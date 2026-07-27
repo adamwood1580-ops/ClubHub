@@ -1,8 +1,8 @@
-// Create a connection to your Supabase project
+// Create a reusable connection to the Supabase project.
 
-const supabase = window.supabase.createClient(
+window.supabaseClient = window.supabase.createClient(
     CONFIG.SUPABASE_URL,
     CONFIG.SUPABASE_ANON_KEY
 );
 
-console.log("Supabase connected");
+console.log("Supabase client created");
