@@ -1,4 +1,4 @@
 const CONFIG = {
-    SUPABASE_URL: "YOUR PROJECT URL",
-    SUPABASE_ANON_KEY: "YOUR PUBLIC ANON KEY"
+    SUPABASE_URL: "https://hncyzcxgncbmtndmacjj.supabase.co",
+    SUPABASE_ANON_KEY: "sb_publishable_c5fkAhAMsScaBax7Y1KWZQ_7QPkZBBZ"
 };
