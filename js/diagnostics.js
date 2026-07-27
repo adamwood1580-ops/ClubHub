@@ -125,11 +125,10 @@
             );
 
             const clientCreated =
-                typeof supabase !== "undefined" &&
-                supabase !== null &&
-                supabase.auth &&
-                typeof supabase.auth.getSession === "function";
-
+    typeof window.supabaseClient !== "undefined" &&
+    window.supabaseClient !== null &&
+    window.supabaseClient.auth &&
+    typeof window.supabaseClient.auth.getSession === "function";
             setResult(
                 "diag-client",
                 clientCreated,
@@ -148,7 +147,8 @@
                 return;
             }
 
-            const { error } = await supabase.auth.getSession();
+            const { error } =
+    await window.supabaseClient.auth.getSession();
 
             if (error) {
                 throw error;
