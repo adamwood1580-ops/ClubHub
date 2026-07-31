@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <meta name="theme-color" content="#1f683d" />
+
+    <title>Score | BookIt</title>
+
+    <link rel="stylesheet" href="../styles/tokens.css" />
+    <link rel="stylesheet" href="../styles/app-shell.css" />
+    <link rel="stylesheet" href="../styles/components.css" />
+    <link rel="stylesheet" href="../styles/score-hub.css" />
+
+    <link rel="manifest" href="../manifest.json" />
+    <link rel="apple-touch-icon" href="../assets/Icon.PNG" />
+</head>
+
+<body>
+    <div class="app-shell">
+        <header class="app-header">
+            <a
+                class="app-header__action"
+                href="index.html"
+                aria-label="Return home"
+            >
+                <svg
+                    class="home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                >
+                    <path d="m15 18-6-6 6-6" />
+                </svg>
+            </a>
+
+            <h1 class="app-header__title">Score</h1>
+
+            <button
+                class="app-header__action"
+                type="button"
+                aria-label="Open profile"
+            >
+                <svg
+                    class="home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                >
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21a8 8 0 0 1 16 0" />
+                </svg>
+            </button>
+        </header>
+
+        <main class="app-main app-main--narrow score-hub">
+            <section class="score-heading">
+                <h2 class="score-heading__title">
+                    What are you playing?
+                </h2>
+
+                <p class="score-heading__subtitle">
+                    Continue a round or start a new scorecard.
+                </p>
+            </section>
+
+            <!-- Placeholder until score saving is connected -->
+            <section class="hero-card continue-round">
+                <p class="hero-card__eyebrow">
+                    Continue round
+                </p>
+
+                <p class="continue-round__course">
+                    Bells Hotel &amp; Country Club
+                </p>
+
+                <div class="continue-round__progress">
+                    <p class="continue-round__hole">Hole 12</p>
+                    <span class="continue-round__label">
+                        Stableford
+                    </span>
+                </div>
+
+                <p class="hero-card__meta">
+                    Started today at 09:18
+                </p>
+
+                <div class="hero-card__actions">
+                    <a
+                        class="button button--hero button--full"
+                        href="stableford.html"
+                    >
+                        Continue round
+                    </a>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section__header">
+                    <h2 class="section__title">
+                        Start a new round
+                    </h2>
+                </div>
+
+                <div class="score-format-grid">
+                    <a
+                        class="card card--interactive score-format-card score-format-card--featured"
+                        href="stableford.html"
+                    >
+                        <div class="score-format-card__top">
+                            <span class="score-format-card__icon">
+                                🏆
+                            </span>
+
+                            <span class="badge badge--gold">
+                                Popular
+                            </span>
+                        </div>
+
+                        <h3 class="score-format-card__title">
+                            Stableford
+                        </h3>
+
+                        <p class="score-format-card__description">
+                            Individual points scoring
+                        </p>
+                    </a>
+
+                    <a
+                        class="card card--interactive score-format-card"
+                        href="strokeplay.html"
+                    >
+                        <div class="score-format-card__top">
+                            <span class="score-format-card__icon">
+                                ⛳
+                            </span>
+                        </div>
+
+                        <h3 class="score-format-card__title">
+                            Stroke Play
+                        </h3>
+
+                        <p class="score-format-card__description">
+                            Medal and gross scoring
+                        </p>
+                    </a>
+
+                    <a
+                        class="card card--interactive score-format-card"
+                        href="fourbbb.html"
+                    >
+                        <div class="score-format-card__top">
+                            <span class="score-format-card__icon">
+                                🤝
+                            </span>
+                        </div>
+
+                        <h3 class="score-format-card__title">
+                            4BBB
+                        </h3>
+
+                        <p class="score-format-card__description">
+                            Fourball Better Ball
+                        </p>
+                    </a>
+
+                    <a
+                        class="card card--interactive score-format-card"
+                        href="greensomes.html"
+                    >
+                        <div class="score-format-card__top">
+                            <span class="score-format-card__icon">
+                                👥
+                            </span>
+                        </div>
+
+                        <h3 class="score-format-card__title">
+                            Greensomes
+                        </h3>
+
+                        <p class="score-format-card__description">
+                            Partners choose one drive
+                        </p>
+                    </a>
+
+                    <a
+                        class="card card--interactive score-format-card"
+                        href="texasscramble.html"
+                    >
+                        <div class="score-format-card__top">
+                            <span class="score-format-card__icon">
+                                🎯
+                            </span>
+                        </div>
+
+                        <h3 class="score-format-card__title">
+                            Texas Scramble
+                        </h3>
+
+                        <p class="score-format-card__description">
+                            Team scramble format
+                        </p>
+                    </a>
+
+                    <a
+                        class="card card--interactive score-format-card"
+                        href="matchplay.html"
+                    >
+                        <div class="score-format-card__top">
+                            <span class="score-format-card__icon">
+                                ⚔️
+                            </span>
+                        </div>
+
+                        <h3 class="score-format-card__title">
+                            Match Play
+                        </h3>
+
+                        <p class="score-format-card__description">
+                            Win holes against an opponent
+                        </p>
+                    </a>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section__header">
+                    <h2 class="section__title">Recent scores</h2>
+
+                    <a class="section__link" href="#history">
+                        View all
+                    </a>
+                </div>
+
+                <div class="list-card">
+                    <a class="list-item" href="#recent-score">
+                        <span class="list-item__icon">🏆</span>
+
+                        <div class="list-item__content">
+                            <p class="list-item__title">
+                                Stableford
+                            </p>
+
+                            <p class="list-item__subtitle">
+                                Saturday · Bells
+                            </p>
+                        </div>
+
+                        <span class="recent-score__result">
+                            34 pts
+                        </span>
+                    </a>
+
+                    <a class="list-item" href="#recent-score">
+                        <span class="list-item__icon">⛳</span>
+
+                        <div class="list-item__content">
+                            <p class="list-item__title">
+                                Stroke Play
+                            </p>
+
+                            <p class="list-item__subtitle">
+                                Wednesday · Bells
+                            </p>
+                        </div>
+
+                        <span class="recent-score__result">
+                            78
+                        </span>
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <nav
+            class="bottom-nav"
+            aria-label="Primary navigation"
+        >
+            <a class="bottom-nav__item" href="index.html">
+                <svg
+                    class="bottom-nav__icon home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                >
+                    <path d="m3 11 9-8 9 8" />
+                    <path d="M5 10v11h14V10" />
+                    <path d="M9 21v-7h6v7" />
+                </svg>
+
+                <span class="bottom-nav__label">Home</span>
+            </a>
+
+            <a class="bottom-nav__item" href="booking.html">
+                <svg
+                    class="bottom-nav__icon home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                >
+                    <rect x="3" y="5" width="18" height="16" rx="2" />
+                    <path d="M16 3v4M8 3v4M3 10h18" />
+                </svg>
+
+                <span class="bottom-nav__label">Book</span>
+            </a>
+
+            <a
+                class="bottom-nav__item"
+                href="score.html"
+                aria-current="page"
+            >
+                <svg
+                    class="bottom-nav__icon home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                >
+                    <path d="M8 21h8" />
+                    <path d="M12 17v4" />
+                    <path d="M7 4h10v4a5 5 0 0 1-10 0V4Z" />
+                    <path d="M7 6H4a3 3 0 0 0 3 3M17 6h3a3 3 0 0 1-3 3" />
+                </svg>
+
+                <span class="bottom-nav__label">Score</span>
+            </a>
+
+            <a class="bottom-nav__item" href="#profile">
+                <svg
+                    class="bottom-nav__icon home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                >
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21a8 8 0 0 1 16 0" />
+                </svg>
+
+                <span class="bottom-nav__label">Me</span>
+            </a>
+        </nav>
+    </div>
+</body>
+</html>
