@@ -1,0 +1,288 @@
+# BookIt Coding Standards
+
+**Version:** 0.1  
+**Status:** Active  
+**Author:** Adam Wood  
+**Last Updated:** 31 July 2026
+
+---
+
+# Purpose
+
+These standards ensure that BookIt remains consistent, maintainable and easy to understand as the project grows.
+
+Every contributor should follow these standards.
+
+---
+
+# General Principles
+
+Code should always be:
+
+- Simple
+- Readable
+- Maintainable
+- Consistent
+- Documented
+
+Code is written for people first and computers second.
+
+---
+
+# Architecture
+
+Always follow the agreed architecture.
+
+Do not add features that bypass the existing structure.
+
+If the architecture needs changing:
+
+1. Update the documentation.
+2. Discuss the change.
+3. Implement it.
+
+Never implement first and document later.
+
+---
+
+# HTML Standards
+
+- Use semantic HTML.
+- Use lowercase element names.
+- Indent with four spaces.
+- Keep pages focused on a single responsibility.
+- Avoid inline JavaScript.
+- Avoid inline CSS.
+
+---
+
+# CSS Standards
+
+- One responsibility per stylesheet.
+- Use meaningful class names.
+- Use CSS variables for colours and spacing.
+- Mobile-first responsive design.
+- Avoid `!important` unless absolutely necessary.
+
+---
+
+# JavaScript Standards
+
+- Use modern JavaScript.
+- Use `const` wherever possible.
+- Use `let` only when values change.
+- Never use `var`.
+- Use camelCase for variables and functions.
+- Keep functions short and focused.
+- One responsibility per function.
+- Avoid duplicated logic.
+
+Example:
+
+Good
+
+```javascript
+function calculatePlayingHandicap() {
+
+}
+```
+
+Bad
+
+```javascript
+function CalcPlayingHandicapStuff() {
+
+}
+```
+
+---
+
+# SQL Standards
+
+Table names:
+
+snake_case
+
+Examples:
+
+- clubs
+- courses
+- tees
+- holes
+
+Column names:
+
+snake_case
+
+Examples:
+
+- course_id
+- created_at
+- updated_at
+
+Primary Keys
+
+- UUID
+- id
+
+Foreign Keys
+
+Always use:
+
+```
+club_id
+course_id
+tee_id
+hole_id
+```
+
+Never abbreviate.
+
+---
+
+# Database Migrations
+
+Every migration must:
+
+- Perform one logical change.
+- Be repeatable where possible.
+- Have a matching seed file if required.
+- Be committed to Git.
+
+Migration example:
+
+```
+001_create_clubs.sql
+```
+
+---
+
+# Documentation
+
+Every architectural decision must be documented.
+
+Documentation is considered part of the codebase.
+
+---
+
+# Git
+
+Never develop directly on `main`.
+
+Workflow:
+
+Feature Branch
+
+↓
+
+Develop
+
+↓
+
+Test
+
+↓
+
+Commit
+
+↓
+
+Merge
+
+Commit messages should clearly describe the change.
+
+Examples:
+
+```
+Create clubs table
+
+Add booking validation
+
+Fix scorecard sharing
+```
+
+---
+
+# Error Handling
+
+Never silently ignore errors.
+
+Display useful messages during development.
+
+Log unexpected errors.
+
+---
+
+# Security
+
+Never expose:
+
+- Service role keys
+- Passwords
+- Secrets
+
+Always use Row Level Security.
+
+Validate user permissions on the backend.
+
+---
+
+# Performance
+
+Optimise for:
+
+- Mobile devices
+- Slow connections
+- Low memory usage
+
+Avoid unnecessary libraries.
+
+---
+
+# Testing
+
+Every feature should be:
+
+Designed
+
+↓
+
+Built
+
+↓
+
+Tested
+
+↓
+
+Committed
+
+Never commit code that has not been tested.
+
+---
+
+# Documentation First
+
+Major features should follow this order:
+
+1. Design
+2. Documentation
+3. Database
+4. Backend
+5. Frontend
+6. Testing
+7. Commit
+8. Changelog
+
+---
+
+# BookIt Philosophy
+
+When making development decisions ask:
+
+- Is it simple?
+- Is it maintainable?
+- Does it improve the experience for golf clubs?
+- Will this still make sense in five years?
+
+If the answer is no, redesign before writing code.
