@@ -1,1 +1,212 @@
+/* =========================================================
+   BOOKIT MEMBER HOME
+   Page-specific styling only
+   ========================================================= */
 
+.member-home {
+    max-width: 42rem;
+}
+
+.member-greeting {
+    margin-bottom: var(--space-5);
+}
+
+.member-greeting__title {
+    margin: 0;
+
+    color: var(--color-primary-dark);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.8rem, 7vw, 2.35rem);
+    line-height: 1.1;
+}
+
+.member-greeting__subtitle {
+    margin: var(--space-2) 0 0;
+
+    color: var(--color-text-muted);
+    font-size: var(--font-size-md);
+}
+
+.booking-hero {
+    isolation: isolate;
+}
+
+.booking-hero__course-art {
+    position: absolute;
+    right: -1rem;
+    top: 4.5rem;
+    z-index: -1;
+
+    width: 9rem;
+    height: 7rem;
+
+    opacity: 0.24;
+    transform: rotate(-4deg);
+}
+
+.booking-hero__details {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+
+    color: rgba(255, 255, 255, 0.86);
+    font-size: var(--font-size-sm);
+}
+
+.booking-hero__details span + span::before {
+    margin-right: var(--space-2);
+    content: "•";
+}
+
+.player-row {
+    display: flex;
+    align-items: center;
+    margin-top: var(--space-4);
+}
+
+.player-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-right: -0.45rem;
+
+    color: var(--color-primary-dark);
+    background: var(--color-accent-light);
+    border: 2px solid rgba(255, 255, 255, 0.92);
+    border-radius: 50%;
+
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+}
+
+.player-avatar:nth-child(2) {
+    background: #dceee2;
+}
+
+.player-avatar:nth-child(3) {
+    background: #e7edf5;
+}
+
+.player-avatar--more {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.home-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+}
+
+.summary-card {
+    min-height: 9rem;
+}
+
+.summary-card__topline {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.summary-card__dot {
+    width: 0.55rem;
+    height: 0.55rem;
+
+    background: var(--color-success);
+    border-radius: 50%;
+}
+
+.summary-card__icon {
+    color: var(--color-accent);
+}
+
+.summary-card__value {
+    margin: 0;
+
+    color: var(--color-primary);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.1;
+}
+
+.summary-card__title {
+    margin: 0;
+
+    color: var(--color-text);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.15;
+}
+
+.summary-card__meta {
+    margin: var(--space-3) 0 0;
+
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+}
+
+.home-icon {
+    width: 1.35rem;
+    height: 1.35rem;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.app-header__club {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+
+    min-width: 0;
+}
+
+.app-header__club-name {
+    overflow: hidden;
+
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notification-dot {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.5rem;
+
+    width: 0.55rem;
+    height: 0.55rem;
+
+    background: var(--color-success);
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+}
+
+@media (min-width: 48rem) {
+    .member-home {
+        max-width: 48rem;
+    }
+
+    .booking-hero__course-art {
+        right: 1rem;
+        width: 12rem;
+        height: 9rem;
+    }
+}
