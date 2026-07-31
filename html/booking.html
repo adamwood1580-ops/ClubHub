@@ -1,107 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8" />
+
     <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
 
+    <meta name="theme-color" content="#173f2b" />
 
-    <title>Tee Booking | Bells Golf App</title>
+    <title>Book a Round | BookIt</title>
 
     <link rel="stylesheet" href="../styles/tokens.css" />
-<link rel="stylesheet" href="../styles/app-shell.css" />
-<link rel="stylesheet" href="../styles/components.css" />
-<link rel="stylesheet" href="../styles/booking.css" />
+    <link rel="stylesheet" href="../styles/app-shell.css" />
+    <link rel="stylesheet" href="../styles/components.css" />
+    <link rel="stylesheet" href="../styles/booking.css" />
+
     <link rel="manifest" href="../json/manifest.json" />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/core/config.js"></script>
-<script src="../js/core/supabase.js"></script>
-<script src="../js/core/diagnostics.js"></script>
-    <meta name="theme-color" content="#003f24" />
     <link rel="apple-touch-icon" href="../assets/Icon.PNG" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/core/config.js"></script>
+    <script src="../js/core/supabase.js"></script>
+    <script src="../js/core/diagnostics.js"></script>
 </head>
 
 <body>
-    <main class="booking-container">
-        <header class="booking-header">
-            <img
-                src="../assets/bells-logo.PNG"
-                alt="Bells Hotel and Country Club logo"
-                class="booking-logo"
-            />
+    <div class="app-shell">
+        <header class="app-header">
+            <a
+                class="app-header__action"
+                href="index.html"
+                aria-label="Return home"
+            >
+                <svg
+                    class="booking-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path d="m15 18-6-6 6-6" />
+                </svg>
+            </a>
 
-            <h1>Tee Booking</h1>
-            <p>Book your next round or join an available group.</p>
+            <div class="booking-header-title">
+                <span>Book a Round</span>
+            </div>
+
+            <button
+                class="app-header__action"
+                type="button"
+                aria-label="Open profile"
+            >
+                <svg
+                    class="booking-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21a8 8 0 0 1 16 0" />
+                </svg>
+            </button>
         </header>
 
-        <section class="date-panel">
-            <button id="prevDay" class="nav-btn" type="button">
-                ‹ Previous
-            </button>
+        <main class="app-main app-main--narrow booking-page">
+            <section class="booking-heading">
+                <p class="booking-heading__eyebrow">
+                    Bells Hotel &amp; Country Club
+                </p>
 
-            <div class="date-display">
-                <strong id="dayName">Today</strong>
-                <span id="dateText"></span>
-            </div>
+                <h1 class="booking-heading__title">
+                    When would you like to play?
+                </h1>
 
-            <button id="nextDay" class="nav-btn" type="button">
-                Next ›
-            </button>
-        </section>
+                <p class="booking-heading__subtitle">
+                    Choose an available time or join an existing group.
+                </p>
+            </section>
 
-        <section class="summary-strip">
-            <div>
-                <strong id="availableCount">0</strong>
-                <span>Available</span>
-            </div>
-
-            <div>
-                <strong id="joinableCount">0</strong>
-                <span>Joinable</span>
-            </div>
-
-            <div>
-                <strong id="bookedCount">0</strong>
-                <span>Booked</span>
-            </div>
-        </section>
-
-        <section class="filter-bar">
-            <button
-                class="filter-btn active"
-                data-filter="all"
-                type="button"
+            <section
+                class="date-panel"
+                aria-label="Select booking date"
             >
-                All
-            </button>
+                <button
+                    id="prevDay"
+                    class="date-button"
+                    type="button"
+                    aria-label="Previous day"
+                >
+                    <svg
+                        class="booking-icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="m15 18-6-6 6-6" />
+                    </svg>
+                </button>
 
-            <button
-                class="filter-btn"
-                data-filter="available"
-                type="button"
+                <button
+                    class="date-display"
+                    type="button"
+                    aria-label="Open calendar"
+                >
+                    <span id="dayName" class="date-display__day">
+                        Today
+                    </span>
+
+                    <span id="dateText" class="date-display__date"></span>
+                </button>
+
+                <button
+                    id="nextDay"
+                    class="date-button"
+                    type="button"
+                    aria-label="Next day"
+                >
+                    <svg
+                        class="booking-icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="m9 18 6-6-6-6" />
+                    </svg>
+                </button>
+            </section>
+
+            <section
+                class="availability-summary"
+                aria-label="Tee-time availability summary"
             >
-                Available
-            </button>
+                <div class="availability-summary__item">
+                    <strong id="availableCount">0</strong>
+                    <span>Available</span>
+                </div>
 
-            <button
-                class="filter-btn"
-                data-filter="joinable"
-                type="button"
+                <div class="availability-summary__item">
+                    <strong id="joinableCount">0</strong>
+                    <span>Joinable</span>
+                </div>
+
+                <div class="availability-summary__item">
+                    <strong id="bookedCount">0</strong>
+                    <span>Booked</span>
+                </div>
+            </section>
+
+            <section class="booking-controls">
+                <div class="filter-bar" aria-label="Filter tee times">
+                    <button
+                        class="filter-btn active"
+                        data-filter="all"
+                        type="button"
+                    >
+                        All times
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="available"
+                        type="button"
+                    >
+                        Available
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="joinable"
+                        type="button"
+                    >
+                        Joinable
+                    </button>
+                </div>
+            </section>
+
+            <section class="tee-sheet-section">
+                <div class="section__header">
+                    <h2 class="section__title">Tee times</h2>
+
+                    <span class="tee-sheet-key">
+                        7-minute intervals
+                    </span>
+                </div>
+
+                <div
+                    id="teeSheet"
+                    class="tee-sheet"
+                    aria-live="polite"
+                    aria-label="Available tee times"
+                ></div>
+            </section>
+        </main>
+
+        <nav
+            class="bottom-nav"
+            aria-label="Primary navigation"
+        >
+            <a class="bottom-nav__item" href="index.html">
+                <svg
+                    class="bottom-nav__icon booking-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path d="m3 11 9-8 9 8" />
+                    <path d="M5 10v11h14V10" />
+                    <path d="M9 21v-7h6v7" />
+                </svg>
+
+                <span class="bottom-nav__label">Home</span>
+            </a>
+
+            <a
+                class="bottom-nav__item"
+                href="booking.html"
+                aria-current="page"
             >
-                Joinable
-            </button>
-        </section>
+                <svg
+                    class="bottom-nav__icon booking-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <rect x="3" y="5" width="18" height="16" rx="2" />
+                    <path d="M16 3v4M8 3v4M3 10h18" />
+                </svg>
 
-        <section
-            id="teeSheet"
-            class="tee-sheet"
-            aria-label="Tee times"
-        ></section>
+                <span class="bottom-nav__label">Book</span>
+            </a>
 
-        <a href="index.html" class="home-link">
-            ← Back to Home
-        </a>
-    </main>
+            <a class="bottom-nav__item" href="score.html">
+                <svg
+                    class="bottom-nav__icon booking-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path d="M8 21h8" />
+                    <path d="M12 17v4" />
+                    <path d="M7 4h10v4a5 5 0 0 1-10 0V4Z" />
+                    <path d="M7 6H4a3 3 0 0 0 3 3M17 6h3a3 3 0 0 1-3 3" />
+                </svg>
+
+                <span class="bottom-nav__label">Score</span>
+            </a>
+
+            <a class="bottom-nav__item" href="#profile">
+                <svg
+                    class="bottom-nav__icon booking-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21a8 8 0 0 1 16 0" />
+                </svg>
+
+                <span class="bottom-nav__label">Me</span>
+            </a>
+        </nav>
+    </div>
 
     <div
         id="bookingModal"
@@ -111,6 +264,8 @@
         aria-labelledby="modalTitle"
     >
         <div class="modal-card">
+            <div class="modal-handle" aria-hidden="true"></div>
+
             <button
                 id="closeModal"
                 class="close-btn"
@@ -120,71 +275,102 @@
                 ×
             </button>
 
+            <p class="modal-eyebrow">Complete your booking</p>
+
             <h2 id="modalTitle">Book Tee Time</h2>
+
             <p id="modalTime" class="modal-time"></p>
 
-            <label>
-                Lead Booker
-                <input
-                    id="leadName"
-                    type="text"
-                    placeholder="Name"
-                    autocomplete="name"
-                />
-            </label>
+            <div class="booking-form">
+                <label class="form-group" for="leadName">
+                    <span class="form-label">Lead Booker</span>
 
-            <label>
-                Contact Number
-                <input
-                    id="contactNumber"
-                    type="tel"
-                    placeholder="Mobile number"
-                    autocomplete="tel"
-                />
-            </label>
-
-            <label>
-                Players
-                <select id="playerCount">
-                    <option value="1">1 player</option>
-                    <option value="2">2 players</option>
-                    <option value="3">3 players</option>
-                    <option value="4">4 players</option>
-                </select>
-            </label>
-
-            <div id="bookingTypeWrap" class="booking-type">
-                <span>Booking Type</span>
-
-                <label>
                     <input
-                        type="radio"
-                        name="bookingType"
-                        value="joinable"
-                        checked
+                        id="leadName"
+                        class="form-input"
+                        type="text"
+                        placeholder="Full name"
+                        autocomplete="name"
                     />
-                    Joinable
                 </label>
 
-                <label>
+                <label class="form-group" for="contactNumber">
+                    <span class="form-label">Contact Number</span>
+
                     <input
-                        type="radio"
-                        name="bookingType"
-                        value="private"
+                        id="contactNumber"
+                        class="form-input"
+                        type="tel"
+                        placeholder="Mobile number"
+                        autocomplete="tel"
                     />
-                    Private
                 </label>
+
+                <label class="form-group" for="playerCount">
+                    <span class="form-label">Number of Players</span>
+
+                    <select
+                        id="playerCount"
+                        class="form-select"
+                    >
+                        <option value="1">1 player</option>
+                        <option value="2">2 players</option>
+                        <option value="3">3 players</option>
+                        <option value="4">4 players</option>
+                    </select>
+                </label>
+
+                <fieldset
+                    id="bookingTypeWrap"
+                    class="booking-type"
+                >
+                    <legend>Booking Type</legend>
+
+                    <label class="booking-option">
+                        <input
+                            type="radio"
+                            name="bookingType"
+                            value="joinable"
+                            checked
+                        />
+
+                        <span class="booking-option__content">
+                            <strong>Joinable</strong>
+                            <small>
+                                Other golfers can join the remaining spaces.
+                            </small>
+                        </span>
+                    </label>
+
+                    <label class="booking-option">
+                        <input
+                            type="radio"
+                            name="bookingType"
+                            value="private"
+                        />
+
+                        <span class="booking-option__content">
+                            <strong>Private</strong>
+                            <small>
+                                Keep the remaining spaces unavailable.
+                            </small>
+                        </span>
+                    </label>
+                </fieldset>
+
+                <div
+                    id="playerNames"
+                    class="player-names"
+                ></div>
+
+                <button
+                    id="confirmBooking"
+                    class="button button--primary button--full confirm-btn"
+                    type="button"
+                >
+                    Confirm Booking
+                </button>
             </div>
-
-            <div id="playerNames" class="player-names"></div>
-
-            <button
-                id="confirmBooking"
-                class="confirm-btn"
-                type="button"
-            >
-                Confirm Booking
-            </button>
         </div>
     </div>
 
