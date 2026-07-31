@@ -26,42 +26,13 @@
     <script src="../js/core/diagnostics.js"></script>
 </head>
 
-<body data-page="book">
+<body
+    data-page="book"
+    data-header="standard"
+    data-title="Book A Round"
+    >
     <div class="app-shell">
-        <header class="app-header">
-            <a
-                class="app-header__action"
-                href="index.html"
-                aria-label="Return home"
-            >
-                <svg
-                    class="booking-icon"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                >
-                    <path d="m15 18-6-6 6-6" />
-                </svg>
-            </a>
-
-            <div class="booking-header-title">
-                <span>Book a Round</span>
-            </div>
-
-            <button
-                class="app-header__action"
-                type="button"
-                aria-label="Open profile"
-            >
-                <svg
-                    class="booking-icon"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                >
-                    <circle cx="12" cy="8" r="4" />
-                    <path d="M4 21a8 8 0 0 1 16 0" />
-                </svg>
-            </button>
-        </header>
+        <header data-app-header></header>
 
         <main class="app-main app-main--narrow booking-page">
             <section class="booking-heading">
