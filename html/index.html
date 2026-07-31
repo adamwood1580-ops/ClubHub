@@ -2,156 +2,312 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Bells Golf App</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
 
-<link rel="stylesheet" href="../styles/tokens.css" />
-<link rel="stylesheet" href="../styles/app-shell.css" />
-<link rel="stylesheet" href="../styles/components.css" />     
-<link rel="stylesheet" href="../styles/main.css" />    
-<link rel="manifest" href="../manifest.json" />
-<link rel="apple-touch-icon" href="../assets/Icon.PNG" />
+    <meta name="theme-color" content="#1f683d" />
+
+    <title>BookIt | Bells Hotel & Country Club</title>
+
+    <link rel="stylesheet" href="../styles/tokens.css" />
+    <link rel="stylesheet" href="../styles/app-shell.css" />
+    <link rel="stylesheet" href="../styles/components.css" />
+    <link rel="stylesheet" href="../styles/member-home.css" />
+
+    <link rel="manifest" href="../manifest.json" />
+    <link rel="apple-touch-icon" href="../assets/Icon.PNG" />
 </head>
 
 <body>
-    <main class="home-container">
-<header class="hero-home">
-    <img
-        src="../assets/bells-logo.PNG"
-        alt="Bells Hotel & Country Club"
-        class="home-logo"
-    />
+    <div class="app-shell">
+        <header class="app-header">
+            <button
+                class="app-header__action"
+                type="button"
+                aria-label="Open notifications"
+            >
+                <svg
+                    class="home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                >
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+                    <path d="M10 21h4" />
+                </svg>
 
-    <div class="suite-title">
-        <h1>Golf Suite</h1>
-        <p>Booking • Scoring • Club</p>
+                <span class="notification-dot"></span>
+            </button>
+
+            <div class="app-header__club">
+                <span class="app-header__club-name">
+                    Bells Hotel &amp; Country Club
+                </span>
+
+                <svg
+                    class="home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    style="width: 1rem; height: 1rem;"
+                >
+                    <path d="m8 10 4 4 4-4" />
+                </svg>
+            </div>
+
+            <button
+                class="app-header__action"
+                type="button"
+                aria-label="Open profile"
+            >
+                <svg
+                    class="home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                >
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21a8 8 0 0 1 16 0" />
+                </svg>
+            </button>
+        </header>
+
+        <main class="app-main app-main--narrow member-home">
+            <section class="member-greeting">
+                <h1 class="member-greeting__title">
+                    Morning Adam 👋
+                </h1>
+
+                <p class="member-greeting__subtitle">
+                    Ready for golf?
+                </p>
+            </section>
+
+            <section
+                class="hero-card booking-hero"
+                aria-labelledby="next-round-title"
+            >
+                <svg
+                    class="booking-hero__course-art"
+                    aria-hidden="true"
+                    viewBox="0 0 180 130"
+                >
+                    <path
+                        d="M15 105 C45 55, 75 95, 105 45 C125 15, 155 30, 170 10"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="24"
+                        stroke-linecap="round"
+                    />
+                    <circle cx="158" cy="19" r="7" fill="#d4af37" />
+                    <path d="M158 19V2" stroke="#ffffff" stroke-width="3" />
+                    <path d="M158 3l13 5-13 5z" fill="#d4af37" />
+                </svg>
+
+                <p class="hero-card__eyebrow">
+                    <svg
+                        class="home-icon"
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                    >
+                        <rect x="3" y="5" width="18" height="16" rx="2" />
+                        <path d="M16 3v4M8 3v4M3 10h18" />
+                    </svg>
+
+                    Your next round
+                </p>
+
+                <p class="hero-card__value">09:04</p>
+
+                <h2
+                    class="hero-card__title"
+                    id="next-round-title"
+                >
+                    Saturday, 1 August
+                </h2>
+
+                <div class="booking-hero__details">
+                    <span>1st Tee</span>
+                    <span>4 players</span>
+                </div>
+
+                <div
+                    class="player-row"
+                    aria-label="Playing with Steve, Dave and Mark"
+                >
+                    <span class="player-avatar" title="Steve">S</span>
+                    <span class="player-avatar" title="Dave">D</span>
+                    <span class="player-avatar" title="Mark">M</span>
+                    <span class="player-avatar player-avatar--more">+1</span>
+                </div>
+
+                <div class="hero-card__actions">
+                    <a
+                        class="button button--hero button--full"
+                        href="booking.html"
+                    >
+                        View booking
+
+                        <span aria-hidden="true">›</span>
+                    </a>
+                </div>
+            </section>
+
+            <section
+                class="home-summary-grid section"
+                aria-label="Club information"
+            >
+                <article class="card summary-card">
+                    <div class="summary-card__topline">
+                        <span class="summary-card__dot"></span>
+                        Course status
+                    </div>
+
+                    <p class="summary-card__value">Open</p>
+
+                    <p class="summary-card__meta">
+                        19°C&nbsp; • &nbsp;Light wind ☀️
+                    </p>
+                </article>
+
+                <a
+                    class="card card--interactive summary-card"
+                    href="#competition"
+                >
+                    <div class="summary-card__topline">
+                        <span
+                            class="summary-card__icon"
+                            aria-hidden="true"
+                        >
+                            🏆
+                        </span>
+                        This week
+                    </div>
+
+                    <h2 class="summary-card__title">
+                        Summer Stableford
+                    </h2>
+
+                    <p class="summary-card__meta">
+                        Saturday, 1 August &nbsp;›
+                    </p>
+                </a>
+            </section>
+
+            <section class="section">
+                <div class="section__header">
+                    <h2 class="section__title">Quick actions</h2>
+                </div>
+
+                <div class="quick-actions">
+                    <a
+                        class="quick-action quick-action--primary"
+                        href="booking.html"
+                    >
+                        <svg
+                            class="home-icon"
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                        >
+                            <rect x="3" y="5" width="18" height="16" rx="2" />
+                            <path d="M16 3v4M8 3v4M3 10h18" />
+                            <path d="M12 14v4M10 16h4" />
+                        </svg>
+
+                        Book a round
+                    </a>
+
+                    <a
+                        class="quick-action quick-action--gold"
+                        href="stableford.html"
+                    >
+                        <svg
+                            class="home-icon"
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                        >
+                            <path d="m4 20 4-1 11-11-3-3L5 16l-1 4Z" />
+                            <path d="m14 6 3 3" />
+                        </svg>
+
+                        Enter score
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <nav
+            class="bottom-nav"
+            aria-label="Primary navigation"
+        >
+            <a
+                class="bottom-nav__item"
+                href="index.html"
+                aria-current="page"
+            >
+                <svg
+                    class="bottom-nav__icon home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                >
+                    <path d="m3 11 9-8 9 8" />
+                    <path d="M5 10v11h14V10" />
+                    <path d="M9 21v-7h6v7" />
+                </svg>
+
+                <span class="bottom-nav__label">Home</span>
+            </a>
+
+            <a
+                class="bottom-nav__item"
+                href="booking.html"
+            >
+                <svg
+                    class="bottom-nav__icon home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                >
+                    <rect x="3" y="5" width="18" height="16" rx="2" />
+                    <path d="M16 3v4M8 3v4M3 10h18" />
+                </svg>
+
+                <span class="bottom-nav__label">Book</span>
+            </a>
+
+            <a
+                class="bottom-nav__item"
+                href="stableford.html"
+            >
+                <svg
+                    class="bottom-nav__icon home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                >
+                    <path d="M8 21h8" />
+                    <path d="M12 17v4" />
+                    <path d="M7 4h10v4a5 5 0 0 1-10 0V4Z" />
+                    <path d="M7 6H4a3 3 0 0 0 3 3M17 6h3a3 3 0 0 1-3 3" />
+                </svg>
+
+                <span class="bottom-nav__label">Score</span>
+            </a>
+
+            <a
+                class="bottom-nav__item"
+                href="#profile"
+            >
+                <svg
+                    class="bottom-nav__icon home-icon"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                >
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21a8 8 0 0 1 16 0" />
+                </svg>
+
+                <span class="bottom-nav__label">Me</span>
+            </a>
+        </nav>
     </div>
-</header>
-
-        <section class="format-section">
-            <h2>Club Services</h2>
-
-            <div class="menu-grid">
-                <a href="booking.html" class="menu-card">
-                    <div class="icon-badge">📅</div>
-
-                    <div class="card-content">
-                        <h3>Tee Booking</h3>
-                        <p>Book your next round or join an available group.</p>
-                    </div>
-
-                    <div class="chevron">›</div>
-                </a>
-            </div>
-        </section>
-
-        <section class="format-section">
-            <h2>Individual Formats</h2>
-
-            <div class="menu-grid">
-                <a href="stableford.html" class="menu-card">
-                    <div class="icon-badge">⛳</div>
-
-                    <div class="card-content">
-                        <h3>Stableford</h3>
-                        <p>Individual Stableford scoring with handicap calculations.</p>
-                    </div>
-
-                    <div class="chevron">›</div>
-                </a>
-
-                <a href="strokeplay.html" class="menu-card">
-                    <div class="icon-badge">🏌️</div>
-
-                    <div class="card-content">
-                        <h3>Stroke Play</h3>
-                        <p>Gross and nett stroke play scorecard.</p>
-                    </div>
-
-                    <div class="chevron">›</div>
-                </a>
-            </div>
-        </section>
-
-        <section class="format-section">
-            <h2>Pairs Formats</h2>
-
-            <div class="menu-grid">
-                <a href="fourbbb.html" class="menu-card">
-                    <div class="icon-badge">👥</div>
-
-                    <div class="card-content">
-                        <h3>4BBB</h3>
-                        <p>Pairs Better Ball Stableford with best-ball scoring.</p>
-                    </div>
-
-                    <div class="chevron">›</div>
-                </a>
-
-               <a href="matchplay.html" class="menu-card">
-    <div class="icon-badge">⚔️</div>
-
-    <div class="card-content">
-        <h3>Match Play</h3>
-        <p>Singles and fourball head-to-head match play.</p>
-    </div>
-
-    <div class="chevron">›</div>
-</a>
-            </div>
-        </section>
-
-        <section class="format-section">
-            <h2>Team Formats</h2>
-
-            <div class="menu-grid">
-                <a href="texasscramble.html" class="menu-card">
-                    <div class="icon-badge">🏆</div>
-
-<div class="card-content">
-    <h3>Texas Scramble</h3>
-    <p>Team scramble scoring with custom handicap allowances.</p>
-</div>
-
-                    <div class="chevron">›</div>
-                </a>
-
-                <a href="greensomes.html" class="menu-card">
-                    <div class="icon-badge">🤝</div>
-
-                    <div class="card-content">
-                        <h3>Greensomes</h3>
-                        <p>Pairs alternate-shot format.</p>
-                    </div>
-
-                </a>
-            </div>
-        </section>
-
-        <section class="feature-bar">
-            <div>
-                <strong>📱 Install App</strong>
-                <span>Add to your home screen</span>
-            </div>
-
-            <div>
-                <strong>📡 Offline Mode</strong>
-                <span>Works without signal</span>
-            </div>
-
-            <div>
-    <strong>📤 Share Results</strong>
-    <span>Save or share scorecards</span>
-</div>
-
-            <div>
-                <strong>🏌️ Bells CC</strong>
-                <span>Built for club use</span>
-            </div>
-        </section>
-    </main>
-
-  
 </body>
 </html>
