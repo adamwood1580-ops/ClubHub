@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <meta name="theme-color" content="#173f2b" />
+
+    <title>Profile | BookIt</title>
+
+    <link rel="stylesheet" href="../styles/tokens.css" />
+    <link rel="stylesheet" href="../styles/app-shell.css" />
+    <link rel="stylesheet" href="../styles/components.css" />
+    <link rel="stylesheet" href="../styles/profile.css" />
+
+    <link rel="manifest" href="../json/manifest.json" />
+    <link rel="apple-touch-icon" href="../assets/Icon.PNG" />
+</head>
+
+<body
+    data-page="profile"
+    data-header="standard"
+    data-title="Profile"
+>
+    <div class="app-shell">
+        <header data-app-header></header>
+
+        <main class="app-main app-main--narrow profile-page">
+            <section class="profile-intro">
+                <div class="profile-avatar" aria-hidden="true">
+                    AW
+                </div>
+
+                <div class="profile-intro__content">
+                    <h1 class="profile-intro__title">
+                        Hello Adam 👋
+                    </h1>
+
+                    <p class="profile-intro__club">
+                        Bells Hotel &amp; Country Club
+                    </p>
+                </div>
+            </section>
+
+            <section
+                class="hero-card handicap-card"
+                aria-labelledby="handicap-title"
+            >
+                <div>
+                    <p
+                        class="handicap-card__label"
+                        id="handicap-title"
+                    >
+                        Handicap Index
+                    </p>
+
+                    <p class="handicap-card__value">
+                        12.4
+                    </p>
+
+                    <p class="handicap-card__meta">
+                        Last updated 29 July
+                    </p>
+                </div>
+
+                <div
+                    class="handicap-card__badge"
+                    aria-hidden="true"
+                >
+                    ⛳
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section__header">
+                    <h2 class="section__title">
+                        Upcoming
+                    </h2>
+                </div>
+
+                <article class="card profile-booking">
+                    <div class="profile-booking__top">
+                        <div>
+                            <p class="profile-booking__date">
+                                Saturday, 1 August
+                            </p>
+
+                            <p class="profile-booking__time">
+                                09:04
+                            </p>
+                        </div>
+
+                        <span class="badge badge--success">
+                            Confirmed
+                        </span>
+                    </div>
+
+                    <p class="profile-booking__meta">
+                        Bells Hotel &amp; Country Club · 1st Tee
+                    </p>
+
+                    <a
+                        class="button button--primary button--full"
+                        href="booking.html"
+                    >
+                        View booking
+                    </a>
+                </article>
+            </section>
+
+            <section class="section">
+                <div class="section__header">
+                    <h2 class="section__title">
+                        Recent golf
+                    </h2>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <span class="profile-stat__value">
+                            18
+                        </span>
+
+                        <span class="profile-stat__label">
+                            Rounds played
+                        </span>
+                    </div>
+
+                    <div class="profile-stat">
+                        <span class="profile-stat__value">
+                            34
+                        </span>
+
+                        <span class="profile-stat__label">
+                            Avg. Stableford
+                        </span>
+                    </div>
+
+                    <div class="profile-stat">
+                        <span class="profile-stat__value">
+                            76
+                        </span>
+
+                        <span class="profile-stat__label">
+                            Best gross
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section__header">
+                    <h2 class="section__title">
+                        Account
+                    </h2>
+                </div>
+
+                <div class="list-card">
+                    <a class="list-item" href="#settings">
+                        <span class="list-item__icon">
+                            <svg
+                                class="profile-menu-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path
+                                    d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.09A1.7 1.7 0 0 0 9 19.35a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.63 15a1.7 1.7 0 0 0-1.56-1.03H3v-4h.09A1.7 1.7 0 0 0 4.65 9a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1.03-1.56V3h4v.09A1.7 1.7 0 0 0 15 4.65a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.37 9a1.7 1.7 0 0 0 1.56 1.03H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"
+                                ></path>
+                            </svg>
+                        </span>
+
+                        <div class="list-item__content">
+                            <p class="list-item__title">
+                                Settings
+                            </p>
+
+                            <p class="list-item__subtitle">
+                                Notifications, privacy and account
+                            </p>
+                        </div>
+
+                        <span class="list-item__meta">›</span>
+                    </a>
+
+                    <a class="list-item" href="#home-club">
+                        <span class="list-item__icon">
+                            <svg
+                                class="profile-menu-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path d="M5 21V4"></path>
+                                <path d="M5 4h10l-2 4 2 4H5"></path>
+                            </svg>
+                        </span>
+
+                        <div class="list-item__content">
+                            <p class="list-item__title">
+                                Home club
+                            </p>
+
+                            <p class="list-item__subtitle">
+                                Bells Hotel &amp; Country Club
+                            </p>
+                        </div>
+
+                        <span class="list-item__meta">›</span>
+                    </a>
+
+                    <div class="list-item">
+                        <span class="list-item__icon">
+                            <svg
+                                class="profile-menu-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path d="M4 19V9"></path>
+                                <path d="M10 19V5"></path>
+                                <path d="M16 19v-7"></path>
+                                <path d="M22 19V3"></path>
+                            </svg>
+                        </span>
+
+                        <div class="list-item__content">
+                            <p class="list-item__title">
+                                Statistics
+                            </p>
+
+                            <p class="list-item__subtitle">
+                                Performance and playing history
+                            </p>
+                        </div>
+
+                        <span class="coming-soon">
+                            Soon
+                        </span>
+                    </div>
+
+                    <div class="list-item">
+                        <span class="list-item__icon">
+                            <svg
+                                class="profile-menu-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <rect
+                                    x="3"
+                                    y="5"
+                                    width="18"
+                                    height="14"
+                                    rx="2"
+                                ></rect>
+                                <path d="M3 10h18"></path>
+                            </svg>
+                        </span>
+
+                        <div class="list-item__content">
+                            <p class="list-item__title">
+                                Membership
+                            </p>
+
+                            <p class="list-item__subtitle">
+                                Membership details and payments
+                            </p>
+                        </div>
+
+                        <span class="coming-soon">
+                            Soon
+                        </span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <nav data-bottom-nav></nav>
+    </div>
+
+    <script src="../js/ui/header.js"></script>
+    <script src="../js/ui/navigation.js"></script>
+</body>
+</html>
