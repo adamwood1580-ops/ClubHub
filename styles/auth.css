@@ -1,0 +1,190 @@
+/* =========================================================
+   BOOKIT AUTHENTICATION
+   ========================================================= */
+
+.auth-page {
+    display: grid;
+    min-height: 100vh;
+    padding:
+        calc(var(--space-6) + var(--safe-area-top))
+        max(var(--space-4), var(--safe-area-right))
+        calc(var(--space-6) + var(--safe-area-bottom))
+        max(var(--space-4), var(--safe-area-left));
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(199, 163, 75, 0.18),
+            transparent 17rem
+        ),
+        linear-gradient(
+            160deg,
+            var(--color-primary-light),
+            var(--color-background) 48%
+        );
+}
+
+.auth-container {
+    display: grid;
+    align-content: center;
+    width: min(100%, 28rem);
+    margin: 0 auto;
+}
+
+.auth-brand {
+    margin-bottom: var(--space-6);
+    text-align: center;
+}
+
+.auth-brand__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 4.75rem;
+    height: 4.75rem;
+    margin-bottom: var(--space-4);
+
+    color: var(--color-text-inverse);
+    background:
+        linear-gradient(
+            145deg,
+            var(--color-primary),
+            var(--color-primary-dark)
+        );
+    border: 3px solid var(--color-accent-light);
+    border-radius: 50%;
+    box-shadow: var(--shadow-md);
+}
+
+.auth-brand__icon {
+    width: 2.4rem;
+    height: 2.4rem;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+}
+
+.auth-brand__title {
+    margin: 0;
+
+    color: var(--color-primary-dark);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: var(--font-size-3xl);
+    line-height: 1;
+}
+
+.auth-brand__subtitle {
+    margin: var(--space-2) 0 0;
+
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.auth-card {
+    padding: var(--space-5);
+
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+}
+
+.auth-card__title {
+    margin: 0;
+
+    color: var(--color-primary-dark);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+}
+
+.auth-card__text {
+    margin: var(--space-2) 0 var(--space-5);
+
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.auth-form {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.password-field {
+    position: relative;
+}
+
+.password-field .form-input {
+    padding-right: 4.5rem;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: var(--space-2);
+
+    min-width: 3.5rem;
+    min-height: 2.5rem;
+    padding: var(--space-2);
+
+    color: var(--color-primary);
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-sm);
+
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.auth-actions {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-1);
+}
+
+.auth-link {
+    color: var(--color-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-align: center;
+    text-decoration: none;
+}
+
+.auth-message {
+    display: none;
+
+    margin: 0;
+    padding: var(--space-3);
+
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-md);
+}
+
+.auth-message.is-visible {
+    display: block;
+}
+
+.auth-message--error {
+    color: var(--color-danger);
+    background: #fdecec;
+    border: 1px solid #efc3c3;
+}
+
+.auth-message--success {
+    color: var(--color-success);
+    background: #eaf6ed;
+    border: 1px solid #cce7d3;
+}
+
+.auth-footer {
+    margin: var(--space-5) 0 0;
+
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    text-align: center;
+}
