@@ -40,13 +40,17 @@
                 </div>
 
                 <div class="profile-intro__content">
-                    <h1 class="profile-intro__title">
-                        Hello Adam 👋
-                    </h1>
+                    <h1
+    id="profileGreeting"
+    class="profile-intro__title">
+    Loading...
+</h1>
 
-                    <p class="profile-intro__club">
-                        Bells Hotel &amp; Country Club
-                    </p>
+                    <p
+    id="profileClub"
+    class="profile-intro__club">
+    Loading...
+</p>
                 </div>
             </section>
 
@@ -62,13 +66,17 @@
                         Handicap Index
                     </p>
 
-                    <p class="handicap-card__value">
-                        12.4
-                    </p>
+                    <p
+    id="profileHandicap"
+    class="handicap-card__value">
+    --.-
+</p>
 
-                    <p class="handicap-card__meta">
-                        Last updated 29 July
-                    </p>
+                    <p
+    id="profileHandicap"
+    class="handicap-card__value">
+    --.-
+</p>
                 </div>
 
                 <div
@@ -288,5 +296,30 @@
     <script src="../js/ui/navigation.js"></script>
     
 </script>
+
+<script>
+document.addEventListener("bookit:ready", function (event) {
+
+    console.log(event.detail.profile);
+
+    const profile = event.detail.profile;
+
+    document.getElementById("profileGreeting").textContent =
+        `Hello ${profile.firstName} 👋`;
+
+    document.getElementById("profileClub").textContent =
+        profile.club?.name ?? "No club";
+
+    document.getElementById("profileHandicap").textContent =
+        profile.handicap?.index ?? "--.-";
+
+    document.getElementById("profileHandicapUpdated").textContent =
+        profile.handicap?.sourceUpdatedAt
+            ? "Updated " + profile.handicap.sourceUpdatedAt
+            : "No update date";
+
+});
+</script>
+
 </body>
 </html>
