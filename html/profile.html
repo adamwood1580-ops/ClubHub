@@ -290,5 +290,10 @@
 
     <script src="../js/ui/header.js"></script>
     <script src="../js/ui/navigation.js"></script>
+    <script>
+document.addEventListener("bookit:ready", () => {
+    console.log(window.BookIt.currentProfile);
+});
+</script>
 </body>
 </html>
