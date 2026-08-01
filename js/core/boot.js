@@ -84,21 +84,32 @@
     }
 
     async function getAuthenticatedUser() {
-        if (!window.supabaseClient) {
-            throw new Error("Supabase client is unavailable.");
-        }
+    const client = requireSupabaseClient();
 
-        const {
-            data: { user },
-            error
-        } = await window.supabaseClient.auth.getUser();
+    const {
+        data: { session },
+        error: sessionError
+    } = await client.auth.getSession();
 
-        if (error) {
-            throw error;
-        }
-
-        return user;
+    if (sessionError) {
+        throw sessionError;
     }
+
+    if (!session) {
+        return null;
+    }
+
+    const {
+        data: { user },
+        error: userError
+    } = await client.auth.getUser();
+
+    if (userError) {
+        throw userError;
+    }
+
+    return user;
+}
 
     function getLastActivity() {
         const storedValue = Number(
@@ -275,12 +286,13 @@
              * the screen permanently hidden.
              */
             if (
-                error.message ===
-                "No authenticated user was found."
-            ) {
-                redirectToLogin();
-                return;
-            }
+    error?.name === "AuthSessionMissingError" ||
+    error?.message === "Auth session missing!" ||
+    error?.message === "No authenticated user was found."
+) {
+    redirectToLogin();
+    return;
+}
 
             showStartupFailure(error);
         }
