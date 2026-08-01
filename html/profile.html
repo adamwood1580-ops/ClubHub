@@ -306,30 +306,9 @@
 
     <script src="../js/ui/header.js"></script>
     <script src="../js/ui/navigation.js"></script>
-    
+    <script src="../js/pages/profile-page.js"></script>
 </script>
 
-<script>
-document.addEventListener("bookit:ready", function (event) {
-    const profile = event.detail.profile;
-
-    document.getElementById("profileGreeting").textContent =
-        `Hello ${profile.firstName} 👋`;
-
-    document.getElementById("profileClub").textContent =
-        profile.club?.name ?? "No club";
-
-    document.getElementById("profileHandicap").textContent =
-        profile.handicap?.index ?? "--.-";
-
-    document.getElementById("profileHandicapUpdated").textContent =
-        profile.handicap?.sourceUpdatedAt ?? "No update date";
-});
-
-document.addEventListener("bookit:error", function (event) {
-    alert(JSON.stringify(event.detail, null, 2));
-});
-</script>
 
 </body>
 </html>
