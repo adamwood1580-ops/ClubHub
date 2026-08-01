@@ -56,7 +56,11 @@
             passwordInput.focus();
             return false;
         }
-        const pageParams = new URLSearchParams(window.location.search);
+    
+        return true;
+    }
+    
+const pageParams = new URLSearchParams(window.location.search);
 
 if (pageParams.get("reason") === "timeout") {
     showMessage(
@@ -64,9 +68,6 @@ if (pageParams.get("reason") === "timeout") {
         "error"
     );
 }
-        return true;
-    }
-
     passwordToggle.addEventListener("click", function () {
         const passwordIsVisible = passwordInput.type === "text";
 
