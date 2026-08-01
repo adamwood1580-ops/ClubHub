@@ -56,7 +56,14 @@
             passwordInput.focus();
             return false;
         }
+        const pageParams = new URLSearchParams(window.location.search);
 
+if (pageParams.get("reason") === "timeout") {
+    showMessage(
+        "You were signed out after 30 minutes of inactivity.",
+        "error"
+    );
+}
         return true;
     }
 
