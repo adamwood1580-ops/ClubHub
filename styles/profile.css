@@ -13,6 +13,18 @@
     margin-bottom: var(--space-5);
 }
 
+.profile-intro__details {
+    min-width: 0;
+}
+
+.profile-intro__membership {
+    margin: var(--space-1) 0 0;
+
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+}
+
 .profile-avatar {
     display: inline-flex;
     align-items: center;
