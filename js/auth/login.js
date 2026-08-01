@@ -109,9 +109,12 @@
 
             showMessage("Signed in successfully. Opening BookIt…", "success");
 
-            window.setTimeout(function () {
-                window.location.href = "index.html";
-            }, 600);
+const params = new URLSearchParams(window.location.search);
+const returnTo = params.get("returnTo");
+
+window.setTimeout(function () {
+    window.location.href = returnTo || "index.html";
+}, 600);
         } catch (error) {
             console.error("BookIt login error:", error);
 
