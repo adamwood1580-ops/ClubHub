@@ -1,59 +1,119 @@
 (function () {
     "use strict";
 
-    const LOGIN_PAGE = "login.html";
+    /* =========================================================
+       BOOKIT APPLICATION BOOTSTRAP
+       ========================================================= */
+
+    const SUPABASE_LIBRARY =
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
+    const CONFIG_SCRIPT = "../js/core/config.js";
+    const SUPABASE_SCRIPT = "../js/core/supabase.js";
     const PROFILE_SCRIPT = "../js/core/profile.js";
+
+    const LOGIN_PAGE = "login.html";
+
     const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
     const LAST_ACTIVITY_KEY = "bookit_last_activity";
 
     window.BookIt = window.BookIt || {};
 
+    let isInitialising = false;
+    let isReady = false;
     let isRedirecting = false;
+    let isSigningOut = false;
+
     let inactivityInterval = null;
     let lastRecordedActivity = 0;
 
-    function redirectToLogin(reason = "") {
-        if (isRedirecting) {
-            return;
-        }
+    let resolveReady;
+    let rejectReady;
 
-        isRedirecting = true;
+    /*
+     * Page-specific scripts can use:
+     *
+     * window.BookIt.ready.then(function ({ user, profile }) {
+     *     // Application is ready.
+     * });
+     */
+    window.BookIt.ready = new Promise(function (resolve, reject) {
+        resolveReady = resolve;
+        rejectReady = reject;
+    });
 
-        const currentPage =
-            window.location.pathname.split("/").pop() || "index.html";
+    /* =========================================================
+       DEPENDENCY LOADING
+       ========================================================= */
 
-        const returnTo = encodeURIComponent(
-            `${currentPage}${window.location.search}`
-        );
-
-        const reasonParameter = reason
-            ? `&reason=${encodeURIComponent(reason)}`
-            : "";
-
-        window.location.replace(
-            `${LOGIN_PAGE}?returnTo=${returnTo}${reasonParameter}`
-        );
-    }
-
-    function loadScript(source) {
+    function loadScript(source, readyCheck) {
         return new Promise(function (resolve, reject) {
-            const existingScript = document.querySelector(
-                `script[src="${source}"]`
-            );
+            if (
+                typeof readyCheck === "function" &&
+                readyCheck()
+            ) {
+                resolve();
+                return;
+            }
+
+            const existingScript = Array.from(
+                document.scripts
+            ).find(function (script) {
+                return script.src === new URL(
+                    source,
+                    document.baseURI
+                ).href;
+            });
 
             if (existingScript) {
-                if (window.BookIt.profile) {
-                    resolve();
+                const handleExistingLoad = function () {
+                    if (
+                        typeof readyCheck !== "function" ||
+                        readyCheck()
+                    ) {
+                        resolve();
+                    } else {
+                        reject(
+                            new Error(
+                                `Script loaded but did not initialise: ${source}`
+                            )
+                        );
+                    }
+                };
+
+                /*
+                 * The script may already have completed before this
+                 * listener was attached.
+                 */
+                if (
+                    existingScript.dataset.bookitLoaded ===
+                    "true"
+                ) {
+                    handleExistingLoad();
                     return;
                 }
 
-                existingScript.addEventListener("load", resolve, {
-                    once: true
-                });
+                existingScript.addEventListener(
+                    "load",
+                    handleExistingLoad,
+                    {
+                        once: true
+                    }
+                );
 
-                existingScript.addEventListener("error", reject, {
-                    once: true
-                });
+                existingScript.addEventListener(
+                    "error",
+                    function () {
+                        reject(
+                            new Error(
+                                `Could not load script: ${source}`
+                            )
+                        );
+                    },
+                    {
+                        once: true
+                    }
+                );
 
                 return;
             }
@@ -61,17 +121,40 @@
             const script = document.createElement("script");
 
             script.src = source;
-            script.defer = true;
+            script.async = false;
+            script.dataset.bookitDependency = "true";
 
-            script.addEventListener("load", resolve, {
-                once: true
-            });
+            script.addEventListener(
+                "load",
+                function () {
+                    script.dataset.bookitLoaded = "true";
+
+                    if (
+                        typeof readyCheck === "function" &&
+                        !readyCheck()
+                    ) {
+                        reject(
+                            new Error(
+                                `Script loaded but did not initialise: ${source}`
+                            )
+                        );
+                        return;
+                    }
+
+                    resolve();
+                },
+                {
+                    once: true
+                }
+            );
 
             script.addEventListener(
                 "error",
                 function () {
                     reject(
-                        new Error(`Could not load script: ${source}`)
+                        new Error(
+                            `Could not load script: ${source}`
+                        )
                     );
                 },
                 {
@@ -83,88 +166,253 @@
         });
     }
 
-    async function getAuthenticatedUser() {
-    const client = requireSupabaseClient();
-
-    const {
-        data: { session },
-        error: sessionError
-    } = await client.auth.getSession();
-
-    if (sessionError) {
-        throw sessionError;
-    }
-
-    if (!session) {
-        return null;
-    }
-
-    const {
-        data: { user },
-        error: userError
-    } = await client.auth.getUser();
-
-    if (userError) {
-        throw userError;
-    }
-
-    return user;
-}
-
-    function getLastActivity() {
-        const storedValue = Number(
-            window.localStorage.getItem(LAST_ACTIVITY_KEY)
+    async function loadDependencies() {
+        await loadScript(
+            SUPABASE_LIBRARY,
+            function () {
+                return Boolean(window.supabase);
+            }
         );
 
-        if (!Number.isFinite(storedValue) || storedValue <= 0) {
-            return Date.now();
+        await loadScript(CONFIG_SCRIPT);
+
+        await loadScript(
+            SUPABASE_SCRIPT,
+            function () {
+                return Boolean(window.supabaseClient);
+            }
+        );
+
+        await loadScript(
+            PROFILE_SCRIPT,
+            function () {
+                return Boolean(
+                    window.BookIt.profile &&
+                    typeof window.BookIt.profile.load ===
+                        "function"
+                );
+            }
+        );
+    }
+
+    /* =========================================================
+       AUTHENTICATION
+       ========================================================= */
+
+    function getSupabaseClient() {
+        if (!window.supabaseClient) {
+            throw new Error(
+                "Supabase client is unavailable."
+            );
         }
 
-        return storedValue;
+        return window.supabaseClient;
+    }
+
+    function getCurrentPage() {
+        return (
+            window.location.pathname
+                .split("/")
+                .pop() || "index.html"
+        );
+    }
+
+    function buildReturnTo() {
+        return `${getCurrentPage()}${window.location.search}`;
+    }
+
+    function redirectToLogin(reason = "") {
+        if (isRedirecting) {
+            return;
+        }
+
+        isRedirecting = true;
+
+        const parameters = new URLSearchParams();
+
+        parameters.set("returnTo", buildReturnTo());
+
+        if (reason) {
+            parameters.set("reason", reason);
+        }
+
+        window.location.replace(
+            `${LOGIN_PAGE}?${parameters.toString()}`
+        );
+    }
+
+    async function getAuthenticatedUser() {
+        const client = getSupabaseClient();
+
+        const {
+            data: sessionData,
+            error: sessionError
+        } = await client.auth.getSession();
+
+        if (sessionError) {
+            throw sessionError;
+        }
+
+        if (!sessionData.session) {
+            return null;
+        }
+
+        const {
+            data: userData,
+            error: userError
+        } = await client.auth.getUser();
+
+        if (userError) {
+            if (
+                userError.name ===
+                    "AuthSessionMissingError" ||
+                userError.message ===
+                    "Auth session missing!"
+            ) {
+                return null;
+            }
+
+            throw userError;
+        }
+
+        return userData.user || null;
+    }
+
+    /* =========================================================
+       INACTIVITY TIMEOUT
+       ========================================================= */
+
+    function readLastActivity() {
+        try {
+            const value = Number(
+                window.localStorage.getItem(
+                    LAST_ACTIVITY_KEY
+                )
+            );
+
+            if (
+                !Number.isFinite(value) ||
+                value <= 0
+            ) {
+                return null;
+            }
+
+            return value;
+        } catch (error) {
+            console.warn(
+                "Could not read BookIt activity time:",
+                error
+            );
+
+            return null;
+        }
+    }
+
+    function saveLastActivity(timestamp) {
+        try {
+            window.localStorage.setItem(
+                LAST_ACTIVITY_KEY,
+                String(timestamp)
+            );
+        } catch (error) {
+            console.warn(
+                "Could not save BookIt activity time:",
+                error
+            );
+        }
+    }
+
+    function clearLastActivity() {
+        try {
+            window.localStorage.removeItem(
+                LAST_ACTIVITY_KEY
+            );
+        } catch (error) {
+            console.warn(
+                "Could not clear BookIt activity time:",
+                error
+            );
+        }
     }
 
     function recordActivity() {
         const now = Date.now();
 
+        /*
+         * Avoid writing continuously during scrolling.
+         */
         if (now - lastRecordedActivity < 1000) {
             return;
         }
 
         lastRecordedActivity = now;
-
-        window.localStorage.setItem(
-            LAST_ACTIVITY_KEY,
-            String(now)
-        );
+        saveLastActivity(now);
     }
 
-    function hasSessionTimedOut() {
+    function sessionHasTimedOut() {
+        const lastActivity = readLastActivity();
+
+        /*
+         * No stored timestamp means this is the first protected-page
+         * load for the current session.
+         */
+        if (lastActivity === null) {
+            return false;
+        }
+
         return (
-            Date.now() - getLastActivity() >=
+            Date.now() - lastActivity >=
             SESSION_TIMEOUT_MS
         );
     }
 
+    function clearApplicationData() {
+        if (
+            window.BookIt.profile &&
+            typeof window.BookIt.profile.clearCache ===
+                "function"
+        ) {
+            window.BookIt.profile.clearCache();
+        }
+
+        window.BookIt.user = null;
+        window.BookIt.currentProfile = null;
+
+        window.bookitUser = null;
+        window.bookitProfile = null;
+    }
+
     async function signOutForInactivity() {
+        if (isSigningOut) {
+            return;
+        }
+
+        isSigningOut = true;
+
         try {
-            if (window.supabaseClient) {
-                await window.supabaseClient.auth.signOut({
-                    scope: "local"
-                });
-            }
+            const client = getSupabaseClient();
+
+            await client.auth.signOut({
+                scope: "local"
+            });
         } catch (error) {
             console.error(
                 "BookIt inactivity sign-out failed:",
                 error
             );
         } finally {
-            window.localStorage.removeItem(LAST_ACTIVITY_KEY);
+            clearLastActivity();
+            clearApplicationData();
             redirectToLogin("timeout");
         }
     }
 
     async function checkInactivity() {
-        if (hasSessionTimedOut()) {
+        if (isRedirecting || isSigningOut) {
+            return;
+        }
+
+        if (sessionHasTimedOut()) {
             await signOutForInactivity();
         }
     }
@@ -187,16 +435,26 @@
             );
         });
 
+        /*
+         * Mobile browsers can pause timers when the device is locked
+         * or the browser is placed in the background.
+         */
         document.addEventListener(
             "visibilitychange",
             function () {
-                if (document.visibilityState === "visible") {
+                if (
+                    document.visibilityState ===
+                    "visible"
+                ) {
                     checkInactivity();
                 }
             }
         );
 
-        window.addEventListener("pageshow", checkInactivity);
+        window.addEventListener(
+            "pageshow",
+            checkInactivity
+        );
 
         inactivityInterval = window.setInterval(
             checkInactivity,
@@ -204,123 +462,144 @@
         );
     }
 
+    /* =========================================================
+       APPLICATION READY STATE
+       ========================================================= */
+
     function exposeApplicationData(user, profile) {
         window.BookIt.user = user;
         window.BookIt.currentProfile = profile;
+
+        /*
+         * Temporary aliases for older scripts.
+         */
         window.bookitUser = user;
         window.bookitProfile = profile;
     }
 
-    function markApplicationReady() {
-        document.documentElement.classList.add("auth-ready");
+    function revealApplication() {
+        document.documentElement.classList.add(
+            "auth-ready"
+        );
+    }
+
+    function dispatchReady(user, profile) {
+        const detail = {
+            user,
+            profile
+        };
+
+        isReady = true;
+
+        exposeApplicationData(user, profile);
+        revealApplication();
+        resolveReady(detail);
 
         document.dispatchEvent(
             new CustomEvent("bookit:ready", {
-                detail: {
-                    user: window.BookIt.user,
-                    profile: window.BookIt.currentProfile
-                }
+                detail
             })
         );
     }
 
-    function showStartupFailure(error) {
-    document.documentElement.classList.add("auth-ready");
+    function dispatchError(error) {
+        const normalisedError =
+            error instanceof Error
+                ? error
+                : new Error(String(error));
 
-    document.dispatchEvent(
-        new CustomEvent("bookit:error", {
-            detail: {
-                message:
-                    error?.message ||
-                    "BookIt could not load your account information.",
+        const detail = {
+            message:
+                normalisedError.message ||
+                "BookIt could not load your account information.",
 
-                code: error?.code || null,
-                details: error?.details || null,
-                hint: error?.hint || null
-            }
-        })
-    );
-}
+            code:
+                error && typeof error === "object"
+                    ? error.code || null
+                    : null,
+
+            details:
+                error && typeof error === "object"
+                    ? error.details || null
+                    : null,
+
+            hint:
+                error && typeof error === "object"
+                    ? error.hint || null
+                    : null,
+
+            error: normalisedError
+        };
+
+        revealApplication();
+        rejectReady(normalisedError);
+
+        document.dispatchEvent(
+            new CustomEvent("bookit:error", {
+                detail
+            })
+        );
+    }
+
+    /* =========================================================
+       STARTUP
+       ========================================================= */
 
     async function initialiseBookIt() {
+        if (
+            isInitialising ||
+            isReady ||
+            isRedirecting
+        ) {
+            return;
+        }
+
+        isInitialising = true;
+
         try {
-            const user = await getAuthenticatedUser();
+            await loadDependencies();
+
+            const user =
+                await getAuthenticatedUser();
 
             if (!user) {
                 redirectToLogin();
                 return;
             }
 
-            if (hasSessionTimedOut()) {
+            if (sessionHasTimedOut()) {
                 await signOutForInactivity();
                 return;
-            }
-
-            await loadScript(PROFILE_SCRIPT);
-
-            if (
-                !window.BookIt.profile ||
-                typeof window.BookIt.profile.load !== "function"
-            ) {
-                throw new Error(
-                    "The BookIt profile service is unavailable."
-                );
             }
 
             const profile =
                 await window.BookIt.profile.load();
 
-            exposeApplicationData(user, profile);
             startInactivityTracking();
-            markApplicationReady();
+            dispatchReady(user, profile);
         } catch (error) {
             console.error(
                 "BookIt startup failed:",
                 error
             );
 
-            /*
-             * A missing or invalid authenticated user should return
-             * to login. Database/profile failures should reveal the
-             * page so an error state can be shown instead of leaving
-             * the screen permanently hidden.
-             */
             if (
-    error?.name === "AuthSessionMissingError" ||
-    error?.message === "Auth session missing!" ||
-    error?.message === "No authenticated user was found."
-) {
-    redirectToLogin();
-    return;
-}
+                error?.name ===
+                    "AuthSessionMissingError" ||
+                error?.message ===
+                    "Auth session missing!" ||
+                error?.message ===
+                    "No authenticated user was found."
+            ) {
+                redirectToLogin();
+                return;
+            }
 
-            showStartupFailure(error);
+            dispatchError(error);
+        } finally {
+            isInitialising = false;
         }
     }
-
-    window.BookIt.ready = new Promise(function (resolve, reject) {
-        document.addEventListener(
-            "bookit:ready",
-            function (event) {
-                resolve(event.detail);
-            },
-            {
-                once: true
-            }
-        );
-
-        document.addEventListener(
-            "bookit:error",
-            function (event) {
-                reject(
-                    new Error(event.detail.message)
-                );
-            },
-            {
-                once: true
-            }
-        );
-    });
 
     if (document.readyState === "loading") {
         document.addEventListener(
@@ -334,9 +613,14 @@
         initialiseBookIt();
     }
 
-    window.addEventListener("beforeunload", function () {
-        if (inactivityInterval) {
-            window.clearInterval(inactivityInterval);
+    window.addEventListener(
+        "beforeunload",
+        function () {
+            if (inactivityInterval) {
+                window.clearInterval(
+                    inactivityInterval
+                );
+            }
         }
-    });
+    );
 })();
