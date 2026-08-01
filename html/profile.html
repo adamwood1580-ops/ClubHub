@@ -299,9 +299,6 @@
 
 <script>
 document.addEventListener("bookit:ready", function (event) {
-
-    console.log(event.detail.profile);
-
     const profile = event.detail.profile;
 
     document.getElementById("profileGreeting").textContent =
@@ -314,10 +311,11 @@ document.addEventListener("bookit:ready", function (event) {
         profile.handicap?.index ?? "--.-";
 
     document.getElementById("profileHandicapUpdated").textContent =
-        profile.handicap?.sourceUpdatedAt
-            ? "Updated " + profile.handicap.sourceUpdatedAt
-            : "No update date";
+        profile.handicap?.sourceUpdatedAt ?? "No update date";
+});
 
+document.addEventListener("bookit:error", function (event) {
+    alert(JSON.stringify(event.detail, null, 2));
 });
 </script>
 
