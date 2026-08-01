@@ -213,18 +213,23 @@
         );
     }
 
-    function showStartupFailure() {
-        document.documentElement.classList.add("auth-ready");
+    function showStartupFailure(error) {
+    document.documentElement.classList.add("auth-ready");
 
-        document.dispatchEvent(
-            new CustomEvent("bookit:error", {
-                detail: {
-                    message:
-                        "BookIt could not load your account information."
-                }
-            })
-        );
-    }
+    document.dispatchEvent(
+        new CustomEvent("bookit:error", {
+            detail: {
+                message:
+                    error?.message ||
+                    "BookIt could not load your account information.",
+
+                code: error?.code || null,
+                details: error?.details || null,
+                hint: error?.hint || null
+            }
+        })
+    );
+}
 
     async function initialiseBookIt() {
         try {
@@ -277,7 +282,7 @@
                 return;
             }
 
-            showStartupFailure();
+            showStartupFailure(error);
         }
     }
 
