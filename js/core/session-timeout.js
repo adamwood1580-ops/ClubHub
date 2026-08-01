@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    const TIMEOUT_MS = 5 * 60 * 1000;
+    const TIMEOUT_MS = 30 * 60 * 1000;
     const LAST_ACTIVITY_KEY = "bookit_last_activity";
     const LOGIN_PAGE = "login.html";
 
