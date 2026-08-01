@@ -144,7 +144,7 @@
             );
 
             window.setTimeout(function () {
-                window.location.href = "index.html";
+                window.location.href = "login.html";
             }, 900);
         } catch (error) {
             console.error("Password update error:", error);
