@@ -85,12 +85,11 @@
                 performance.now();
 
             const teeSheet =
-                await window.BookIt.booking.getDay(
-                    new Date(),
-                    {
-                        forceRefresh: true
-                    }
-                );
+                const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+
+const teeSheet =
+    await window.BookIt.booking.getDay(tomorrow);
 
             const finishedAt =
                 performance.now();
