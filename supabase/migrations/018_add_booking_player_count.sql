@@ -2,17 +2,11 @@ begin;
 
 -- =========================================================
 -- BOOKING PLAYER COUNT
---
--- The booking stores the total number of occupied places.
--- booking_members continues to store identifiable members,
--- beginning with the authenticated lead booker.
 -- =========================================================
 
 alter table public.bookings
 add column if not exists player_count smallint;
 
--- Backfill existing bookings using their active identified
--- members. Every booking must occupy at least one place.
 update public.bookings as b
 set player_count = greatest(
     (
@@ -54,18 +48,29 @@ $$;
 
 
 -- =========================================================
--- UPDATED CREATE BOOKING FUNCTION
+-- REMOVE OLD RPC SIGNATURE
 --
--- Creates a booking for the authenticated lead member while
--- reserving the requested total number of player places.
+-- PostgreSQL cannot change default parameters in place.
+-- =========================================================
+
+drop function if exists public.create_booking(
+    uuid,
+    text,
+    text,
+    text
+);
+
+
+-- =========================================================
+-- PRIMARY CREATE BOOKING FUNCTION
 -- =========================================================
 
 create or replace function public.create_booking(
     p_tee_time_id uuid,
-    p_player_count smallint default 1,
-    p_booking_type text default 'joinable',
-    p_contact_number text default null,
-    p_notes text default null
+    p_player_count smallint,
+    p_booking_type text,
+    p_contact_number text,
+    p_notes text
 )
 returns uuid
 language plpgsql
@@ -110,10 +115,6 @@ begin
             'Booking type must be joinable or private.';
     end if;
 
-    /*
-     * Lock the tee-time row so simultaneous attempts cannot
-     * both reserve the same empty tee time.
-     */
     select *
     into v_tee_time
     from public.tee_times
@@ -206,10 +207,6 @@ begin
     returning id
     into v_booking_id;
 
-    /*
-     * Only the accountable lead booker is identified here.
-     * player_count records the total occupied places.
-     */
     insert into public.booking_members (
         booking_id,
         membership_id,
@@ -236,13 +233,10 @@ $$;
 
 
 -- =========================================================
--- COMPATIBILITY WRAPPER
---
--- Keeps the existing four-argument application call working
--- until booking.js is replaced with player-count support.
+-- TEMPORARY FOUR-ARGUMENT COMPATIBILITY WRAPPER
 -- =========================================================
 
-create or replace function public.create_booking(
+create function public.create_booking(
     p_tee_time_id uuid,
     p_booking_type text,
     p_contact_number text,
