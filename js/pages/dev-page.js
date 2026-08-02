@@ -8,7 +8,9 @@
         document.getElementById("testBooking");
 
     function show(text) {
-        output.textContent = text;
+        if (output) {
+            output.textContent = text;
+        }
     }
 
     function formatError(error) {
@@ -32,7 +34,7 @@
                     ? error.message
                     : typeof source.message === "string"
                         ? source.message
-                        : null,
+                        : String(error),
 
             code:
                 error.code ||
@@ -54,7 +56,7 @@
             result.raw = JSON.parse(
                 JSON.stringify(source)
             );
-        } catch {
+        } catch (jsonError) {
             result.raw = String(source);
         }
 
@@ -65,10 +67,36 @@
         );
     }
 
+    function formatDate(date) {
+        return new Intl.DateTimeFormat(
+            "en-GB",
+            {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        ).format(date);
+    }
+
     async function testBookingService() {
         show("Testing booking service...");
 
+        if (button) {
+            button.disabled = true;
+            button.textContent = "Testing...";
+        }
+
         try {
+            if (
+                !window.BookIt ||
+                !window.BookIt.ready
+            ) {
+                throw new Error(
+                    "The BookIt startup service is unavailable."
+                );
+            }
+
             await window.BookIt.ready;
 
             if (
@@ -81,15 +109,22 @@
                 );
             }
 
+            const tomorrow = new Date();
+
+            tomorrow.setDate(
+                tomorrow.getDate() + 1
+            );
+
             const startedAt =
                 performance.now();
 
             const teeSheet =
-                const tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate() + 1);
-
-const teeSheet =
-    await window.BookIt.booking.getDay(tomorrow);
+                await window.BookIt.booking.getDay(
+                    tomorrow,
+                    {
+                        forceRefresh: true
+                    }
+                );
 
             const finishedAt =
                 performance.now();
@@ -99,6 +134,9 @@ const teeSheet =
 
 Club:
 ${window.BookIt.currentProfile?.club?.name || "Unknown"}
+
+Date Tested:
+${formatDate(tomorrow)}
 
 Tee Times Returned:
 ${teeSheet.length}
@@ -121,6 +159,12 @@ STACK
 
 ${error?.stack || "No stack available"}`
             );
+        } finally {
+            if (button) {
+                button.disabled = false;
+                button.textContent =
+                    "Test Booking Service";
+            }
         }
     }
 
