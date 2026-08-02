@@ -6,12 +6,51 @@
     const teeSheetElement =
         document.getElementById("teeSheet");
 
-    const selectedDateElement =
-        document.getElementById("selectedDate");
+    const dayNameElement =
+        document.getElementById("dayName");
 
-    let selectedDate = new Date("2026-08-03T00:00:00");
+    const dateTextElement =
+        document.getElementById("dateText");
 
-     function escapeHtml(value) {
+    const dateDisplayButton =
+        document.getElementById("dateDisplay");
+
+    const datePicker =
+        document.getElementById("bookingDatePicker");
+
+    const previousDayButton =
+        document.getElementById("prevDay");
+
+    const nextDayButton =
+        document.getElementById("nextDay");
+
+    const availableCountElement =
+        document.getElementById("availableCount");
+
+    const joinableCountElement =
+        document.getElementById("joinableCount");
+
+    const bookedCountElement =
+        document.getElementById("bookedCount");
+
+    const filterButtons = Array.from(
+        document.querySelectorAll("[data-filter]")
+    );
+
+    /*
+     * Temporary test date because this is currently the date
+     * containing the generated 95-row tee sheet.
+     *
+     * This will later return to today's date once tee sheets
+     * are generated automatically.
+     */
+    let selectedDate =
+        new Date("2026-08-03T00:00:00");
+
+    let currentTeeTimes = [];
+    let activeFilter = "all";
+
+    function escapeHtml(value) {
         return String(value ?? "")
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
@@ -34,16 +73,45 @@
         return `${year}-${month}-${day}`;
     }
 
-    function formatDisplayDate(date) {
-        return new Intl.DateTimeFormat(
-            "en-GB",
-            {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric"
-            }
-        ).format(date);
+    function createLocalDate(dateKey) {
+        return new Date(`${dateKey}T00:00:00`);
+    }
+
+    function isToday(date) {
+        const today = new Date();
+
+        return (
+            date.getFullYear() === today.getFullYear() &&
+            date.getMonth() === today.getMonth() &&
+            date.getDate() === today.getDate()
+        );
+    }
+
+    function updateDateDisplay() {
+        dayNameElement.textContent =
+            isToday(selectedDate)
+                ? "Today"
+                : new Intl.DateTimeFormat(
+                    "en-GB",
+                    {
+                        weekday: "long"
+                    }
+                ).format(selectedDate);
+
+        dateTextElement.textContent =
+            new Intl.DateTimeFormat(
+                "en-GB",
+                {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                }
+            ).format(selectedDate);
+
+        if (datePicker) {
+            datePicker.value =
+                toDateKey(selectedDate);
+        }
     }
 
     function getButtonLabel(teeTime) {
@@ -58,7 +126,7 @@
         return teeTime.displayStatus;
     }
 
-    function getStatusClass(teeTime) {
+    function getCardClass(teeTime) {
         if (
             teeTime.operationalStatus !== "open"
         ) {
@@ -80,12 +148,9 @@
         const isDisabled =
             teeTime.action === "none";
 
-        const statusClass =
-            getStatusClass(teeTime);
-
         return `
             <article
-                class="tee-time-card ${statusClass}"
+                class="tee-time-card ${getCardClass(teeTime)}"
                 data-tee-time-id="${escapeHtml(teeTime.id)}"
             >
                 <div class="tee-time-card__time">
@@ -116,7 +181,79 @@
         `;
     }
 
+    function matchesFilter(teeTime) {
+        if (activeFilter === "available") {
+            return (
+                teeTime.action === "book" &&
+                !teeTime.booking
+            );
+        }
+
+        if (activeFilter === "joinable") {
+            return teeTime.action === "join";
+        }
+
+        return true;
+    }
+
+    function renderCurrentTeeSheet() {
+        const filteredTeeTimes =
+            currentTeeTimes.filter(matchesFilter);
+
+        if (!filteredTeeTimes.length) {
+            teeSheetElement.innerHTML = `
+                <p class="tee-sheet-message">
+                    No tee times match this filter.
+                </p>
+            `;
+
+            return;
+        }
+
+        teeSheetElement.innerHTML =
+            filteredTeeTimes
+                .map(renderTeeTime)
+                .join("");
+    }
+
+    function updateSummary() {
+        const availableCount =
+            currentTeeTimes.filter(function (teeTime) {
+                return (
+                    teeTime.action === "book" &&
+                    !teeTime.booking
+                );
+            }).length;
+
+        const joinableCount =
+            currentTeeTimes.filter(function (teeTime) {
+                return teeTime.action === "join";
+            }).length;
+
+        const bookedCount =
+            currentTeeTimes.filter(function (teeTime) {
+                return (
+                    teeTime.booking !== null ||
+                    teeTime.spacesRemaining === 0
+                );
+            }).length;
+
+        availableCountElement.textContent =
+            String(availableCount);
+
+        joinableCountElement.textContent =
+            String(joinableCount);
+
+        bookedCountElement.textContent =
+            String(bookedCount);
+    }
+
     function showLoading() {
+        teeSheetElement.setAttribute(
+            "aria-busy",
+            "true"
+        );
+
         teeSheetElement.innerHTML = `
             <p class="tee-sheet-message">
                 Loading tee times...
@@ -139,7 +276,10 @@
         );
 
         teeSheetElement.innerHTML = `
-            <div class="tee-sheet-message tee-sheet-message--error">
+            <div
+                class="tee-sheet-message
+                       tee-sheet-message--error"
+            >
                 <p>
                     We could not load the tee sheet.
                 </p>
@@ -168,12 +308,10 @@
         forceRefresh = false
     ) {
         showLoading();
-
-        selectedDateElement.textContent =
-            formatDisplayDate(selectedDate);
+        updateDateDisplay();
 
         try {
-            const teeTimes =
+            currentTeeTimes =
                 await window.BookIt.booking.getDay(
                     toDateKey(selectedDate),
                     {
@@ -181,18 +319,61 @@
                     }
                 );
 
-            if (!teeTimes.length) {
+            teeSheetElement.setAttribute(
+                "aria-busy",
+                "false"
+            );
+
+            updateSummary();
+
+            if (!currentTeeTimes.length) {
                 showEmpty();
                 return;
             }
 
-            teeSheetElement.innerHTML =
-                teeTimes
-                    .map(renderTeeTime)
-                    .join("");
+            renderCurrentTeeSheet();
         } catch (error) {
+            teeSheetElement.setAttribute(
+                "aria-busy",
+                "false"
+            );
+
             showError(error);
         }
+    }
+
+    function changeSelectedDate(numberOfDays) {
+        const nextDate =
+            new Date(selectedDate);
+
+        nextDate.setDate(
+            nextDate.getDate() + numberOfDays
+        );
+
+        selectedDate = nextDate;
+
+        loadTeeSheet(true);
+    }
+
+    function setFilter(filter) {
+        activeFilter = filter;
+
+        filterButtons.forEach(function (button) {
+            const isActive =
+                button.dataset.filter === filter;
+
+            button.classList.toggle(
+                "active",
+                isActive
+            );
+
+            button.setAttribute(
+                "aria-pressed",
+                String(isActive)
+            );
+        });
+
+        renderCurrentTeeSheet();
     }
 
     function handleTeeSheetClick(event) {
@@ -210,21 +391,34 @@
         const teeTimeId =
             button.dataset.teeTimeId;
 
-        /*
-         * Booking and joining will be connected next.
-         */
         window.alert(
-            `${action === "join" ? "Join" : "Book"} tee time ${teeTimeId}`
+            `${
+                action === "join"
+                    ? "Join"
+                    : "Book"
+            } tee time ${teeTimeId}`
         );
     }
 
     async function initialiseBookingPage() {
+        const requiredElements = [
+            teeSheetElement,
+            dayNameElement,
+            dateTextElement,
+            previousDayButton,
+            nextDayButton,
+            availableCountElement,
+            joinableCountElement,
+            bookedCountElement
+        ];
+
         if (
-            !teeSheetElement ||
-            !selectedDateElement
+            requiredElements.some(function (element) {
+                return !element;
+            })
         ) {
             console.error(
-                "Booking page elements are missing."
+                "One or more booking-page elements are missing."
             );
 
             return;
@@ -243,12 +437,64 @@
                 );
             }
 
+            previousDayButton.addEventListener(
+                "click",
+                function () {
+                    changeSelectedDate(-1);
+                }
+            );
+
+            nextDayButton.addEventListener(
+                "click",
+                function () {
+                    changeSelectedDate(1);
+                }
+            );
+
+            dateDisplayButton?.addEventListener(
+                "click",
+                function () {
+                    if (datePicker?.showPicker) {
+                        datePicker.showPicker();
+                    } else {
+                        datePicker?.click();
+                    }
+                }
+            );
+
+            datePicker?.addEventListener(
+                "change",
+                function () {
+                    if (!datePicker.value) {
+                        return;
+                    }
+
+                    selectedDate =
+                        createLocalDate(
+                            datePicker.value
+                        );
+
+                    loadTeeSheet(true);
+                }
+            );
+
+            filterButtons.forEach(function (button) {
+                button.addEventListener(
+                    "click",
+                    function () {
+                        setFilter(
+                            button.dataset.filter
+                        );
+                    }
+                );
+            });
+
             teeSheetElement.addEventListener(
                 "click",
                 handleTeeSheetClick
             );
 
-            await loadTeeSheet();
+            await loadTeeSheet(true);
         } catch (error) {
             showError(error);
         }
