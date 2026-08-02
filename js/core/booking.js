@@ -63,7 +63,8 @@
             );
         }
 
-        const year = date.getFullYear();
+        const year =
+            date.getFullYear();
 
         const month = String(
             date.getMonth() + 1
@@ -96,6 +97,33 @@
             String(value).trim();
 
         return normalised || null;
+    }
+
+    function validatePlayerCount(
+        playerCount,
+        maximum
+    ) {
+        if (
+            !Number.isInteger(playerCount) ||
+            playerCount < 1
+        ) {
+            throw new Error(
+                "A valid player count is required."
+            );
+        }
+
+        if (
+            Number.isFinite(maximum) &&
+            playerCount > maximum
+        ) {
+            throw new Error(
+                `Only ${maximum} ${
+                    maximum === 1
+                        ? "place remains"
+                        : "places remain"
+                }.`
+            );
+        }
     }
 
     function isActiveBookingMember(member) {
@@ -355,6 +383,22 @@
                 teeTime
             );
         });
+    }
+
+    function clearAffectedCaches(teeTime) {
+        if (teeTime?.playDate) {
+            dayCache.delete(
+                teeTime.playDate
+            );
+        }
+
+        if (teeTime?.id) {
+            teeTimeCache.delete(
+                teeTime.id
+            );
+        }
+
+        upcomingCache = undefined;
     }
 
     const TEE_TIME_SELECT = `
@@ -754,15 +798,6 @@
         }
 
         if (
-            !Number.isInteger(playerCount) ||
-            playerCount < 1
-        ) {
-            throw new Error(
-                "A valid player count is required."
-            );
-        }
-
-        if (
             ![
                 "joinable",
                 "private"
@@ -787,6 +822,11 @@
             );
         }
 
+        validatePlayerCount(
+            playerCount,
+            teeTime.maxPlayers
+        );
+
         if (
             teeTime.operationalStatus !==
             "open"
@@ -799,15 +839,6 @@
         if (teeTime.booking) {
             throw new Error(
                 "This tee time already has a booking."
-            );
-        }
-
-        if (
-            playerCount >
-            teeTime.maxPlayers
-        ) {
-            throw new Error(
-                `This tee time allows a maximum of ${teeTime.maxPlayers} players.`
             );
         }
 
@@ -847,16 +878,9 @@
             );
         }
 
-        dayCache.delete(
-            teeTime.playDate
+        clearAffectedCaches(
+            teeTime
         );
-
-        teeTimeCache.delete(
-            teeTimeId
-        );
-
-        upcomingCache =
-            undefined;
 
         return {
             bookingId:
@@ -872,6 +896,119 @@
 
             playerCount,
             bookingType
+        };
+    }
+
+    async function joinBooking(
+        options = {}
+    ) {
+        const teeTimeId =
+            options.teeTimeId;
+
+        const bookingId =
+            options.bookingId;
+
+        const playerCount =
+            Number(options.playerCount || 1);
+
+        if (!teeTimeId) {
+            throw new Error(
+                "A tee-time ID is required."
+            );
+        }
+
+        if (!bookingId) {
+            throw new Error(
+                "A booking ID is required."
+            );
+        }
+
+        const teeTime =
+            await getTeeTime(
+                teeTimeId,
+                {
+                    forceRefresh: true
+                }
+            );
+
+        if (!teeTime) {
+            throw new Error(
+                "The selected tee time could not be found."
+            );
+        }
+
+        if (!teeTime.booking) {
+            throw new Error(
+                "This tee time no longer has a booking to join."
+            );
+        }
+
+        if (
+            teeTime.booking.id !== bookingId
+        ) {
+            throw new Error(
+                "The selected booking has changed. Refresh the tee sheet and try again."
+            );
+        }
+
+        if (
+            teeTime.booking.type !==
+            "joinable"
+        ) {
+            throw new Error(
+                "This booking is private and cannot be joined."
+            );
+        }
+
+        validatePlayerCount(
+            playerCount,
+            teeTime.spacesRemaining
+        );
+
+        const client =
+            getClient();
+
+        const { data, error } =
+            await client.rpc(
+                "join_booking",
+                {
+                    p_booking_id:
+                        bookingId,
+
+                    p_player_count:
+                        playerCount
+                }
+            );
+
+        if (error) {
+            console.error(
+                "BookIt could not join the booking:",
+                error
+            );
+
+            throw new Error(
+                error.message ||
+                "The booking could not be joined."
+            );
+        }
+
+        clearAffectedCaches(
+            teeTime
+        );
+
+        return {
+            bookingId:
+                data,
+
+            teeTimeId,
+
+            playDate:
+                teeTime.playDate,
+
+            time:
+                teeTime.time,
+
+            playerCount
         };
     }
 
@@ -908,6 +1045,7 @@
         getTeeTime,
         getUpcoming,
         createBooking,
+        joinBooking,
         refreshDay,
         refreshUpcoming,
         clearCache
