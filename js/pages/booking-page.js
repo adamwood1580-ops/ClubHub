@@ -44,8 +44,7 @@
      * This will later return to today's date once tee sheets
      * are generated automatically.
      */
-    let selectedDate =
-        new Date("2026-08-03T00:00:00");
+    let selectedDate = new Date();
 
     let currentTeeTimes = [];
     let activeFilter = "all";
