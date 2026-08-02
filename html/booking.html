@@ -282,6 +282,26 @@
     <script src="../js/ui/header.js"></script>
     <script src="../js/ui/navigation.js"></script>
     <script src="../js/core/booking.js"></script>
+    <script>
+    window.BookIt.ready
+        .then(function () {
+            return window.BookIt.booking.getDay(
+                new Date()
+            );
+        })
+        .then(function (teeTimes) {
+            console.log(
+                "Live tee sheet:",
+                teeTimes
+            );
+        })
+        .catch(function (error) {
+            console.error(
+                "Booking service test failed:",
+                error
+            );
+        });
+</script>
     <script src="../js/booking/booking.js"></script>
 </body>
 </html>
