@@ -326,15 +326,15 @@
                         position,
                         member_status,
                         checked_in_at,
-                        club_memberships (
-                            id,
-                            profiles (
-                                id,
-                                first_name,
-                                last_name,
-                                display_name
-                            )
-                        )
+                        club_memberships!booking_members_membership_id_fkey (
+    id,
+    profiles (
+        id,
+        first_name,
+        last_name,
+        display_name
+    )
+)
                     )
                 )
             `)
@@ -420,15 +420,15 @@
                         position,
                         member_status,
                         checked_in_at,
-                        club_memberships (
-                            id,
-                            profiles (
-                                id,
-                                first_name,
-                                last_name,
-                                display_name
-                            )
-                        )
+                        club_memberships!booking_members_membership_id_fkey (
+    id,
+    profiles (
+        id,
+        first_name,
+        last_name,
+        display_name
+    )
+)
                     )
                 )
             `)
