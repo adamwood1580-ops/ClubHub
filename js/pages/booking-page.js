@@ -3,6 +3,10 @@
 
     window.BookIt = window.BookIt || {};
 
+    /* =========================================================
+       PAGE ELEMENTS
+       ========================================================= */
+
     const teeSheetElement =
         document.getElementById("teeSheet");
 
@@ -37,17 +41,55 @@
         document.querySelectorAll("[data-filter]")
     );
 
-    /*
-     * Temporary test date because this is currently the date
-     * containing the generated 95-row tee sheet.
-     *
-     * This will later return to today's date once tee sheets
-     * are generated automatically.
-     */
+    /* =========================================================
+       MODAL ELEMENTS
+       ========================================================= */
+
+    const bookingModal =
+        document.getElementById("bookingModal");
+
+    const closeModalButton =
+        document.getElementById("closeModal");
+
+    const modalTitle =
+        document.getElementById("modalTitle");
+
+    const modalTime =
+        document.getElementById("modalTime");
+
+    const leadNameInput =
+        document.getElementById("leadName");
+
+    const contactNumberInput =
+        document.getElementById("contactNumber");
+
+    const playerCountSelect =
+        document.getElementById("playerCount");
+
+    const bookingTypeWrap =
+        document.getElementById("bookingTypeWrap");
+
+    const playerNamesElement =
+        document.getElementById("playerNames");
+
+    const confirmBookingButton =
+        document.getElementById("confirmBooking");
+
+    /* =========================================================
+       PAGE STATE
+       ========================================================= */
+
     let selectedDate = new Date();
 
     let currentTeeTimes = [];
     let activeFilter = "all";
+
+    let selectedTeeTime = null;
+    let bookingSubmissionInProgress = false;
+
+    /* =========================================================
+       GENERAL HELPERS
+       ========================================================= */
 
     function escapeHtml(value) {
         return String(value ?? "")
@@ -76,6 +118,29 @@
         return new Date(`${dateKey}T00:00:00`);
     }
 
+    function formatLongDate(date) {
+        return new Intl.DateTimeFormat(
+            "en-GB",
+            {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        ).format(date);
+    }
+
+    function formatShortDate(date) {
+        return new Intl.DateTimeFormat(
+            "en-GB",
+            {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        ).format(date);
+    }
+
     function isToday(date) {
         const today = new Date();
 
@@ -85,6 +150,30 @@
             date.getDate() === today.getDate()
         );
     }
+
+    function getCurrentProfile() {
+        return window.BookIt.currentProfile || null;
+    }
+
+    function getMemberName() {
+        const profile = getCurrentProfile();
+
+        return (
+            profile?.displayName ||
+            [
+                profile?.firstName,
+                profile?.lastName
+            ]
+                .filter(Boolean)
+                .join(" ")
+                .trim() ||
+            "Member"
+        );
+    }
+
+    /* =========================================================
+       DATE DISPLAY
+       ========================================================= */
 
     function updateDateDisplay() {
         dayNameElement.textContent =
@@ -98,20 +187,17 @@
                 ).format(selectedDate);
 
         dateTextElement.textContent =
-            new Intl.DateTimeFormat(
-                "en-GB",
-                {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric"
-                }
-            ).format(selectedDate);
+            formatShortDate(selectedDate);
 
         if (datePicker) {
             datePicker.value =
                 toDateKey(selectedDate);
         }
     }
+
+    /* =========================================================
+       TEE-TIME CARD RENDERING
+       ========================================================= */
 
     function getButtonLabel(teeTime) {
         if (teeTime.action === "book") {
@@ -215,6 +301,10 @@
                 .join("");
     }
 
+    /* =========================================================
+       AVAILABILITY SUMMARY
+       ========================================================= */
+
     function updateSummary() {
         const availableCount =
             currentTeeTimes.filter(function (teeTime) {
@@ -246,6 +336,10 @@
         bookedCountElement.textContent =
             String(bookedCount);
     }
+
+    /* =========================================================
+       LOADING AND ERROR STATES
+       ========================================================= */
 
     function showLoading() {
         teeSheetElement.setAttribute(
@@ -303,6 +397,10 @@
             );
     }
 
+    /* =========================================================
+       TEE-SHEET LOADING
+       ========================================================= */
+
     async function loadTeeSheet(
         forceRefresh = false
     ) {
@@ -341,6 +439,10 @@
         }
     }
 
+    /* =========================================================
+       DATE NAVIGATION
+       ========================================================= */
+
     function changeSelectedDate(numberOfDays) {
         const nextDate =
             new Date(selectedDate);
@@ -353,6 +455,10 @@
 
         loadTeeSheet(true);
     }
+
+    /* =========================================================
+       FILTERING
+       ========================================================= */
 
     function setFilter(filter) {
         activeFilter = filter;
@@ -375,6 +481,201 @@
         renderCurrentTeeSheet();
     }
 
+    /* =========================================================
+       BOOKING MODAL
+       ========================================================= */
+
+    function getSelectedBookingType() {
+        return (
+            document.querySelector(
+                'input[name="bookingType"]:checked'
+            )?.value || "joinable"
+        );
+    }
+
+    function resetBookingModal() {
+        const profile = getCurrentProfile();
+
+        if (leadNameInput) {
+            leadNameInput.value =
+                getMemberName();
+
+            leadNameInput.readOnly = true;
+        }
+
+        if (contactNumberInput) {
+            contactNumberInput.value =
+                profile?.phone || "";
+        }
+
+        if (playerCountSelect) {
+            playerCountSelect.value = "1";
+            playerCountSelect.disabled = true;
+        }
+
+        if (playerNamesElement) {
+            playerNamesElement.innerHTML = "";
+            playerNamesElement.hidden = true;
+        }
+
+        document
+            .querySelectorAll(
+                'input[name="bookingType"]'
+            )
+            .forEach(function (radio) {
+                radio.checked =
+                    radio.value === "joinable";
+            });
+
+        if (confirmBookingButton) {
+            confirmBookingButton.disabled = false;
+            confirmBookingButton.textContent =
+                "Confirm Booking";
+        }
+    }
+
+    function openBookingModal(teeTime) {
+        if (!bookingModal) {
+            window.alert(
+                "The booking form is unavailable."
+            );
+
+            return;
+        }
+
+        selectedTeeTime = teeTime;
+
+        resetBookingModal();
+
+        if (modalTitle) {
+            modalTitle.textContent =
+                "Book Tee Time";
+        }
+
+        if (modalTime) {
+            modalTime.textContent =
+                `${formatLongDate(selectedDate)} at ${teeTime.time}`;
+        }
+
+        bookingModal.classList.remove("hidden");
+
+        bookingModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        document.body.classList.add(
+            "modal-open"
+        );
+
+        window.setTimeout(function () {
+            contactNumberInput?.focus();
+        }, 100);
+    }
+
+    function closeBookingModal() {
+        if (!bookingModal) {
+            return;
+        }
+
+        if (bookingSubmissionInProgress) {
+            return;
+        }
+
+        bookingModal.classList.add("hidden");
+
+        bookingModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        document.body.classList.remove(
+            "modal-open"
+        );
+
+        selectedTeeTime = null;
+    }
+
+    /* =========================================================
+       CREATE BOOKING
+       ========================================================= */
+
+    async function submitBooking() {
+        if (
+            bookingSubmissionInProgress ||
+            !selectedTeeTime
+        ) {
+            return;
+        }
+
+        bookingSubmissionInProgress = true;
+
+        if (confirmBookingButton) {
+            confirmBookingButton.disabled = true;
+            confirmBookingButton.textContent =
+                "Creating booking...";
+        }
+
+        try {
+            const result =
+                await window.BookIt.booking.createBooking({
+                    teeTimeId:
+                        selectedTeeTime.id,
+
+                    bookingType:
+                        getSelectedBookingType(),
+
+                    contactNumber:
+                        contactNumberInput?.value || null,
+
+                    notes:
+                        null
+                });
+
+            bookingModal?.classList.add("hidden");
+
+            bookingModal?.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            document.body.classList.remove(
+                "modal-open"
+            );
+
+            selectedTeeTime = null;
+
+            await loadTeeSheet(true);
+
+            window.alert(
+                `Booking confirmed for ${result.time} on ` +
+                `${formatShortDate(createLocalDate(result.playDate))}.`
+            );
+        } catch (error) {
+            console.error(
+                "BookIt could not create the booking:",
+                error
+            );
+
+            window.alert(
+                error?.message ||
+                "The booking could not be created."
+            );
+        } finally {
+            bookingSubmissionInProgress = false;
+
+            if (confirmBookingButton) {
+                confirmBookingButton.disabled = false;
+                confirmBookingButton.textContent =
+                    "Confirm Booking";
+            }
+        }
+    }
+
+    /* =========================================================
+       TEE-SHEET ACTIONS
+       ========================================================= */
+
     function handleTeeSheetClick(event) {
         const button = event.target.closest(
             "[data-booking-action]"
@@ -390,14 +691,34 @@
         const teeTimeId =
             button.dataset.teeTimeId;
 
-        window.alert(
-            `${
-                action === "join"
-                    ? "Join"
-                    : "Book"
-            } tee time ${teeTimeId}`
-        );
+        const teeTime =
+            currentTeeTimes.find(function (item) {
+                return item.id === teeTimeId;
+            });
+
+        if (!teeTime) {
+            window.alert(
+                "The selected tee time could not be found."
+            );
+
+            return;
+        }
+
+        if (action === "book") {
+            openBookingModal(teeTime);
+            return;
+        }
+
+        if (action === "join") {
+            window.alert(
+                `Joining the ${teeTime.time} booking will be added next.`
+            );
+        }
     }
+
+    /* =========================================================
+       PAGE INITIALISATION
+       ========================================================= */
 
     async function initialiseBookingPage() {
         const requiredElements = [
@@ -429,6 +750,8 @@
             if (
                 !window.BookIt.booking ||
                 typeof window.BookIt.booking.getDay !==
+                    "function" ||
+                typeof window.BookIt.booking.createBooking !==
                     "function"
             ) {
                 throw new Error(
@@ -491,6 +814,40 @@
             teeSheetElement.addEventListener(
                 "click",
                 handleTeeSheetClick
+            );
+
+            closeModalButton?.addEventListener(
+                "click",
+                closeBookingModal
+            );
+
+            confirmBookingButton?.addEventListener(
+                "click",
+                submitBooking
+            );
+
+            bookingModal?.addEventListener(
+                "click",
+                function (event) {
+                    if (event.target === bookingModal) {
+                        closeBookingModal();
+                    }
+                }
+            );
+
+            document.addEventListener(
+                "keydown",
+                function (event) {
+                    if (
+                        event.key === "Escape" &&
+                        bookingModal &&
+                        !bookingModal.classList.contains(
+                            "hidden"
+                        )
+                    ) {
+                        closeBookingModal();
+                    }
+                }
             );
 
             await loadTeeSheet(true);
