@@ -9,9 +9,9 @@
     const selectedDateElement =
         document.getElementById("selectedDate");
 
-    let selectedDate = new Date();
+    let selectedDate = new Date("2026-08-03T00:00:00");
 
-    function escapeHtml(value) {
+     function escapeHtml(value) {
         return String(value ?? "")
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
