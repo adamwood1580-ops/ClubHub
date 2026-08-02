@@ -55,8 +55,16 @@
     const contactNumberInput =
         document.getElementById("contactNumber");
 
+    const contactNumberGroup =
+        contactNumberInput?.closest(
+            ".form-group"
+        ) || null;
+
     const playerCountSelect =
         document.getElementById("playerCount");
+
+    const bookingTypeWrap =
+        document.getElementById("bookingTypeWrap");
 
     const playerNamesElement =
         document.getElementById("playerNames");
@@ -75,6 +83,9 @@
 
     let selectedTeeTime =
         null;
+
+    let modalMode =
+        "create";
 
     let bookingSubmissionInProgress =
         false;
@@ -598,7 +609,7 @@
     }
 
     function populatePlayerCountOptions(
-        maxPlayers
+        maximum
     ) {
         if (!playerCountSelect) {
             return;
@@ -608,7 +619,7 @@
 
         for (
             let count = 1;
-            count <= maxPlayers;
+            count <= maximum;
             count += 1
         ) {
             options.push(`
@@ -632,6 +643,30 @@
             false;
     }
 
+    function showCreateFields() {
+        if (bookingTypeWrap) {
+            bookingTypeWrap.hidden =
+                false;
+        }
+
+        if (contactNumberGroup) {
+            contactNumberGroup.hidden =
+                false;
+        }
+    }
+
+    function showJoinFields() {
+        if (bookingTypeWrap) {
+            bookingTypeWrap.hidden =
+                true;
+        }
+
+        if (contactNumberGroup) {
+            contactNumberGroup.hidden =
+                true;
+        }
+    }
+
     function resetBookingModal() {
         const profile =
             getCurrentProfile();
@@ -648,11 +683,6 @@
             contactNumberInput.value =
                 profile?.phone || "";
         }
-
-        populatePlayerCountOptions(
-            selectedTeeTime?.maxPlayers ||
-            4
-        );
 
         if (playerNamesElement) {
             playerNamesElement.innerHTML =
@@ -678,11 +708,14 @@
             false;
 
         confirmBookingButton.textContent =
-            "Confirm Booking";
+            modalMode === "join"
+                ? "Confirm Join"
+                : "Confirm Booking";
     }
 
     function openBookingModal(
-        teeTime
+        teeTime,
+        mode
     ) {
         if (!bookingModal) {
             window.alert(
@@ -695,13 +728,41 @@
         selectedTeeTime =
             teeTime;
 
+        modalMode =
+            mode;
+
         resetBookingModal();
 
-        modalTitle.textContent =
-            "Book Tee Time";
+        if (mode === "join") {
+            showJoinFields();
 
-        modalTime.textContent =
-            `${formatLongDate(selectedDate)} at ${teeTime.time}`;
+            populatePlayerCountOptions(
+                teeTime.spacesRemaining
+            );
+
+            modalTitle.textContent =
+                "Join Tee Time";
+
+            modalTime.textContent =
+                `${formatLongDate(selectedDate)} at ${teeTime.time} · ` +
+                `${teeTime.spacesRemaining} ${
+                    teeTime.spacesRemaining === 1
+                        ? "space available"
+                        : "spaces available"
+                }`;
+        } else {
+            showCreateFields();
+
+            populatePlayerCountOptions(
+                teeTime.maxPlayers
+            );
+
+            modalTitle.textContent =
+                "Book Tee Time";
+
+            modalTime.textContent =
+                `${formatLongDate(selectedDate)} at ${teeTime.time}`;
+        }
 
         bookingModal.classList.remove(
             "hidden"
@@ -747,6 +808,9 @@
 
         selectedTeeTime =
             null;
+
+        modalMode =
+            "create";
     }
 
     async function submitBooking() {
@@ -760,13 +824,22 @@
         const bookingService =
             getBookingService();
 
+        const isJoin =
+            modalMode === "join";
+
+        const requiredFunction =
+            isJoin
+                ? bookingService?.joinBooking
+                : bookingService?.createBooking;
+
         if (
-            !bookingService ||
-            typeof bookingService.createBooking !==
-                "function"
+            typeof requiredFunction !==
+            "function"
         ) {
             window.alert(
-                "Booking creation is temporarily unavailable."
+                isJoin
+                    ? "Joining is temporarily unavailable."
+                    : "Booking creation is temporarily unavailable."
             );
 
             return;
@@ -779,27 +852,45 @@
             true;
 
         confirmBookingButton.textContent =
-            "Creating booking...";
+            isJoin
+                ? "Joining booking..."
+                : "Creating booking...";
 
         try {
-            const result =
-                await bookingService.createBooking({
-                    teeTimeId:
-                        selectedTeeTime.id,
+            let result;
 
-                    playerCount:
-                        getSelectedPlayerCount(),
+            if (isJoin) {
+                result =
+                    await bookingService.joinBooking({
+                        bookingId:
+                            selectedTeeTime.booking.id,
 
-                    bookingType:
-                        getSelectedBookingType(),
+                        teeTimeId:
+                            selectedTeeTime.id,
 
-                    contactNumber:
-                        contactNumberInput?.value ||
-                        null,
+                        playerCount:
+                            getSelectedPlayerCount()
+                    });
+            } else {
+                result =
+                    await bookingService.createBooking({
+                        teeTimeId:
+                            selectedTeeTime.id,
 
-                    notes:
-                        null
-                });
+                        playerCount:
+                            getSelectedPlayerCount(),
+
+                        bookingType:
+                            getSelectedBookingType(),
+
+                        contactNumber:
+                            contactNumberInput?.value ||
+                            null,
+
+                        notes:
+                            null
+                    });
+            }
 
             bookingModal.classList.add(
                 "hidden"
@@ -817,6 +908,9 @@
             selectedTeeTime =
                 null;
 
+            modalMode =
+                "create";
+
             await loadTeeSheet(true);
 
             const resultDate =
@@ -825,15 +919,17 @@
                 );
 
             window.alert(
-                `Booking confirmed for ${result.playerCount} ${
+                `${isJoin ? "Joined" : "Booking confirmed"} for ` +
+                `${result.playerCount} ${
                     result.playerCount === 1
                         ? "player"
                         : "players"
-                } at ${result.time} on ${formatShortDate(resultDate)}.`
+                } at ${result.time} on ` +
+                `${formatShortDate(resultDate)}.`
             );
         } catch (error) {
             console.error(
-                "BookIt could not create the booking:",
+                "BookIt booking action failed:",
                 error
             );
 
@@ -848,7 +944,9 @@
                 false;
 
             confirmBookingButton.textContent =
-                "Confirm Booking";
+                modalMode === "join"
+                    ? "Confirm Join"
+                    : "Confirm Booking";
         }
     }
 
@@ -890,13 +988,18 @@
         }
 
         if (action === "book") {
-            openBookingModal(teeTime);
+            openBookingModal(
+                teeTime,
+                "create"
+            );
+
             return;
         }
 
         if (action === "join") {
-            window.alert(
-                `Joining the ${teeTime.time} booking will be added next.`
+            openBookingModal(
+                teeTime,
+                "join"
             );
         }
     }
@@ -998,7 +1101,10 @@
             nextDayButton,
             availableCountElement,
             joinableCountElement,
-            bookedCountElement
+            bookedCountElement,
+            bookingModal,
+            playerCountSelect,
+            confirmBookingButton
         ];
 
         if (
