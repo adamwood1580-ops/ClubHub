@@ -109,18 +109,24 @@
                 );
             }
 
-            const tomorrow = new Date();
+            const dateInput =
+    document.getElementById("bookingTestDate");
 
-            tomorrow.setDate(
-                tomorrow.getDate() + 1
-            );
+const selectedDate =
+    dateInput?.value;
+
+if (!selectedDate) {
+    throw new Error(
+        "Select the tee-sheet date to test."
+    );
+}
 
             const startedAt =
                 performance.now();
 
             const teeSheet =
                 await window.BookIt.booking.getDay(
-                    tomorrow,
+                    selectedDate,
                     {
                         forceRefresh: true
                     }
@@ -136,7 +142,7 @@ Club:
 ${window.BookIt.currentProfile?.club?.name || "Unknown"}
 
 Date Tested:
-${formatDate(tomorrow)}
+${selectedDate}
 
 Tee Times Returned:
 ${teeSheet.length}
