@@ -125,12 +125,12 @@ if (!selectedDate) {
                 performance.now();
 
             const teeSheet =
-                await window.BookIt.booking.getDay(
-                    selectedDate,
-                    {
-                        forceRefresh: true
-                    }
-                );
+    await window.BookIt.booking.getDay(
+        "2026-08-03",
+        {
+            forceRefresh: true
+        }
+    );
 
             const finishedAt =
                 performance.now();
