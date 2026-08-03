@@ -4,9 +4,7 @@
     window.BookIt = window.BookIt || {};
 
     const greetingElement =
-        document.getElementById(
-            "homeGreeting"
-        );
+        document.getElementById("homeGreeting");
 
     const greetingSubtitleElement =
         document.getElementById(
@@ -44,8 +42,7 @@
         );
 
     function getGreetingPeriod() {
-        const hour =
-            new Date().getHours();
+        const hour = new Date().getHours();
 
         if (hour < 12) {
             return "Good morning";
@@ -64,9 +61,7 @@
         }
 
         if (profile?.displayName) {
-            return String(
-                profile.displayName
-            )
+            return String(profile.displayName)
                 .trim()
                 .split(/\s+/)[0];
         }
@@ -74,17 +69,13 @@
         return "Member";
     }
 
-    function createLocalDate(
-        dateKey
-    ) {
+    function createLocalDate(dateKey) {
         return new Date(
             `${dateKey}T00:00:00`
         );
     }
 
-    function formatBookingDate(
-        dateKey
-    ) {
+    function formatBookingDate(dateKey) {
         return new Intl.DateTimeFormat(
             "en-GB",
             {
@@ -116,32 +107,26 @@
 
     function showNoUpcomingBooking() {
         if (nextRoundCard) {
-            nextRoundCard.hidden =
-                true;
+            nextRoundCard.hidden = true;
         }
 
         if (nextRoundEmpty) {
-            nextRoundEmpty.hidden =
-                false;
+            nextRoundEmpty.hidden = false;
         }
     }
 
-    function renderUpcomingBooking(
-        upcoming
-    ) {
+    function renderUpcomingBooking(upcoming) {
         if (!upcoming) {
             showNoUpcomingBooking();
             return;
         }
 
         if (nextRoundCard) {
-            nextRoundCard.hidden =
-                false;
+            nextRoundCard.hidden = false;
         }
 
         if (nextRoundEmpty) {
-            nextRoundEmpty.hidden =
-                true;
+            nextRoundEmpty.hidden = true;
         }
 
         if (nextRoundTime) {
@@ -163,11 +148,10 @@
         }
 
         if (nextRoundPlayers) {
-            const playerCount =
-                Number(
-                    upcoming.booking
-                        ?.playerCount || 1
-                );
+            const playerCount = Number(
+                upcoming.booking?.playerCount ||
+                1
+            );
 
             nextRoundPlayers.textContent =
                 `${playerCount} ${
@@ -178,43 +162,30 @@
         }
     }
 
-    function showHomeError(error) {
+    function showProfileError(error) {
         console.error(
-            "BookIt home page failed:",
+            "BookIt home profile failed:",
             error
         );
 
+        if (greetingElement) {
+            greetingElement.textContent =
+                "Welcome";
+        }
+
         if (greetingSubtitleElement) {
             greetingSubtitleElement.textContent =
-                "We could not load all of your account information.";
+                error?.message ||
+                "We could not load your account information.";
         }
     }
 
-    async function initialiseHomePage() {
+    async function loadUpcomingBooking() {
         try {
-            const {
-                profile
-            } = await window.BookIt.ready;
-
-            /*
-             * Force one account-validated profile read so the
-             * home page never renders another user's details.
-             */
-            const currentProfile =
-                await window.BookIt.profile.load({
-                    forceRefresh: true
-                });
-
-            renderGreeting(
-                currentProfile ||
-                profile
-            );
-
             if (
                 !window.BookIt.booking ||
                 typeof window.BookIt.booking
-                    .getUpcoming !==
-                    "function"
+                    .getUpcoming !== "function"
             ) {
                 showNoUpcomingBooking();
                 return;
@@ -226,18 +197,62 @@
                         forceRefresh: true
                     });
 
-            renderUpcomingBooking(
-                upcoming
-            );
+            renderUpcomingBooking(upcoming);
         } catch (error) {
-            showHomeError(error);
+            console.error(
+                "BookIt upcoming booking failed:",
+                error
+            );
+
+            /*
+             * A booking-query problem must not prevent the
+             * authenticated member's name from rendering.
+             */
             showNoUpcomingBooking();
         }
     }
 
+    async function initialiseHomePage() {
+        let readyData;
+
+        try {
+            readyData =
+                await window.BookIt.ready;
+        } catch (error) {
+            showProfileError(error);
+            showNoUpcomingBooking();
+            return;
+        }
+
+        try {
+            const currentProfile =
+                await window.BookIt.profile.load({
+                    forceRefresh: true
+                });
+
+            renderGreeting(
+                currentProfile ||
+                readyData?.profile
+            );
+        } catch (error) {
+            /*
+             * The profile already resolved during Boot in most
+             * cases, so retain that valid value as a fallback.
+             */
+            if (readyData?.profile) {
+                renderGreeting(
+                    readyData.profile
+                );
+            } else {
+                showProfileError(error);
+            }
+        }
+
+        await loadUpcomingBooking();
+    }
+
     if (
-        document.readyState ===
-        "loading"
+        document.readyState === "loading"
     ) {
         document.addEventListener(
             "DOMContentLoaded",
