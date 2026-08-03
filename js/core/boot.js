@@ -8,9 +8,9 @@
     const SUPABASE_LIBRARY =
         "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
-    const CONFIG_SCRIPT = "../js/core/config.js";
-    const SUPABASE_SCRIPT = "../js/core/supabase.js";
-    const PROFILE_SCRIPT = "../js/core/profile.js";
+    const CONFIG_SCRIPT = "../js/core/config.js?v=1";
+    const SUPABASE_SCRIPT = "../js/core/supabase.js?v=1";
+    const PROFILE_SCRIPT = "../js/core/profile.js?v=2";
 
     const LOGIN_PAGE = "login.html";
 
