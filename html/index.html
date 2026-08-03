@@ -21,9 +21,15 @@
     <link rel="apple-touch-icon" href="../assets/Icon.PNG" />
 
     <script
-        src="../js/core/boot.js?v=6"
-        defer
-    ></script>
+    src="../js/core/protected-loader.js?loader=1"
+    data-scripts="
+        ../js/ui/header.js,
+        ../js/ui/navigation.js,
+        ../js/core/booking.js,
+        ../js/pages/home-page.js
+    "
+    defer
+></script>
 </head>
 
 <body
@@ -303,11 +309,5 @@
 
         <nav data-bottom-nav></nav>
     </div>
-
-    <script src="../js/ui/header.js"></script>
-    <script src="../js/ui/navigation.js"></script>
-
-    <script src="../js/core/booking.js?v=7"></script>
-    <script src="../js/pages/home-page.js?v=2"></script>
 </body>
 </html>
