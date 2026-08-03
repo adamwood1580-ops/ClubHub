@@ -4,8 +4,16 @@
     const loaderScript =
         document.currentScript;
 
+    if (!loaderScript) {
+        console.error(
+            "BookIt protected loader could not identify its script element."
+        );
+
+        return;
+    }
+
     const requestedScripts = String(
-        loaderScript?.dataset.scripts || ""
+        loaderScript.dataset.scripts || ""
     )
         .split(",")
         .map(function (value) {
@@ -13,54 +21,11 @@
         })
         .filter(Boolean);
 
-    function getVersionFileUrl() {
+    function getVersionManifestUrl() {
         return new URL(
             "../../app-version.json",
             loaderScript.src
         );
-    }
-
-    async function getAssetVersion() {
-        const versionUrl =
-            getVersionFileUrl();
-
-        /*
-         * Always request the version manifest from the
-         * network rather than accepting a cached copy.
-         */
-        versionUrl.searchParams.set(
-            "cacheBust",
-            String(Date.now())
-        );
-
-        const response = await fetch(
-            versionUrl.href,
-            {
-                cache: "no-store"
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error(
-                `Could not load the BookIt asset version: ${response.status}`
-            );
-        }
-
-        const manifest =
-            await response.json();
-
-        if (
-            !manifest ||
-            typeof manifest.version !==
-                "string" ||
-            !manifest.version.trim()
-        ) {
-            throw new Error(
-                "The BookIt asset version is invalid."
-            );
-        }
-
-        return manifest.version.trim();
     }
 
     function buildVersionedUrl(
@@ -78,6 +43,46 @@
         );
 
         return url.href;
+    }
+
+    async function loadAssetVersion() {
+        const versionUrl =
+            getVersionManifestUrl();
+
+        versionUrl.searchParams.set(
+            "cacheBust",
+            String(Date.now())
+        );
+
+        const response = await fetch(
+            versionUrl.href,
+            {
+                cache: "no-store",
+                credentials: "same-origin"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Could not load app-version.json (${response.status}).`
+            );
+        }
+
+        const manifest =
+            await response.json();
+
+        const version =
+            typeof manifest?.version === "string"
+                ? manifest.version.trim()
+                : "";
+
+        if (!version) {
+            throw new Error(
+                "app-version.json does not contain a valid version."
+            );
+        }
+
+        return version;
     }
 
     function loadScript(
@@ -100,6 +105,9 @@
                 );
 
             script.async = false;
+
+            script.dataset.bookitLoadedBy =
+                "protected-loader";
 
             script.addEventListener(
                 "load",
@@ -149,6 +157,7 @@
                         message:
                             error?.message ||
                             "BookIt could not start.",
+
                         error
                     }
                 }
@@ -159,13 +168,17 @@
     async function initialise() {
         try {
             const version =
-                await getAssetVersion();
+                await loadAssetVersion();
 
             window.BOOKIT_ASSET_VERSION =
                 version;
 
             /*
-             * Boot always loads first.
+             * Boot must load first because it creates:
+             *
+             * window.BookIt.ready
+             * window.supabaseClient
+             * window.BookIt.currentProfile
              */
             await loadScript(
                 "../js/core/boot.js",
@@ -173,8 +186,8 @@
             );
 
             /*
-             * Page-specific dependencies then load in the
-             * order supplied by the HTML page.
+             * Page dependencies are then loaded in the exact
+             * order supplied by the page's data-scripts value.
              */
             for (
                 const source of requestedScripts
@@ -184,6 +197,19 @@
                     version
                 );
             }
+
+            window.dispatchEvent(
+                new CustomEvent(
+                    "bookit:protected-scripts-loaded",
+                    {
+                        detail: {
+                            version,
+                            scripts:
+                                requestedScripts.slice()
+                        }
+                    }
+                )
+            );
         } catch (error) {
             showStartupError(error);
         }
