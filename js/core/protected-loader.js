@@ -22,8 +22,15 @@
         .filter(Boolean);
 
     function getVersionManifestUrl() {
+        /*
+         * protected-loader.js lives in:
+         * /js/core/
+         *
+         * app-version.json lives in:
+         * /json/
+         */
         return new URL(
-            "../../app-version.json",
+            "../../json/app-version.json",
             loaderScript.src
         );
     }
@@ -173,22 +180,11 @@
             window.BOOKIT_ASSET_VERSION =
                 version;
 
-            /*
-             * Boot must load first because it creates:
-             *
-             * window.BookIt.ready
-             * window.supabaseClient
-             * window.BookIt.currentProfile
-             */
             await loadScript(
                 "../js/core/boot.js",
                 version
             );
 
-            /*
-             * Page dependencies are then loaded in the exact
-             * order supplied by the page's data-scripts value.
-             */
             for (
                 const source of requestedScripts
             ) {
