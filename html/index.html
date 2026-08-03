@@ -16,33 +16,56 @@
     <link rel="stylesheet" href="../styles/app-shell.css" />
     <link rel="stylesheet" href="../styles/components.css" />
     <link rel="stylesheet" href="../styles/member-home.css" />
+
     <link rel="manifest" href="../manifest.json" />
     <link rel="apple-touch-icon" href="../assets/Icon.PNG" />
-<script src="../js/core/boot.js" defer></script>
+
+    <script
+        src="../js/core/boot.js?v=6"
+        defer
+    ></script>
 </head>
 
 <body
     data-page="home"
     data-header="home"
     data-club-name="Bells Hotel & Country Club"
-    >
-    
+>
     <div class="app-shell">
         <header data-app-header></header>
-        <main class="app-main app-main--narrow member-home">
+
+        <main
+            class="app-main app-main--narrow member-home"
+        >
+            <!-- =================================================
+                 MEMBER GREETING
+                 ================================================= -->
+
             <section class="member-greeting">
-                <h1 class="member-greeting__title">
-                    Morning Adam 👋
+                <h1
+                    id="homeGreeting"
+                    class="member-greeting__title"
+                >
+                    Loading...
                 </h1>
 
-                <p class="member-greeting__subtitle">
-                    Ready for golf?
+                <p
+                    id="homeGreetingSubtitle"
+                    class="member-greeting__subtitle"
+                >
+                    Loading your club information...
                 </p>
             </section>
 
+            <!-- =================================================
+                 NEXT ROUND
+                 ================================================= -->
+
             <section
+                id="nextRoundCard"
                 class="hero-card booking-hero"
-                aria-labelledby="next-round-title"
+                aria-labelledby="nextRoundDate"
+                hidden
             >
                 <svg
                     class="booking-hero__course-art"
@@ -56,9 +79,24 @@
                         stroke-width="24"
                         stroke-linecap="round"
                     />
-                    <circle cx="158" cy="19" r="7" fill="#d4af37" />
-                    <path d="M158 19V2" stroke="#ffffff" stroke-width="3" />
-                    <path d="M158 3l13 5-13 5z" fill="#d4af37" />
+
+                    <circle
+                        cx="158"
+                        cy="19"
+                        r="7"
+                        fill="#d4af37"
+                    />
+
+                    <path
+                        d="M158 19V2"
+                        stroke="#ffffff"
+                        stroke-width="3"
+                    />
+
+                    <path
+                        d="M158 3l13 5-13 5z"
+                        fill="#d4af37"
+                    />
                 </svg>
 
                 <p class="hero-card__eyebrow">
@@ -67,35 +105,44 @@
                         aria-hidden="true"
                         viewBox="0 0 24 24"
                     >
-                        <rect x="3" y="5" width="18" height="16" rx="2" />
-                        <path d="M16 3v4M8 3v4M3 10h18" />
+                        <rect
+                            x="3"
+                            y="5"
+                            width="18"
+                            height="16"
+                            rx="2"
+                        />
+
+                        <path
+                            d="M16 3v4M8 3v4M3 10h18"
+                        />
                     </svg>
 
                     Your next round
                 </p>
 
-                <p class="hero-card__value">09:04</p>
+                <p
+                    id="nextRoundTime"
+                    class="hero-card__value"
+                >
+                    --:--
+                </p>
 
                 <h2
+                    id="nextRoundDate"
                     class="hero-card__title"
-                    id="next-round-title"
                 >
-                    Saturday, 1 August
+                    Loading booking...
                 </h2>
 
                 <div class="booking-hero__details">
-                    <span>1st Tee</span>
-                    <span>4 players</span>
-                </div>
+                    <span id="nextRoundCourse">
+                        Main Course
+                    </span>
 
-                <div
-                    class="player-row"
-                    aria-label="Playing with Steve, Dave and Mark"
-                >
-                    <span class="player-avatar" title="Steve">S</span>
-                    <span class="player-avatar" title="Dave">D</span>
-                    <span class="player-avatar" title="Mark">M</span>
-                    <span class="player-avatar player-avatar--more">+1</span>
+                    <span id="nextRoundPlayers">
+                        1 player
+                    </span>
                 </div>
 
                 <div class="hero-card__actions">
@@ -105,10 +152,42 @@
                     >
                         View booking
 
-                        <span aria-hidden="true">›</span>
+                        <span aria-hidden="true">
+                            ›
+                        </span>
                     </a>
                 </div>
             </section>
+
+            <!-- =================================================
+                 NO UPCOMING BOOKING
+                 ================================================= -->
+
+            <section
+                id="nextRoundEmpty"
+                class="card section"
+                hidden
+            >
+                <h2 class="section__title">
+                    No upcoming booking
+                </h2>
+
+                <p class="card__meta">
+                    Choose an available tee time when you are
+                    ready to play.
+                </p>
+
+                <a
+                    class="button button--primary button--full"
+                    href="booking.html"
+                >
+                    Book a round
+                </a>
+            </section>
+
+            <!-- =================================================
+                 CLUB SUMMARY
+                 ================================================= -->
 
             <section
                 class="home-summary-grid section"
@@ -116,11 +195,16 @@
             >
                 <article class="card summary-card">
                     <div class="summary-card__topline">
-                        <span class="summary-card__dot"></span>
+                        <span
+                            class="summary-card__dot"
+                        ></span>
+
                         Course status
                     </div>
 
-                    <p class="summary-card__value">Open</p>
+                    <p class="summary-card__value">
+                        Open
+                    </p>
 
                     <p class="summary-card__meta">
                         19°C&nbsp; • &nbsp;Light wind ☀️
@@ -138,6 +222,7 @@
                         >
                             🏆
                         </span>
+
                         This week
                     </div>
 
@@ -151,9 +236,15 @@
                 </a>
             </section>
 
+            <!-- =================================================
+                 QUICK ACTIONS
+                 ================================================= -->
+
             <section class="section">
                 <div class="section__header">
-                    <h2 class="section__title">Quick actions</h2>
+                    <h2 class="section__title">
+                        Quick actions
+                    </h2>
                 </div>
 
                 <div class="quick-actions">
@@ -166,9 +257,21 @@
                             aria-hidden="true"
                             viewBox="0 0 24 24"
                         >
-                            <rect x="3" y="5" width="18" height="16" rx="2" />
-                            <path d="M16 3v4M8 3v4M3 10h18" />
-                            <path d="M12 14v4M10 16h4" />
+                            <rect
+                                x="3"
+                                y="5"
+                                width="18"
+                                height="16"
+                                rx="2"
+                            />
+
+                            <path
+                                d="M16 3v4M8 3v4M3 10h18"
+                            />
+
+                            <path
+                                d="M12 14v4M10 16h4"
+                            />
                         </svg>
 
                         Book a round
@@ -183,8 +286,13 @@
                             aria-hidden="true"
                             viewBox="0 0 24 24"
                         >
-                            <path d="m4 20 4-1 11-11-3-3L5 16l-1 4Z" />
-                            <path d="m14 6 3 3" />
+                            <path
+                                d="m4 20 4-1 11-11-3-3L5 16l-1 4Z"
+                            />
+
+                            <path
+                                d="m14 6 3 3"
+                            />
                         </svg>
 
                         Enter score
@@ -193,10 +301,13 @@
             </section>
         </main>
 
-        <nav data-bottom-nav></nav>        
-        
+        <nav data-bottom-nav></nav>
     </div>
-<script src="../js/ui/header.js"></script>
-<script src="../js/ui/navigation.js"></script>
+
+    <script src="../js/ui/header.js"></script>
+    <script src="../js/ui/navigation.js"></script>
+
+    <script src="../js/core/booking.js?v=6"></script>
+    <script src="../js/pages/home-page.js?v=1"></script>
 </body>
 </html>
