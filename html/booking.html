@@ -24,7 +24,16 @@
         boot.js loads the Supabase library, configuration,
         Supabase client and profile service.
     -->
-    <script src="../js/core/boot.js" defer></script>
+    <script
+    src="../js/core/protected-loader.js?loader=1"
+    data-scripts="
+        ../js/ui/header.js,
+        ../js/ui/navigation.js,
+        ../js/core/booking.js,
+        ../js/pages/booking-page.js
+    "
+    defer
+></script>
 </head>
 
 <body
@@ -366,14 +375,5 @@
         </div>
     </div>
 
-    <!-- Reusable interface components -->
-    <script src="../js/ui/header.js"></script>
-    <script src="../js/ui/navigation.js"></script>
-
-    <!-- Read-only booking data service -->
-    <script src="../js/core/booking.js?v=5"></script>
-
-    <!-- Live booking-page controller -->
-    <script src="../js/pages/booking-page.js?v=5"></script>
-</body>
+   </body>
 </html>
