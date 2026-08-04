@@ -3,6 +3,10 @@
 
     window.BookIt = window.BookIt || {};
 
+    /* =========================================================
+       PAGE ELEMENTS
+       ========================================================= */
+
     const teeSheetElement =
         document.getElementById("teeSheet");
 
@@ -37,6 +41,10 @@
         document.querySelectorAll("[data-filter]")
     );
 
+    /* =========================================================
+       BOOKING MODAL ELEMENTS
+       ========================================================= */
+
     const bookingModal =
         document.getElementById("bookingModal");
 
@@ -63,6 +71,11 @@
     const playerCountSelect =
         document.getElementById("playerCount");
 
+    const playerCountGroup =
+        playerCountSelect?.closest(
+            ".form-group"
+        ) || null;
+
     const bookingTypeWrap =
         document.getElementById("bookingTypeWrap");
 
@@ -71,6 +84,10 @@
 
     const confirmBookingButton =
         document.getElementById("confirmBooking");
+
+    /* =========================================================
+       PAGE STATE
+       ========================================================= */
 
     let selectedDate =
         new Date();
@@ -90,8 +107,15 @@
     let bookingSubmissionInProgress =
         false;
 
+    let directActionInProgress =
+        false;
+
     let pageInitialised =
         false;
+
+    /* =========================================================
+       GENERAL HELPERS
+       ========================================================= */
 
     function escapeHtml(value) {
         return String(value ?? "")
@@ -215,6 +239,22 @@
         return String(error);
     }
 
+    function setElementHidden(
+        element,
+        hidden
+    ) {
+        if (!element) {
+            return;
+        }
+
+        element.hidden =
+            hidden;
+    }
+
+    /* =========================================================
+       DATE DISPLAY
+       ========================================================= */
+
     function updateDateDisplay() {
         dayNameElement.textContent =
             isToday(selectedDate)
@@ -235,16 +275,38 @@
         }
     }
 
+    /* =========================================================
+       TEE-TIME DISPLAY HELPERS
+       ========================================================= */
+
     function getButtonLabel(teeTime) {
-        if (teeTime.action === "book") {
-            return "Book Now";
+        switch (teeTime.action) {
+            case "book":
+                return "Book Now";
+
+            case "join":
+                return "Join";
+
+            case "leave":
+                return "Leave Booking";
+
+            case "cancel":
+                return "Cancel Booking";
+
+            default:
+                return teeTime.displayStatus;
+        }
+    }
+
+    function getButtonClass(teeTime) {
+        if (
+            teeTime.action === "leave" ||
+            teeTime.action === "cancel"
+        ) {
+            return "button button--secondary tee-time-card__action";
         }
 
-        if (teeTime.action === "join") {
-            return "Join";
-        }
-
-        return teeTime.displayStatus;
+        return "button button--primary tee-time-card__action";
     }
 
     function getCardClass(teeTime) {
@@ -253,6 +315,12 @@
             "open"
         ) {
             return "tee-time-card--unavailable";
+        }
+
+        if (
+            teeTime.isCurrentMembersBooking
+        ) {
+            return "tee-time-card--my-booking";
         }
 
         if (
@@ -275,9 +343,65 @@
         return "tee-time-card--available";
     }
 
-    function renderTeeTime(teeTime) {
+    function getBookingDescription(
+        teeTime
+    ) {
+        const booking =
+            teeTime.booking;
+
+        if (!booking) {
+            return "";
+        }
+
+        const leadName =
+            booking.leadName ||
+            "Member";
+
+        const extraPlayers =
+            Math.max(
+                Number(
+                    booking.playerCount || 1
+                ) - 1,
+                0
+            );
+
+        if (extraPlayers === 0) {
+            return leadName;
+        }
+
+        return `${leadName} +${extraPlayers}`;
+    }
+
+    function getStatusLabel(
+        teeTime
+    ) {
+        if (
+            teeTime.booking
+                ?.currentMemberIsLead
+        ) {
+            return "Your booking";
+        }
+
+        if (
+            teeTime.booking
+                ?.currentMemberIsParticipant
+        ) {
+            return "You are playing";
+        }
+
+        return teeTime.displayStatus;
+    }
+
+    function renderTeeTime(
+        teeTime
+    ) {
         const disabled =
             teeTime.action === "none";
+
+        const bookingDescription =
+            getBookingDescription(
+                teeTime
+            );
 
         return `
             <article
@@ -290,8 +414,18 @@
 
                 <div class="tee-time-card__details">
                     <p class="tee-time-card__status">
-                        ${escapeHtml(teeTime.displayStatus)}
+                        ${escapeHtml(getStatusLabel(teeTime))}
                     </p>
+
+                    ${
+                        bookingDescription
+                            ? `
+                                <p class="tee-time-card__booker">
+                                    ${escapeHtml(bookingDescription)}
+                                </p>
+                            `
+                            : ""
+                    }
 
                     <p class="tee-time-card__spaces">
                         ${teeTime.occupied}/${teeTime.maxPlayers}
@@ -301,7 +435,7 @@
 
                 <button
                     type="button"
-                    class="button button--primary tee-time-card__action"
+                    class="${getButtonClass(teeTime)}"
                     data-booking-action="${escapeHtml(teeTime.action)}"
                     data-tee-time-id="${escapeHtml(teeTime.id)}"
                     ${disabled ? "disabled" : ""}
@@ -312,13 +446,40 @@
         `;
     }
 
-    function matchesFilter(teeTime) {
-        if (activeFilter === "available") {
-            return teeTime.action === "book";
+    /* =========================================================
+       FILTERING
+       ========================================================= */
+
+    function matchesFilter(
+        teeTime
+    ) {
+        if (
+            activeFilter === "available"
+        ) {
+            return (
+                !teeTime.booking &&
+                teeTime.action === "book"
+            );
         }
 
-        if (activeFilter === "joinable") {
-            return teeTime.action === "join";
+        if (
+            activeFilter === "joinable"
+        ) {
+            return (
+                teeTime.booking?.type ===
+                    "joinable" &&
+                teeTime.spacesRemaining > 0 &&
+                !teeTime.booking
+                    .currentMemberIsParticipant
+            );
+        }
+
+        if (
+            activeFilter === "booked"
+        ) {
+            return Boolean(
+                teeTime.booking
+            );
         }
 
         return true;
@@ -346,6 +507,10 @@
                 .join("");
     }
 
+    /* =========================================================
+       SUMMARY COUNTERS
+       ========================================================= */
+
     function resetSummary() {
         availableCountElement.textContent =
             "0";
@@ -362,8 +527,9 @@
             currentTeeTimes.filter(
                 function (teeTime) {
                     return (
+                        !teeTime.booking &&
                         teeTime.action ===
-                        "book"
+                            "book"
                     );
                 }
             ).length;
@@ -372,8 +538,12 @@
             currentTeeTimes.filter(
                 function (teeTime) {
                     return (
-                        teeTime.action ===
-                        "join"
+                        teeTime.booking?.type ===
+                            "joinable" &&
+                        teeTime.spacesRemaining >
+                            0 &&
+                        !teeTime.booking
+                            .currentMemberIsParticipant
                     );
                 }
             ).length;
@@ -381,11 +551,8 @@
         const booked =
             currentTeeTimes.filter(
                 function (teeTime) {
-                    return (
-                        teeTime.booking !==
-                            null &&
-                        teeTime.action ===
-                            "none"
+                    return Boolean(
+                        teeTime.booking
                     );
                 }
             ).length;
@@ -399,6 +566,10 @@
         bookedCountElement.textContent =
             String(booked);
     }
+
+    /* =========================================================
+       LOADING, EMPTY AND ERROR STATES
+       ========================================================= */
 
     function showLoading() {
         teeSheetElement.setAttribute(
@@ -447,7 +618,9 @@
         `;
 
         document
-            .getElementById("retryTeeSheet")
+            .getElementById(
+                "retryTeeSheet"
+            )
             ?.addEventListener(
                 "click",
                 function () {
@@ -458,6 +631,10 @@
                 }
             );
     }
+
+    /* =========================================================
+       TEE-SHEET LOADING
+       ========================================================= */
 
     async function loadTeeSheet(
         forceRefresh = false
@@ -517,6 +694,10 @@
         }
     }
 
+    /* =========================================================
+       DATE NAVIGATION
+       ========================================================= */
+
     function changeSelectedDate(
         numberOfDays
     ) {
@@ -525,7 +706,7 @@
 
         nextDate.setDate(
             nextDate.getDate() +
-            numberOfDays
+                numberOfDays
         );
 
         selectedDate =
@@ -587,6 +768,10 @@
         renderCurrentTeeSheet();
     }
 
+    /* =========================================================
+       MODAL FIELD HELPERS
+       ========================================================= */
+
     function getSelectedBookingType() {
         return (
             document.querySelector(
@@ -615,11 +800,17 @@
             return;
         }
 
+        const safeMaximum =
+            Math.max(
+                Number(maximum || 1),
+                1
+            );
+
         const options = [];
 
         for (
             let count = 1;
-            count <= maximum;
+            count <= safeMaximum;
             count += 1
         ) {
             options.push(`
@@ -644,27 +835,37 @@
     }
 
     function showCreateFields() {
-        if (bookingTypeWrap) {
-            bookingTypeWrap.hidden =
-                false;
-        }
+        setElementHidden(
+            bookingTypeWrap,
+            false
+        );
 
-        if (contactNumberGroup) {
-            contactNumberGroup.hidden =
-                false;
-        }
+        setElementHidden(
+            contactNumberGroup,
+            false
+        );
+
+        setElementHidden(
+            playerCountGroup,
+            false
+        );
     }
 
     function showJoinFields() {
-        if (bookingTypeWrap) {
-            bookingTypeWrap.hidden =
-                true;
-        }
+        setElementHidden(
+            bookingTypeWrap,
+            true
+        );
 
-        if (contactNumberGroup) {
-            contactNumberGroup.hidden =
-                true;
-        }
+        setElementHidden(
+            contactNumberGroup,
+            true
+        );
+
+        setElementHidden(
+            playerCountGroup,
+            false
+        );
     }
 
     function resetBookingModal() {
@@ -750,6 +951,9 @@
                         ? "space available"
                         : "spaces available"
                 }`;
+
+            confirmBookingButton.textContent =
+                "Confirm Join";
         } else {
             showCreateFields();
 
@@ -762,6 +966,9 @@
 
             modalTime.textContent =
                 `${formatLongDate(selectedDate)} at ${teeTime.time}`;
+
+            confirmBookingButton.textContent =
+                "Confirm Booking";
         }
 
         bookingModal.classList.remove(
@@ -812,6 +1019,10 @@
         modalMode =
             "create";
     }
+
+    /* =========================================================
+       CREATE AND JOIN
+       ========================================================= */
 
     async function submitBooking() {
         if (
@@ -950,7 +1161,171 @@
         }
     }
 
-    function handleTeeSheetClick(event) {
+    /* =========================================================
+       LEAVE AND CANCEL
+       ========================================================= */
+
+    async function leaveBooking(
+        teeTime
+    ) {
+        if (
+            directActionInProgress
+        ) {
+            return;
+        }
+
+        const partySize =
+            Number(
+                teeTime.booking
+                    ?.currentMemberPartySize ||
+                1
+            );
+
+        const confirmed =
+            window.confirm(
+                `Leave the ${teeTime.time} booking for ` +
+                `${partySize} ${
+                    partySize === 1
+                        ? "player"
+                        : "players"
+                }?`
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const bookingService =
+            getBookingService();
+
+        if (
+            typeof bookingService?.leaveBooking !==
+            "function"
+        ) {
+            window.alert(
+                "Leaving a booking is temporarily unavailable."
+            );
+
+            return;
+        }
+
+        directActionInProgress =
+            true;
+
+        try {
+            const result =
+                await bookingService.leaveBooking({
+                    bookingId:
+                        teeTime.booking.id,
+
+                    teeTimeId:
+                        teeTime.id
+                });
+
+            await loadTeeSheet(true);
+
+            window.alert(
+                `You have left the ${result.time} booking.`
+            );
+        } catch (error) {
+            console.error(
+                "BookIt leave booking failed:",
+                error
+            );
+
+            window.alert(
+                getReadableError(error)
+            );
+        } finally {
+            directActionInProgress =
+                false;
+        }
+    }
+
+    async function cancelBooking(
+        teeTime
+    ) {
+        if (
+            directActionInProgress
+        ) {
+            return;
+        }
+
+        const playerCount =
+            Number(
+                teeTime.booking
+                    ?.playerCount ||
+                1
+            );
+
+        const confirmed =
+            window.confirm(
+                `Cancel the entire ${teeTime.time} booking for ` +
+                `${playerCount} ${
+                    playerCount === 1
+                        ? "player"
+                        : "players"
+                }? This will remove everyone from the booking.`
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const bookingService =
+            getBookingService();
+
+        if (
+            typeof bookingService?.cancelBooking !==
+            "function"
+        ) {
+            window.alert(
+                "Cancelling a booking is temporarily unavailable."
+            );
+
+            return;
+        }
+
+        directActionInProgress =
+            true;
+
+        try {
+            const result =
+                await bookingService.cancelBooking({
+                    bookingId:
+                        teeTime.booking.id,
+
+                    teeTimeId:
+                        teeTime.id
+                });
+
+            await loadTeeSheet(true);
+
+            window.alert(
+                `The ${result.time} booking has been cancelled.`
+            );
+        } catch (error) {
+            console.error(
+                "BookIt cancel booking failed:",
+                error
+            );
+
+            window.alert(
+                getReadableError(error)
+            );
+        } finally {
+            directActionInProgress =
+                false;
+        }
+    }
+
+    /* =========================================================
+       TEE-SHEET CLICK HANDLING
+       ========================================================= */
+
+    function handleTeeSheetClick(
+        event
+    ) {
         const button =
             event.target.closest(
                 "[data-booking-action]"
@@ -958,7 +1333,8 @@
 
         if (
             !button ||
-            button.disabled
+            button.disabled ||
+            directActionInProgress
         ) {
             return;
         }
@@ -987,22 +1363,41 @@
             return;
         }
 
-        if (action === "book") {
-            openBookingModal(
-                teeTime,
-                "create"
-            );
+        switch (action) {
+            case "book":
+                openBookingModal(
+                    teeTime,
+                    "create"
+                );
+                break;
 
-            return;
-        }
+            case "join":
+                openBookingModal(
+                    teeTime,
+                    "join"
+                );
+                break;
 
-        if (action === "join") {
-            openBookingModal(
-                teeTime,
-                "join"
-            );
+            case "leave":
+                leaveBooking(
+                    teeTime
+                );
+                break;
+
+            case "cancel":
+                cancelBooking(
+                    teeTime
+                );
+                break;
+
+            default:
+                break;
         }
     }
+
+    /* =========================================================
+       EVENT LISTENERS
+       ========================================================= */
 
     function attachEventListeners() {
         previousDayButton.addEventListener(
@@ -1085,6 +1480,10 @@
         );
     }
 
+    /* =========================================================
+       INITIALISATION
+       ========================================================= */
+
     async function initialiseBookingPage() {
         if (pageInitialised) {
             return;
@@ -1126,6 +1525,34 @@
 
         try {
             await window.BookIt.ready;
+
+            const bookingService =
+                getBookingService();
+
+            const requiredFunctions = [
+                "getDay",
+                "createBooking",
+                "joinBooking",
+                "leaveBooking",
+                "cancelBooking"
+            ];
+
+            const missingFunction =
+                requiredFunctions.find(
+                    function (name) {
+                        return (
+                            typeof bookingService?.[
+                                name
+                            ] !== "function"
+                        );
+                    }
+                );
+
+            if (missingFunction) {
+                throw new Error(
+                    `The booking service is missing ${missingFunction}().`
+                );
+            }
 
             await loadTeeSheet(true);
         } catch (error) {
