@@ -193,23 +193,79 @@
                 class="home-summary-grid section"
                 aria-label="Club information"
             >
-                <article class="card summary-card">
-                    <div class="summary-card__topline">
-                        <span
-                            class="summary-card__dot"
-                        ></span>
+                <article
+    id="weatherCard"
+    class="card summary-card weather-card"
+    aria-live="polite"
+>
+    <div class="summary-card__topline">
+        <span
+            id="weatherStatusDot"
+            class="summary-card__dot"
+        ></span>
 
-                        Course status
-                    </div>
+        <span id="weatherTitle">
+            Bells today
+        </span>
+    </div>
 
-                    <p class="summary-card__value">
-                        Open
-                    </p>
+    <div class="weather-card__main">
+        <div
+            id="weatherIcon"
+            class="weather-card__icon"
+            aria-hidden="true"
+        >
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="4" />
+                <path
+                    d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"
+                />
+            </svg>
+        </div>
 
-                    <p class="summary-card__meta">
-                        19°C&nbsp; • &nbsp;Light wind ☀️
-                    </p>
-                </article>
+        <div>
+            <p
+                id="weatherTemperature"
+                class="summary-card__value"
+            >
+                --°C
+            </p>
+
+            <p
+                id="weatherDescription"
+                class="weather-card__description"
+            >
+                Loading weather...
+            </p>
+        </div>
+    </div>
+
+    <p
+        id="weatherWind"
+        class="summary-card__meta"
+    >
+        Wind -- mph
+    </p>
+
+    <p
+        id="weatherAdvisory"
+        class="weather-card__advisory"
+        hidden
+    ></p>
+
+    <div class="weather-card__footer">
+        <span>
+            Course
+            <strong id="weatherCourseStatus">
+                Open
+            </strong>
+        </span>
+
+        <span id="weatherUpdated">
+            Updating...
+        </span>
+    </div>
+</article>
 
                 <a
                     class="card card--interactive summary-card"
