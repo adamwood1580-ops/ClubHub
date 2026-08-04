@@ -37,7 +37,7 @@
         home: [
             "../js/core/booking.js",
             "../js/pages/home-page.js"
-            
+            "../js/core/weather.js"
         ],
 
         book: [
