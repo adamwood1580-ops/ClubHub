@@ -1,17 +1,14 @@
 (function () {
     "use strict";
 
-    window.BookIt =
-        window.BookIt || {};
+    window.BookIt = window.BookIt || {};
 
     /* =========================================================
        HOME ELEMENTS
        ========================================================= */
 
     const greetingElement =
-        document.getElementById(
-            "homeGreeting"
-        );
+        document.getElementById("homeGreeting");
 
     const greetingSubtitleElement =
         document.getElementById(
@@ -102,8 +99,10 @@
             "weatherUpdated"
         );
 
+    let homeInitialised = false;
+
     /* =========================================================
-       PROFILE AND GREETING
+       PROFILE
        ========================================================= */
 
     function getFirstName(profile) {
@@ -139,7 +138,7 @@
         }
     }
 
-    function showGreetingError(error) {
+    function showProfileError(error) {
         console.error(
             "BookIt Home profile failed:",
             error
@@ -152,7 +151,7 @@
 
         if (greetingSubtitleElement) {
             greetingSubtitleElement.textContent =
-                "We could not load all of your account information.";
+                "We could not load your account information.";
         }
     }
 
@@ -208,32 +207,26 @@
 
     function showNoUpcomingBooking() {
         if (nextRoundCard) {
-            nextRoundCard.hidden =
-                true;
+            nextRoundCard.hidden = true;
         }
 
         if (nextRoundEmpty) {
-            nextRoundEmpty.hidden =
-                false;
+            nextRoundEmpty.hidden = false;
         }
     }
 
-    function renderUpcomingBooking(
-        upcoming
-    ) {
+    function renderUpcomingBooking(upcoming) {
         if (!upcoming) {
             showNoUpcomingBooking();
             return;
         }
 
         if (nextRoundCard) {
-            nextRoundCard.hidden =
-                false;
+            nextRoundCard.hidden = false;
         }
 
         if (nextRoundEmpty) {
-            nextRoundEmpty.hidden =
-                true;
+            nextRoundEmpty.hidden = true;
         }
 
         if (nextRoundTime) {
@@ -245,8 +238,7 @@
         if (nextRoundDate) {
             nextRoundDate.textContent =
                 formatBookingDate(
-                    upcoming.teeTime
-                        ?.playDate
+                    upcoming.teeTime?.playDate
                 ) ||
                 "Upcoming round";
         }
@@ -260,8 +252,7 @@
         if (nextRoundPlayers) {
             const playerCount =
                 Number(
-                    upcoming.booking
-                        ?.playerCount ||
+                    upcoming.booking?.playerCount ||
                     1
                 );
 
@@ -281,8 +272,7 @@
 
             if (
                 !bookingService ||
-                typeof bookingService
-                    .getUpcoming !==
+                typeof bookingService.getUpcoming !==
                     "function"
             ) {
                 showNoUpcomingBooking();
@@ -290,10 +280,9 @@
             }
 
             const upcoming =
-                await bookingService
-                    .getUpcoming({
-                        forceRefresh: true
-                    });
+                await bookingService.getUpcoming({
+                    forceRefresh: true
+                });
 
             renderUpcomingBooking(
                 upcoming
@@ -304,6 +293,10 @@
                 error
             );
 
+            /*
+             * A booking query failure must not replace the
+             * member greeting or prevent weather loading.
+             */
             showNoUpcomingBooking();
         }
     }
@@ -434,21 +427,20 @@
         return null;
     }
 
-    function setWeatherSeverity(
-        severity
-    ) {
-        if (!weatherCard) {
-            return;
-        }
-
-        weatherCard.dataset
-            .weatherSeverity =
+    function setWeatherSeverity(severity) {
+        const value =
             severity || "normal";
+
+        if (weatherCard) {
+            weatherCard.dataset
+                .weatherSeverity =
+                value;
+        }
 
         if (weatherStatusDot) {
             weatherStatusDot.dataset
                 .weatherSeverity =
-                severity || "normal";
+                value;
         }
     }
 
@@ -515,22 +507,21 @@
         }
 
         if (weatherUpdated) {
-            const cachedLabel =
-                weather.cacheStatus ===
-                    "stale"
+            const label =
+                weather.cacheStatus === "stale"
                     ? "Cached"
-                    : "Updated";
+                    : weather.cacheStatus === "fresh"
+                        ? "Updated"
+                        : "Updated";
 
             weatherUpdated.textContent =
                 weather.updatedTime
-                    ? `${cachedLabel} ${weather.updatedTime}`
-                    : cachedLabel;
+                    ? `${label} ${weather.updatedTime}`
+                    : label;
         }
 
         /*
-         * The club's official course status will later come
-         * from ClubHub. Weather must not automatically close
-         * or reopen the course.
+         * Course status remains club controlled.
          */
         if (weatherCourseStatus) {
             weatherCourseStatus.textContent =
@@ -590,9 +581,7 @@
         }
     }
 
-    function showWeatherUnavailable(
-        error
-    ) {
+    function showWeatherUnavailable(error) {
         console.error(
             "BookIt weather failed:",
             error
@@ -630,27 +619,69 @@
         );
     }
 
+    /* =========================================================
+       STALE-WHILE-REVALIDATE WEATHER
+       ========================================================= */
+
     async function loadWeather() {
+        const weatherService =
+            window.BookIt.weather;
+
+        if (
+            !weatherService ||
+            typeof weatherService.load !==
+                "function"
+        ) {
+            showWeatherUnavailable(
+                new Error(
+                    "The weather service is unavailable."
+                )
+            );
+
+            return;
+        }
+
         showWeatherLoading();
 
         try {
-            const weatherService =
-                window.BookIt.weather;
-
-            if (
-                !weatherService ||
-                typeof weatherService.load !==
-                    "function"
-            ) {
-                throw new Error(
-                    "The weather service is unavailable."
-                );
-            }
-
+            /*
+             * The normal load returns cached weather immediately
+             * when the cache is still valid.
+             */
             const weather =
                 await weatherService.load();
 
             renderWeather(weather);
+
+            /*
+             * When the first result came from cache, refresh
+             * quietly in the background and update the card.
+             *
+             * A failed background refresh leaves the displayed
+             * cached result intact.
+             */
+            if (
+                weather.cacheStatus === "fresh" ||
+                weather.cacheStatus === "stale"
+            ) {
+                weatherService
+                    .refresh()
+                    .then(function (
+                        refreshedWeather
+                    ) {
+                        renderWeather(
+                            refreshedWeather
+                        );
+                    })
+                    .catch(function (
+                        error
+                    ) {
+                        console.warn(
+                            "BookIt background weather refresh failed:",
+                            error
+                        );
+                    });
+            }
         } catch (error) {
             showWeatherUnavailable(
                 error
@@ -663,51 +694,39 @@
        ========================================================= */
 
     async function initialiseHomePage() {
+        if (homeInitialised) {
+            return;
+        }
+
+        homeInitialised = true;
+
         let readyData;
 
         try {
+            /*
+             * Boot has already loaded and validated this profile.
+             * Do not immediately perform a second forced profile
+             * query from the Home page.
+             */
             readyData =
                 await window.BookIt.ready;
+
+            renderGreeting(
+                readyData?.profile ||
+                window.BookIt.currentProfile
+            );
         } catch (error) {
-            showGreetingError(error);
+            showProfileError(error);
             showNoUpcomingBooking();
 
-            /*
-             * Weather does not require member profile data and
-             * can still be attempted if application boot partly
-             * completed.
-             */
             await loadWeather();
             return;
         }
 
-        try {
-            const currentProfile =
-                window.BookIt.profile &&
-                typeof window.BookIt.profile
-                    .load === "function"
-                    ? await window.BookIt
-                        .profile.load({
-                            forceRefresh: true
-                        })
-                    : readyData?.profile;
-
-            renderGreeting(
-                currentProfile ||
-                readyData?.profile
-            );
-        } catch (error) {
-            if (readyData?.profile) {
-                renderGreeting(
-                    readyData.profile
-                );
-            } else {
-                showGreetingError(
-                    error
-                );
-            }
-        }
-
+        /*
+         * Booking and weather failures are isolated from the
+         * profile greeting and from each other.
+         */
         await Promise.allSettled([
             loadUpcomingBooking(),
             loadWeather()
