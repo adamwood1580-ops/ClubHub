@@ -3,10 +3,18 @@
 
     window.BookIt = window.BookIt || {};
 
+    /* =========================================================
+       CACHE
+       ========================================================= */
+
     const dayCache = new Map();
     const teeTimeCache = new Map();
 
     let upcomingCache;
+
+    /* =========================================================
+       CORE HELPERS
+       ========================================================= */
 
     function getClient() {
         if (!window.supabaseClient) {
@@ -34,7 +42,18 @@
             );
         }
 
+        if (!profile.membership?.id) {
+            throw new Error(
+                "The current club membership is unavailable."
+            );
+        }
+
         return profile;
+    }
+
+    function getCurrentMembershipId() {
+        return getCurrentProfile()
+            .membership.id;
     }
 
     function toDateKey(value) {
@@ -134,6 +153,30 @@
         ].includes(member.member_status);
     }
 
+    function getMemberDisplayName(profile) {
+        if (!profile) {
+            return "Member";
+        }
+
+        const fullName = [
+            profile.first_name,
+            profile.last_name
+        ]
+            .filter(Boolean)
+            .join(" ")
+            .trim();
+
+        return (
+            profile.display_name ||
+            fullName ||
+            "Member"
+        );
+    }
+
+    /* =========================================================
+       DISPLAY STATE
+       ========================================================= */
+
     function getDisplayStatus(
         operationalStatus,
         booking,
@@ -195,6 +238,14 @@
             return "book";
         }
 
+        if (booking.currentMemberIsLead) {
+            return "cancel";
+        }
+
+        if (booking.currentMemberIsParticipant) {
+            return "leave";
+        }
+
         if (
             booking.type === "private" ||
             spacesRemaining <= 0
@@ -209,20 +260,16 @@
         return "none";
     }
 
+    /* =========================================================
+       NORMALISATION
+       ========================================================= */
+
     function normaliseMember(member) {
         const membership =
             member.club_memberships || null;
 
         const profile =
             membership?.profiles || null;
-
-        const fallbackName = [
-            profile?.first_name,
-            profile?.last_name
-        ]
-            .filter(Boolean)
-            .join(" ")
-            .trim();
 
         return {
             bookingMemberId:
@@ -234,21 +281,24 @@
             position:
                 Number(member.position),
 
+            partySize:
+                Number(member.party_size || 1),
+
             status:
                 member.member_status,
 
             checkedInAt:
-                member.checked_in_at ||
-                null,
+                member.checked_in_at || null,
 
             name:
-                profile?.display_name ||
-                fallbackName ||
-                "Member"
+                getMemberDisplayName(profile)
         };
     }
 
-    function normaliseTeeTime(row) {
+    function normaliseTeeTime(
+        row,
+        currentMembershipId
+    ) {
         const bookings =
             Array.isArray(row.bookings)
                 ? row.bookings
@@ -292,6 +342,30 @@
             0
         );
 
+        const leadMember =
+            activeMembers.find(function (member) {
+                return member.position === 1;
+            }) || activeMembers[0] || null;
+
+        const currentMember =
+            activeMembers.find(function (member) {
+                return (
+                    member.membershipId ===
+                    currentMembershipId
+                );
+            }) || null;
+
+        const currentMemberIsLead =
+            Boolean(
+                activeBookingRow &&
+                activeBookingRow
+                    .created_by_membership_id ===
+                    currentMembershipId
+            );
+
+        const currentMemberIsParticipant =
+            Boolean(currentMember);
+
         const booking = activeBookingRow
             ? {
                 id:
@@ -308,18 +382,40 @@
                         activeBookingRow.player_count
                     ),
 
+                createdByMembershipId:
+                    activeBookingRow
+                        .created_by_membership_id,
+
                 leadName:
+                    leadMember?.name ||
                     activeBookingRow.lead_name ||
-                    "",
+                    "Member",
+
+                leadPartySize:
+                    leadMember?.partySize || 1,
 
                 contactNumber:
                     activeBookingRow.contact_number ||
                     "",
 
                 members:
-                    activeMembers
+                    activeMembers,
+
+                currentMember,
+                currentMemberIsLead,
+                currentMemberIsParticipant,
+
+                currentMemberPartySize:
+                    currentMember?.partySize || 0
             }
             : null;
+
+        const action =
+            getActionType(
+                row.operational_status,
+                booking,
+                spacesRemaining
+            );
 
         return {
             id:
@@ -365,16 +461,73 @@
                     maxPlayers
                 ),
 
-            action:
-                getActionType(
-                    row.operational_status,
-                    booking,
-                    spacesRemaining
+            action,
+
+            isCurrentMembersBooking:
+                Boolean(
+                    booking &&
+                    booking
+                        .currentMemberIsParticipant
                 ),
 
             booking
         };
     }
+
+    /* =========================================================
+       SELECT DEFINITIONS
+       ========================================================= */
+
+    const TEE_TIME_SELECT = `
+        id,
+        course_id,
+        play_date,
+        start_time,
+        max_players,
+        operational_status,
+        notes,
+
+        courses!inner (
+            id,
+            club_id,
+            name
+        ),
+
+        bookings (
+            id,
+            tee_time_id,
+            created_by_membership_id,
+            player_count,
+            booking_type,
+            booking_status,
+            lead_name,
+            contact_number,
+
+            booking_members (
+                id,
+                membership_id,
+                position,
+                party_size,
+                member_status,
+                checked_in_at,
+
+                club_memberships!booking_members_membership_id_fkey (
+                    id,
+
+                    profiles (
+                        id,
+                        first_name,
+                        last_name,
+                        display_name
+                    )
+                )
+            )
+        )
+    `;
+
+    /* =========================================================
+       CACHE HELPERS
+       ========================================================= */
 
     function cacheTeeTimes(teeTimes) {
         teeTimes.forEach(function (teeTime) {
@@ -401,50 +554,15 @@
         upcomingCache = undefined;
     }
 
-    const TEE_TIME_SELECT = `
-        id,
-        course_id,
-        play_date,
-        start_time,
-        max_players,
-        operational_status,
-        notes,
+    function clearCache() {
+        dayCache.clear();
+        teeTimeCache.clear();
+        upcomingCache = undefined;
+    }
 
-        courses!inner (
-            id,
-            club_id,
-            name
-        ),
-
-        bookings (
-            id,
-            tee_time_id,
-            player_count,
-            booking_type,
-            booking_status,
-            lead_name,
-            contact_number,
-
-            booking_members (
-                id,
-                membership_id,
-                position,
-                member_status,
-                checked_in_at,
-
-                club_memberships!booking_members_membership_id_fkey (
-                    id,
-
-                    profiles (
-                        id,
-                        first_name,
-                        last_name,
-                        display_name
-                    )
-                )
-            )
-        )
-    `;
+    /* =========================================================
+       READ: DAY
+       ========================================================= */
 
     async function getDay(
         date,
@@ -468,6 +586,9 @@
 
         const profile =
             getCurrentProfile();
+
+        const currentMembershipId =
+            profile.membership.id;
 
         const { data, error } =
             await client
@@ -499,7 +620,12 @@
 
         const teeTimes =
             (data || []).map(
-                normaliseTeeTime
+                function (row) {
+                    return normaliseTeeTime(
+                        row,
+                        currentMembershipId
+                    );
+                }
             );
 
         dayCache.set(
@@ -511,6 +637,10 @@
 
         return teeTimes;
     }
+
+    /* =========================================================
+       READ: SINGLE TEE TIME
+       ========================================================= */
 
     async function getTeeTime(
         id,
@@ -538,6 +668,9 @@
         const profile =
             getCurrentProfile();
 
+        const currentMembershipId =
+            profile.membership.id;
+
         const { data, error } =
             await client
                 .from("tee_times")
@@ -563,7 +696,10 @@
         }
 
         const teeTime =
-            normaliseTeeTime(data);
+            normaliseTeeTime(
+                data,
+                currentMembershipId
+            );
 
         teeTimeCache.set(
             teeTime.id,
@@ -572,6 +708,10 @@
 
         return teeTime;
     }
+
+    /* =========================================================
+       READ: UPCOMING BOOKING
+       ========================================================= */
 
     async function getUpcoming(
         options = {}
@@ -593,12 +733,7 @@
             getCurrentProfile();
 
         const membershipId =
-            profile.membership?.id;
-
-        if (!membershipId) {
-            upcomingCache = null;
-            return null;
-        }
+            profile.membership.id;
 
         const today =
             toDateKey(new Date());
@@ -610,10 +745,12 @@
                     id,
                     membership_id,
                     position,
+                    party_size,
                     member_status,
 
                     bookings!inner (
                         id,
+                        created_by_membership_id,
                         player_count,
                         booking_type,
                         booking_status,
@@ -713,8 +850,16 @@
             position:
                 Number(row.position),
 
+            partySize:
+                Number(row.party_size || 1),
+
             memberStatus:
                 row.member_status,
+
+            isLeadBooker:
+                booking
+                    .created_by_membership_id ===
+                membershipId,
 
             booking: {
                 id:
@@ -729,7 +874,11 @@
                 playerCount:
                     Number(
                         booking.player_count
-                    )
+                    ),
+
+                createdByMembershipId:
+                    booking
+                        .created_by_membership_id
             },
 
             teeTime: {
@@ -768,6 +917,10 @@
         return upcomingCache;
     }
 
+    /* =========================================================
+       WRITE: CREATE BOOKING
+       ========================================================= */
+
     async function createBooking(
         options = {}
     ) {
@@ -775,7 +928,9 @@
             options.teeTimeId;
 
         const playerCount =
-            Number(options.playerCount || 1);
+            Number(
+                options.playerCount || 1
+            );
 
         const bookingType =
             options.bookingType ||
@@ -899,6 +1054,10 @@
         };
     }
 
+    /* =========================================================
+       WRITE: JOIN BOOKING
+       ========================================================= */
+
     async function joinBooking(
         options = {}
     ) {
@@ -909,7 +1068,9 @@
             options.bookingId;
 
         const playerCount =
-            Number(options.playerCount || 1);
+            Number(
+                options.playerCount || 1
+            );
 
         if (!teeTimeId) {
             throw new Error(
@@ -944,10 +1105,20 @@
         }
 
         if (
-            teeTime.booking.id !== bookingId
+            teeTime.booking.id !==
+            bookingId
         ) {
             throw new Error(
                 "The selected booking has changed. Refresh the tee sheet and try again."
+            );
+        }
+
+        if (
+            teeTime.booking
+                .currentMemberIsParticipant
+        ) {
+            throw new Error(
+                "You are already part of this booking."
             );
         }
 
@@ -1012,11 +1183,227 @@
         };
     }
 
-    function clearCache() {
-        dayCache.clear();
-        teeTimeCache.clear();
-        upcomingCache = undefined;
+    /* =========================================================
+       WRITE: LEAVE BOOKING
+       ========================================================= */
+
+    async function leaveBooking(
+        options = {}
+    ) {
+        const teeTimeId =
+            options.teeTimeId;
+
+        const bookingId =
+            options.bookingId;
+
+        if (!teeTimeId) {
+            throw new Error(
+                "A tee-time ID is required."
+            );
+        }
+
+        if (!bookingId) {
+            throw new Error(
+                "A booking ID is required."
+            );
+        }
+
+        const teeTime =
+            await getTeeTime(
+                teeTimeId,
+                {
+                    forceRefresh: true
+                }
+            );
+
+        if (!teeTime?.booking) {
+            throw new Error(
+                "This booking could not be found."
+            );
+        }
+
+        if (
+            teeTime.booking.id !==
+            bookingId
+        ) {
+            throw new Error(
+                "The booking has changed. Refresh the tee sheet and try again."
+            );
+        }
+
+        if (
+            teeTime.booking
+                .currentMemberIsLead
+        ) {
+            throw new Error(
+                "The lead booker must cancel the booking instead."
+            );
+        }
+
+        if (
+            !teeTime.booking
+                .currentMemberIsParticipant
+        ) {
+            throw new Error(
+                "You are not part of this booking."
+            );
+        }
+
+        const releasedPlaces =
+            teeTime.booking
+                .currentMemberPartySize;
+
+        const client =
+            getClient();
+
+        const { data, error } =
+            await client.rpc(
+                "leave_booking",
+                {
+                    p_booking_id:
+                        bookingId
+                }
+            );
+
+        if (error) {
+            console.error(
+                "BookIt could not leave the booking:",
+                error
+            );
+
+            throw new Error(
+                error.message ||
+                "The booking could not be left."
+            );
+        }
+
+        clearAffectedCaches(
+            teeTime
+        );
+
+        return {
+            bookingId:
+                data,
+
+            teeTimeId,
+
+            playDate:
+                teeTime.playDate,
+
+            time:
+                teeTime.time,
+
+            releasedPlaces
+        };
     }
+
+    /* =========================================================
+       WRITE: CANCEL BOOKING
+       ========================================================= */
+
+    async function cancelBooking(
+        options = {}
+    ) {
+        const teeTimeId =
+            options.teeTimeId;
+
+        const bookingId =
+            options.bookingId;
+
+        if (!teeTimeId) {
+            throw new Error(
+                "A tee-time ID is required."
+            );
+        }
+
+        if (!bookingId) {
+            throw new Error(
+                "A booking ID is required."
+            );
+        }
+
+        const teeTime =
+            await getTeeTime(
+                teeTimeId,
+                {
+                    forceRefresh: true
+                }
+            );
+
+        if (!teeTime?.booking) {
+            throw new Error(
+                "This booking could not be found."
+            );
+        }
+
+        if (
+            teeTime.booking.id !==
+            bookingId
+        ) {
+            throw new Error(
+                "The booking has changed. Refresh the tee sheet and try again."
+            );
+        }
+
+        if (
+            !teeTime.booking
+                .currentMemberIsLead
+        ) {
+            throw new Error(
+                "Only the lead booker can cancel this booking."
+            );
+        }
+
+        const cancelledPlayers =
+            teeTime.booking.playerCount;
+
+        const client =
+            getClient();
+
+        const { data, error } =
+            await client.rpc(
+                "cancel_booking",
+                {
+                    p_booking_id:
+                        bookingId
+                }
+            );
+
+        if (error) {
+            console.error(
+                "BookIt could not cancel the booking:",
+                error
+            );
+
+            throw new Error(
+                error.message ||
+                "The booking could not be cancelled."
+            );
+        }
+
+        clearAffectedCaches(
+            teeTime
+        );
+
+        return {
+            bookingId:
+                data,
+
+            teeTimeId,
+
+            playDate:
+                teeTime.playDate,
+
+            time:
+                teeTime.time,
+
+            cancelledPlayers
+        };
+    }
+
+    /* =========================================================
+       REFRESH HELPERS
+       ========================================================= */
 
     async function refreshDay(date) {
         const dateKey =
@@ -1040,12 +1427,20 @@
         });
     }
 
+    /* =========================================================
+       PUBLIC API
+       ========================================================= */
+
     window.BookIt.booking = {
         getDay,
         getTeeTime,
         getUpcoming,
+
         createBooking,
         joinBooking,
+        leaveBooking,
+        cancelBooking,
+
         refreshDay,
         refreshUpcoming,
         clearCache
