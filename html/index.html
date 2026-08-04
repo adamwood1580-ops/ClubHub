@@ -15,18 +15,84 @@
     <link rel="stylesheet" href="../styles/tokens.css" />
     <link rel="stylesheet" href="../styles/app-shell.css" />
     <link rel="stylesheet" href="../styles/components.css" />
-    <link rel="stylesheet" href="../styles/member-home.css" />
+    <link rel="stylesheet" href="../styles/member-home.
+<link
+    rel="stylesheet"
+    href="../styles/clubhub-splash.css?brand=2"
+/>
 
+<script
+    src="../js/ui/clubhub-splash.js?brand=2"
+    defer
+></script>
     <link rel="manifest" href="../manifest.json" />
     <link rel="apple-touch-icon" href="../assets/Icon.PNG" />
 
     <script
-    src="../js/core/protected-loader.js?loader=3"
+    src="../js/core/protected-loader.js?loader=5"
     defer
 ></script>
 </head>
 
 <body
+    
+    <div
+    id="clubhubSplash"
+    class="clubhub-splash"
+    role="status"
+    aria-label="ClubHub is loading"
+>
+    <div class="clubhub-splash__content">
+        <div
+            class="clubhub-splash__mark"
+            aria-hidden="true"
+        >
+            <svg viewBox="0 0 96 96">
+                <circle
+                    cx="48"
+                    cy="48"
+                    r="43"
+                />
+
+                <path
+                    d="M16 67
+                       C27 59, 34 61, 42 55
+                       C52 47, 58 49, 67 39
+                       C73 32, 79 31, 83 29"
+                />
+
+                <path
+                    d="M22 73
+                       C33 69, 42 70, 51 64
+                       C62 57, 69 57, 78 50"
+                />
+
+                <path d="M62 53V24" />
+
+                <path
+                    class="clubhub-flag"
+                    d="M62 25L79 31L62 37Z"
+                />
+
+                <circle
+                    cx="62"
+                    cy="55"
+                    r="3"
+                />
+            </svg>
+        </div>
+
+        <h1 class="clubhub-splash__title">
+            Club<span>Hub</span>
+        </h1>
+
+        <p class="clubhub-splash__tagline">
+            <span>Designed for the club.</span>
+            <span>Built for the golfer.</span>
+        </p>
+    </div>
+</div>
+
     data-page="home"
     data-header="home"
     data-club-name="Bells Hotel & Country Club"
