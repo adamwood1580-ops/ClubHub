@@ -16,13 +16,6 @@
         return;
     }
 
-    /*
-     * Keep the existing BookIt namespace and event names for
-     * compatibility while the visible product is rebranded.
-     */
-    window.BookIt =
-        window.BookIt || {};
-
     const SHARED_SCRIPTS = [
         "../js/ui/header.js",
         "../js/ui/navigation.js"
@@ -86,168 +79,8 @@
         ]
     };
 
-    const SPLASH_MINIMUM_MS =
-        350;
-
-    const SPLASH_REMOVE_DELAY_MS =
-        320;
-
     let assetVersion = null;
     let initialisationStarted = false;
-    let splashCreatedAt = 0;
-    let splashElement = null;
-
-    /* =========================================================
-       SPLASH SCREEN
-       ========================================================= */
-
-    function createSplash() {
-        if (
-            splashElement ||
-            !document.body
-        ) {
-            return;
-        }
-
-        splashCreatedAt =
-            Date.now();
-
-        splashElement =
-            document.createElement(
-                "div"
-            );
-
-        splashElement.id =
-            "clubhubSplash";
-
-        splashElement.className =
-            "clubhub-splash";
-
-        splashElement.setAttribute(
-            "role",
-            "status"
-        );
-
-        splashElement.setAttribute(
-            "aria-label",
-            "ClubHub is loading"
-        );
-
-        splashElement.innerHTML = `
-            <div class="clubhub-splash__content">
-                <div
-                    class="clubhub-splash__mark"
-                    aria-hidden="true"
-                >
-                    <svg viewBox="0 0 96 96">
-                        <circle
-                            class="clubhub-splash__mark-ring"
-                            cx="48"
-                            cy="48"
-                            r="43"
-                        />
-
-                        <path
-                            class="clubhub-splash__mark-land"
-                            d="M16 67
-                               C27 59, 34 61, 42 55
-                               C52 47, 58 49, 67 39
-                               C73 32, 79 31, 83 29"
-                        />
-
-                        <path
-                            class="clubhub-splash__mark-land"
-                            d="M22 73
-                               C33 69, 42 70, 51 64
-                               C62 57, 69 57, 78 50"
-                        />
-
-                        <path
-                            class="clubhub-splash__mark-land"
-                            d="M62 53V24"
-                        />
-
-                        <path
-                            class="clubhub-splash__mark-flag"
-                            d="M62 25L79 31L62 37Z"
-                        />
-
-                        <circle
-                            cx="62"
-                            cy="55"
-                            r="3"
-                        />
-                    </svg>
-                </div>
-
-                <h1 class="clubhub-splash__title">
-                    Club<span class="clubhub-splash__title-accent">Hub</span>
-                </h1>
-
-                <p class="clubhub-splash__tagline">
-                    <span>Designed for the club.</span>
-                    <span>Built for the golfer.</span>
-                </p>
-            </div>
-        `;
-
-        document.body.appendChild(
-            splashElement
-        );
-    }
-
-    function wait(milliseconds) {
-        return new Promise(function (
-            resolve
-        ) {
-            window.setTimeout(
-                resolve,
-                milliseconds
-            );
-        });
-    }
-
-    async function dismissSplash() {
-        if (!splashElement) {
-            return;
-        }
-
-        const elapsed =
-            Date.now() -
-            splashCreatedAt;
-
-        const remaining =
-            Math.max(
-                SPLASH_MINIMUM_MS -
-                    elapsed,
-                0
-            );
-
-        if (remaining > 0) {
-            await wait(remaining);
-        }
-
-        splashElement.classList.add(
-            "clubhub-splash--leaving"
-        );
-
-        splashElement.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-        const elementToRemove =
-            splashElement;
-
-        splashElement = null;
-
-        window.setTimeout(
-            function () {
-                elementToRemove.remove();
-            },
-            SPLASH_REMOVE_DELAY_MS
-        );
-    }
 
     /* =========================================================
        PAGE AND SCRIPT RESOLUTION
@@ -261,14 +94,15 @@
 
     function getCurrentPageName() {
         return normalisePageName(
-            document.body?.dataset.page
+            document.body
+                ? document.body.dataset.page
+                : ""
         );
     }
 
     function getLegacyRequestedScripts() {
         return String(
-            loaderScript.dataset.scripts ||
-            ""
+            loaderScript.dataset.scripts || ""
         )
             .split(",")
             .map(function (value) {
@@ -290,21 +124,21 @@
 
         if (legacyScripts.length) {
             console.warn(
-                `ClubHub has no smart-loader mapping for data-page="${pageName}". ` +
-                "Using the page's legacy data-scripts list."
+                "ClubHub has no smart-loader mapping for " +
+                `data-page="${pageName}". ` +
+                "Using the legacy data-scripts list."
             );
 
             return legacyScripts;
         }
 
         throw new Error(
-            `No protected-loader configuration exists for data-page="${pageName || "missing"}".`
+            "No protected-loader configuration exists for " +
+            `data-page="${pageName || "missing"}".`
         );
     }
 
-    function removeDuplicateScripts(
-        scripts
-    ) {
+    function removeDuplicateScripts(scripts) {
         const seen =
             new Set();
 
@@ -338,10 +172,11 @@
             pageName,
 
             scripts:
-                removeDuplicateScripts([
-                    ...SHARED_SCRIPTS,
-                    ...pageScripts
-                ])
+                removeDuplicateScripts(
+                    SHARED_SCRIPTS.concat(
+                        pageScripts
+                    )
+                )
         };
     }
 
@@ -377,7 +212,8 @@
 
         if (!response.ok) {
             throw new Error(
-                `Could not load app-version.json (${response.status}).`
+                "Could not load app-version.json " +
+                `(${response.status}).`
             );
         }
 
@@ -385,7 +221,8 @@
             await response.json();
 
         const version =
-            typeof manifest?.version ===
+            manifest &&
+            typeof manifest.version ===
                 "string"
                 ? manifest.version.trim()
                 : "";
@@ -421,19 +258,18 @@
        SCRIPT LOADING
        ========================================================= */
 
-    function findExistingScript(
-        sourceUrl
-    ) {
+    function findExistingScript(sourceUrl) {
         return (
             Array.from(
                 document.scripts
-            ).find(function (script) {
-                return (
-                    script.src ===
-                    sourceUrl
-                );
-            }) ||
-            null
+            ).find(
+                function (script) {
+                    return (
+                        script.src ===
+                        sourceUrl
+                    );
+                }
+            ) || null
         );
     }
 
@@ -441,40 +277,85 @@
         source,
         version
     ) {
-        return new Promise(function (
-            resolve,
-            reject
-        ) {
-            const sourceUrl =
-                buildVersionedUrl(
-                    source,
-                    version
-                );
+        return new Promise(
+            function (
+                resolve,
+                reject
+            ) {
+                const sourceUrl =
+                    buildVersionedUrl(
+                        source,
+                        version
+                    );
 
-            const existingScript =
-                findExistingScript(
-                    sourceUrl
-                );
+                const existingScript =
+                    findExistingScript(
+                        sourceUrl
+                    );
 
-            if (existingScript) {
-                if (
-                    existingScript.dataset
-                        .bookitLoaded ===
-                    "true"
-                ) {
-                    resolve();
+                if (existingScript) {
+                    if (
+                        existingScript.dataset
+                            .bookitLoaded ===
+                        "true"
+                    ) {
+                        resolve();
+                        return;
+                    }
+
+                    existingScript.addEventListener(
+                        "load",
+                        resolve,
+                        {
+                            once: true
+                        }
+                    );
+
+                    existingScript.addEventListener(
+                        "error",
+                        function () {
+                            reject(
+                                new Error(
+                                    `Could not load script: ${source}`
+                                )
+                            );
+                        },
+                        {
+                            once: true
+                        }
+                    );
+
                     return;
                 }
 
-                existingScript.addEventListener(
+                const script =
+                    document.createElement(
+                        "script"
+                    );
+
+                script.src =
+                    sourceUrl;
+
+                script.async =
+                    false;
+
+                script.dataset.bookitLoadedBy =
+                    "protected-loader";
+
+                script.addEventListener(
                     "load",
-                    resolve,
+                    function () {
+                        script.dataset.bookitLoaded =
+                            "true";
+
+                        resolve();
+                    },
                     {
                         once: true
                     }
                 );
 
-                existingScript.addEventListener(
+                script.addEventListener(
                     "error",
                     function () {
                         reject(
@@ -488,54 +369,11 @@
                     }
                 );
 
-                return;
-            }
-
-            const script =
-                document.createElement(
-                    "script"
+                document.head.appendChild(
+                    script
                 );
-
-            script.src =
-                sourceUrl;
-
-            script.async =
-                false;
-
-            script.dataset.bookitLoadedBy =
-                "protected-loader";
-
-            script.addEventListener(
-                "load",
-                function () {
-                    script.dataset.bookitLoaded =
-                        "true";
-
-                    resolve();
-                },
-                {
-                    once: true
-                }
-            );
-
-            script.addEventListener(
-                "error",
-                function () {
-                    reject(
-                        new Error(
-                            `Could not load script: ${source}`
-                        )
-                    );
-                },
-                {
-                    once: true
-                }
-            );
-
-            document.head.appendChild(
-                script
-            );
-        });
+            }
+        );
     }
 
     async function loadScriptsInOrder(
@@ -548,20 +386,6 @@
                 version
             );
         }
-    }
-
-    async function waitForApplicationReady() {
-        if (
-            !window.BookIt.ready ||
-            typeof window.BookIt.ready.then !==
-                "function"
-        ) {
-            throw new Error(
-                "ClubHub did not create an application-ready promise."
-            );
-        }
-
-        return window.BookIt.ready;
     }
 
     /* =========================================================
@@ -590,16 +414,17 @@
                 {
                     detail: {
                         message:
-                            error?.message ||
-                            "ClubHub could not start.",
+                            error &&
+                            error.message
+                                ? error.message
+                                : "ClubHub could not start.",
 
-                        error
+                        error:
+                            error
                     }
                 }
             )
         );
-
-        dismissSplash();
     }
 
     function dispatchLoaded(
@@ -637,13 +462,9 @@
         initialisationStarted =
             true;
 
-        createSplash();
-
         try {
-            const {
-                pageName,
-                scripts
-            } = getRequiredScripts();
+            const requirements =
+                getRequiredScripts();
 
             assetVersion =
                 await loadAssetVersion();
@@ -651,11 +472,14 @@
             window.BOOKIT_ASSET_VERSION =
                 assetVersion;
 
+            window.BookIt =
+                window.BookIt || {};
+
             window.BookIt.assetVersion =
                 assetVersion;
 
             window.BookIt.pageName =
-                pageName;
+                requirements.pageName;
 
             await loadScript(
                 "../js/core/boot.js",
@@ -663,31 +487,23 @@
             );
 
             await loadScriptsInOrder(
-                scripts,
+                requirements.scripts,
                 assetVersion
             );
 
             dispatchLoaded(
-                pageName,
-                scripts
+                requirements.pageName,
+                requirements.scripts
             );
-
-            await waitForApplicationReady();
-
-            await dismissSplash();
         } catch (error) {
             revealLoaderError(error);
         }
     }
 
-    /*
-     * A deferred script normally runs after the body has been
-     * parsed. This fallback also supports accidental non-deferred
-     * loading.
-     */
-    if (document.body) {
-        initialise();
-    } else {
+    if (
+        document.readyState ===
+        "loading"
+    ) {
         document.addEventListener(
             "DOMContentLoaded",
             initialise,
@@ -695,5 +511,7 @@
                 once: true
             }
         );
+    } else {
+        initialise();
     }
 })();
