@@ -10,14 +10,6 @@
     const WEATHER_API_URL =
         "https://api.open-meteo.com/v1/forecast";
 
-    /*
-     * Bells Hotel & Country Club
-     * Lords Hill, Coleford, Gloucestershire, GL16 8BE
-     *
-     * These fixed coordinates ensure that every member sees
-     * weather for the golf course rather than their phone's
-     * current location.
-     */
     const CLUB_LOCATION = {
         name: "Bells Hotel & Country Club",
         shortName: "Bells",
@@ -36,12 +28,8 @@
     let loadingPromise = null;
 
     /* =========================================================
-       GENERAL HELPERS
+       BASIC HELPERS
        ========================================================= */
-
-    function getCurrentTimestamp() {
-        return Date.now();
-    }
 
     function isFiniteNumber(value) {
         return Number.isFinite(
@@ -59,9 +47,24 @@
         );
     }
 
-    function normaliseDate(value) {
-        if (!value) {
+    function getArrayValue(
+        collection,
+        key,
+        index
+    ) {
+        if (
+            !collection ||
+            !Array.isArray(collection[key])
+        ) {
             return null;
+        }
+
+        return collection[key][index] ?? null;
+    }
+
+    function formatUpdatedTime(value) {
+        if (!value) {
+            return "";
         }
 
         const date =
@@ -72,17 +75,6 @@
                 date.getTime()
             )
         ) {
-            return null;
-        }
-
-        return date;
-    }
-
-    function formatUpdatedTime(value) {
-        const date =
-            normaliseDate(value);
-
-        if (!date) {
             return "";
         }
 
@@ -97,7 +89,7 @@
     }
 
     /* =========================================================
-       WEATHER CODE INTERPRETATION
+       WEATHER CODE HELPERS
        ========================================================= */
 
     function getWeatherDescription(
@@ -139,7 +131,6 @@
             71: "Light snow",
             73: "Snow",
             75: "Heavy snow",
-
             77: "Snow grains",
 
             80: "Light rain showers",
@@ -231,9 +222,7 @@
             return "snow";
         }
 
-        if (
-            code >= 95
-        ) {
+        if (code >= 95) {
             return "thunderstorm";
         }
 
@@ -303,7 +292,7 @@
         }
 
         return (
-            getCurrentTimestamp() -
+            Date.now() -
                 Number(cache.cachedAt) <
             CACHE_DURATION_MS
         );
@@ -311,22 +300,21 @@
 
     function readStoredCache() {
         try {
-            const rawValue =
+            const raw =
                 window.localStorage.getItem(
                     CACHE_KEY
                 );
 
-            if (!rawValue) {
+            if (!raw) {
                 return null;
             }
 
             const parsed =
-                JSON.parse(rawValue);
+                JSON.parse(raw);
 
             if (
                 !parsed ||
-                typeof parsed !==
-                    "object"
+                typeof parsed !== "object"
             ) {
                 return null;
             }
@@ -411,7 +399,7 @@
     }
 
     /* =========================================================
-       API REQUEST
+       OPEN-METEO REQUEST
        ========================================================= */
 
     function buildRequestUrl() {
@@ -526,36 +514,19 @@
     }
 
     /* =========================================================
-       NORMALISATION
+       RESPONSE NORMALISATION
        ========================================================= */
 
-    function normaliseWeather(
-        response
-    ) {
+    function normaliseWeather(response) {
         const current =
             response.current || {};
 
         const daily =
             response.daily || {};
 
-        const temperature =
-            roundNumber(
-                current.temperature_2m
-            );
-
-        const feelsLike =
-            roundNumber(
-                current.apparent_temperature
-            );
-
-        const windSpeed =
-            roundNumber(
-                current.wind_speed_10m
-            );
-
-        const windGust =
-            roundNumber(
-                current.wind_gusts_10m
+        const weatherCode =
+            Number(
+                current.weather_code
             );
 
         const precipitation =
@@ -566,14 +537,6 @@
                     current.precipitation
                 )
                 : 0;
-
-        const weatherCode =
-            Number(
-                current.weather_code
-            );
-
-        const isDay =
-            Number(current.is_day) === 1;
 
         const fetchedAt =
             new Date().toISOString();
@@ -597,10 +560,18 @@
             },
 
             current: {
-                temperature,
-                feelsLike,
+                temperature:
+                    roundNumber(
+                        current.temperature_2m
+                    ),
+
+                feelsLike:
+                    roundNumber(
+                        current.apparent_temperature
+                    ),
 
                 weatherCode,
+
                 description:
                     getWeatherDescription(
                         weatherCode,
@@ -626,10 +597,20 @@
                         current.cloud_cover
                     ),
 
-                windSpeed,
-                windGust,
+                windSpeed:
+                    roundNumber(
+                        current.wind_speed_10m
+                    ),
 
-                isDay,
+                windGust:
+                    roundNumber(
+                        current.wind_gusts_10m
+                    ),
+
+                isDay:
+                    Number(
+                        current.is_day
+                    ) === 1,
 
                 observationTime:
                     current.time || null
@@ -638,32 +619,44 @@
             today: {
                 maximumTemperature:
                     roundNumber(
-                        daily
-                            .temperature_2m_max
-                            ?.[0]
+                        getArrayValue(
+                            daily,
+                            "temperature_2m_max",
+                            0
+                        )
                     ),
 
                 minimumTemperature:
                     roundNumber(
-                        daily
-                            .temperature_2m_min
-                            ?.[0]
+                        getArrayValue(
+                            daily,
+                            "temperature_2m_min",
+                            0
+                        )
                     ),
 
                 precipitationChance:
                     roundNumber(
-                        daily
-                            .precipitation_probability_max
-                            ?.[0]
+                        getArrayValue(
+                            daily,
+                            "precipitation_probability_max",
+                            0
+                        )
                     ),
 
                 sunrise:
-                    daily.sunrise?.[0] ||
-                    null,
+                    getArrayValue(
+                        daily,
+                        "sunrise",
+                        0
+                    ),
 
                 sunset:
-                    daily.sunset?.[0] ||
-                    null
+                    getArrayValue(
+                        daily,
+                        "sunset",
+                        0
+                    )
             },
 
             fetchedAt,
@@ -679,7 +672,7 @@
     }
 
     /* =========================================================
-       PUBLIC LOAD METHOD
+       PUBLIC METHODS
        ========================================================= */
 
     async function loadWeather(
@@ -693,10 +686,14 @@
                 getFreshCache();
 
             if (freshCache) {
-                return {
-                    ...freshCache.weather,
-                    cacheStatus: "fresh"
-                };
+                return Object.assign(
+                    {},
+                    freshCache.weather,
+                    {
+                        cacheStatus:
+                            "fresh"
+                    }
+                );
             }
         }
 
@@ -720,7 +717,7 @@
 
                     const cache = {
                         cachedAt:
-                            getCurrentTimestamp(),
+                            Date.now(),
 
                         weather
                     };
@@ -732,33 +729,39 @@
                         cache
                     );
 
-                    return {
-                        ...weather,
-                        cacheStatus:
-                            "network"
-                    };
+                    return Object.assign(
+                        {},
+                        weather,
+                        {
+                            cacheStatus:
+                                "network"
+                        }
+                    );
                 } catch (error) {
                     const staleCache =
                         getStaleCache();
 
                     if (
-                        staleCache?.weather
+                        staleCache &&
+                        staleCache.weather
                     ) {
                         console.warn(
                             "BookIt is using cached weather because the live request failed:",
                             error
                         );
 
-                        return {
-                            ...staleCache.weather,
+                        return Object.assign(
+                            {},
+                            staleCache.weather,
+                            {
+                                cacheStatus:
+                                    "stale",
 
-                            cacheStatus:
-                                "stale",
-
-                            warning:
-                                error?.message ||
-                                "Live weather is unavailable."
-                        };
+                                warning:
+                                    error.message ||
+                                    "Live weather is unavailable."
+                            }
+                        );
                     }
 
                     throw error;
@@ -771,15 +774,11 @@
         return loadingPromise;
     }
 
-    async function refreshWeather() {
+    function refreshWeather() {
         return loadWeather({
             forceRefresh: true
         });
     }
-
-    /* =========================================================
-       PUBLIC API
-       ========================================================= */
 
     window.BookIt.weather = {
         load:
@@ -792,9 +791,10 @@
 
         getLocation:
             function () {
-                return {
-                    ...CLUB_LOCATION
-                };
+                return Object.assign(
+                    {},
+                    CLUB_LOCATION
+                );
             },
 
         getDescription:
