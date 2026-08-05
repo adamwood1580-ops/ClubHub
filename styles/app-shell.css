@@ -3,11 +3,13 @@ html {
     background: var(--color-background);
 }
 
-html.auth-protected body {
+/* Hide only the application while authentication completes */
+
+html.auth-protected .app-shell {
     visibility: hidden;
 }
 
-html.auth-protected.auth-ready body {
+html.auth-protected.auth-ready .app-shell {
     visibility: visible;
 }
 *,
