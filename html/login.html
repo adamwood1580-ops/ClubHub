@@ -8,127 +8,278 @@
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
 
-    <meta name="theme-color" content="#173f2b" />
+    <meta name="theme-color" content="#184332" />
 
-    <title>Sign In | BookIt</title>
+    <title>Sign In | ClubHub</title>
 
-    <link rel="stylesheet" href="../styles/tokens.css" />
-    <link rel="stylesheet" href="../styles/components.css" />
-    <link rel="stylesheet" href="../styles/auth.css" />
+    <link
+        rel="stylesheet"
+        href="../styles/tokens.css"
+    />
 
-    <link rel="manifest" href="../json/manifest.json" />
-    <link rel="apple-touch-icon" href="../assets/Icon.PNG" />
+    <link
+        rel="stylesheet"
+        href="../styles/components.css"
+    />
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/core/config.js"></script>
-    <script src="../js/core/supabase.js"></script>
+    <link
+        rel="stylesheet"
+        href="../styles/auth.css?brand=1"
+    />
+
+    <link
+        rel="manifest"
+        href="../manifest.json"
+    />
+
+    <link
+        rel="apple-touch-icon"
+        href="../assets/Icon.PNG"
+    />
 </head>
 
-<body>
-    <main class="auth-page">
-        <div class="auth-container">
-            <section class="auth-brand" aria-labelledby="bookit-title">
-                <div class="auth-brand__mark" aria-hidden="true">
+<body class="auth-page">
+    <main class="auth-layout">
+        <section
+            class="auth-panel"
+            aria-labelledby="clubhubWordmark"
+        >
+            <!-- =============================================
+                 CLUBHUB BRAND
+                 ============================================= -->
+
+            <header class="auth-brand">
+                <div
+                    class="clubhub-mark"
+                    aria-hidden="true"
+                >
                     <svg
-                        class="auth-brand__icon"
-                        viewBox="0 0 24 24"
+                        viewBox="0 0 160 160"
+                        role="img"
                     >
-                        <path d="M5 21V4"></path>
-                        <path d="M5 4h10l-2 4 2 4H5"></path>
-                        <circle cx="15" cy="18" r="2"></circle>
+                        <path
+                            class="clubhub-mark__c"
+                            d="
+                                M82 22
+                                C48 22 25 45 25 80
+                                C25 115 48 138 82 138
+                                L82 113
+                                C63 113 50 100 50 80
+                                C50 60 63 47 82 47
+                            "
+                        />
+
+                        <path
+                            class="clubhub-mark__h"
+                            d="
+                                M82 50
+                                L105 50
+                                L105 69
+                                L127 69
+                                L127 38
+                                L150 38
+                                L150 122
+                                L127 122
+                                L127 92
+                                L105 92
+                                L105 111
+                                L82 111
+                                Z
+                            "
+                        />
                     </svg>
                 </div>
 
-                <h1 class="auth-brand__title" id="bookit-title">
-                    BookIt
+                <h1
+                    id="clubhubWordmark"
+                    class="clubhub-wordmark"
+                >
+                    <span class="clubhub-wordmark__club">
+                        Club
+                    </span><span class="clubhub-wordmark__hub">
+                        Hub
+                    </span>
                 </h1>
 
-                <p class="auth-brand__subtitle">
-                    Bells Hotel &amp; Country Club
+                <p class="auth-tagline">
+                    <span>
+                        Designed for the club.
+                    </span>
+
+                    <span>
+                        Built for the golfer.
+                    </span>
                 </p>
-            </section>
+            </header>
 
-            <section class="auth-card" aria-labelledby="sign-in-title">
-                <h2 class="auth-card__title" id="sign-in-title">
-                    Welcome back
-                </h2>
+            <!-- =============================================
+                 LOGIN FORM
+                 ============================================= -->
 
-                <p class="auth-card__text">
-                    Sign in to manage bookings, rounds and your profile.
-                </p>
+            <form
+                id="loginForm"
+                class="auth-form"
+                novalidate
+            >
+                <div class="auth-fields">
+                    <div class="auth-field">
+                        <label
+                            class="visually-hidden"
+                            for="email"
+                        >
+                            Email address
+                        </label>
 
-                <form id="loginForm" class="auth-form" novalidate>
-                    <label class="form-group" for="email">
-                        <span class="form-label">Email address</span>
+                        <span
+                            class="auth-field__icon"
+                            aria-hidden="true"
+                        >
+                            <svg viewBox="0 0 24 24">
+                                <rect
+                                    x="3"
+                                    y="5"
+                                    width="18"
+                                    height="14"
+                                    rx="2"
+                                />
+
+                                <path
+                                    d="m4 7 8 6 8-6"
+                                />
+                            </svg>
+                        </span>
 
                         <input
                             id="email"
-                            class="form-input"
                             name="email"
                             type="email"
                             inputmode="email"
                             autocomplete="email"
-                            placeholder="name@example.com"
+                            autocapitalize="none"
+                            spellcheck="false"
+                            placeholder="Email address"
                             required
                         />
-                    </label>
-
-                    <label class="form-group" for="password">
-                        <span class="form-label">Password</span>
-
-                        <span class="password-field">
-                            <input
-                                id="password"
-                                class="form-input"
-                                name="password"
-                                type="password"
-                                autocomplete="current-password"
-                                placeholder="Enter your password"
-                                minlength="6"
-                                required
-                            />
-
-                            <button
-                                id="passwordToggle"
-                                class="password-toggle"
-                                type="button"
-                                aria-controls="password"
-                                aria-pressed="false"
-                            >
-                                Show
-                            </button>
-                        </span>
-                    </label>
-
-                    <p
-                        id="loginMessage"
-                        class="auth-message"
-                        role="status"
-                        aria-live="polite"
-                    ></p>
-
-                    <div class="auth-actions">
-                        <button
-                            id="loginButton"
-                            class="button button--primary button--full"
-                            type="submit"
-                        >
-                            Sign in
-                        </button>
-
-                        <a class="auth-link" href="#forgot-password">
-                            Forgotten your password?
-                        </a>
                     </div>
-                </form>
-            </section>
 
-            <p class="auth-footer">
-                Simple enough for everyone. Powerful enough for every club.
-            </p>
-        </div>
+                    <div class="auth-field">
+                        <label
+                            class="visually-hidden"
+                            for="password"
+                        >
+                            Password
+                        </label>
+
+                        <span
+                            class="auth-field__icon"
+                            aria-hidden="true"
+                        >
+                            <svg viewBox="0 0 24 24">
+                                <rect
+                                    x="5"
+                                    y="10"
+                                    width="14"
+                                    height="11"
+                                    rx="2"
+                                />
+
+                                <path
+                                    d="M8 10V7a4 4 0 0 1 8 0v3"
+                                />
+                            </svg>
+                        </span>
+
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            autocomplete="current-password"
+                            placeholder="Password"
+                            required
+                        />
+
+                        <button
+                            id="passwordToggle"
+                            class="auth-field__toggle"
+                            type="button"
+                            aria-label="Show password"
+                            aria-pressed="false"
+                        >
+                            <svg
+                                class="password-eye password-eye--show"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="
+                                        M2 12
+                                        C4.8 7.8 8.1 6 12 6
+                                        C15.9 6 19.2 7.8 22 12
+                                        C19.2 16.2 15.9 18 12 18
+                                        C8.1 18 4.8 16.2 2 12Z
+                                    "
+                                />
+
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="3"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <button
+                        id="loginButton"
+                        class="auth-submit"
+                        type="submit"
+                    >
+                        <span class="auth-submit__label">
+                            Sign In
+                        </span>
+
+                        <span
+                            class="auth-submit__spinner"
+                            aria-hidden="true"
+                        ></span>
+                    </button>
+                </div>
+
+                <p
+                    id="loginMessage"
+                    class="auth-message"
+                    role="status"
+                    aria-live="polite"
+                    hidden
+                ></p>
+            </form>
+
+            <!-- =============================================
+                 SECONDARY ACTIONS
+                 ============================================= -->
+
+            <footer class="auth-footer">
+                <a
+                    class="auth-link auth-link--password"
+                    href="forgot-password.html"
+                >
+                    Forgot password?
+                </a>
+
+                <p class="auth-club-contact">
+                    New here?
+
+                    <a href="mailto:">
+                        Contact your club.
+                    </a>
+                </p>
+            </footer>
+        </section>
     </main>
 
+    <script src="../js/core/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/core/supabase.js"></script>
     <script src="../js/auth/login.js"></script>
 </body>
 </html>
