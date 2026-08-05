@@ -1,12 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+        :root {
+            color-scheme: dark;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            background: #06382a;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+
+            overflow: hidden;
+
+            font-family:
+                Inter,
+                Manrope,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .clubhub-entry {
+            position: fixed;
+            inset: 0;
+
+            display: grid;
+            place-items: center;
+
+            padding:
+                max(1.5rem, env(safe-area-inset-top))
+                max(1.25rem, env(safe-area-inset-right))
+                max(1.5rem, env(safe-area-inset-bottom))
+                max(1.25rem, env(safe-area-inset-left));
+
+            background:
+                radial-gradient(
+                    circle at 50% 34%,
+                    rgba(31, 109, 78, 0.26),
+                    transparent 42%
+                ),
+                linear-gradient(
+                    180deg,
+                    #074430 0%,
+                    #06382a 48%,
+                    #032b21 100%
+                );
+
+            opacity: 1;
+
+            transition:
+                opacity 180ms ease;
+        }
+
+        .clubhub-entry.is-leaving {
+            opacity: 0;
+        }
+
+        .clubhub-entry__content {
+            display: flex;
+            width: min(100%, 20rem);
+            flex-direction: column;
+            align-items: center;
+
+            text-align: center;
+
+            animation:
+                clubhub-entry-in
+                460ms
+                cubic-bezier(0.22, 1, 0.36, 1)
+                both;
+        }
+
+        .clubhub-entry__logo {
+            display: block;
+
+            width: 10.5rem;
+            max-width: 58%;
+
+            height: auto;
+
+            margin: 0 auto 1rem;
+
+            object-fit: contain;
+
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .clubhub-entry__wordmark {
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size:
+                clamp(2.65rem, 12vw, 3.35rem);
+
+            font-weight: 520;
+            line-height: 1;
+
+            letter-spacing: -0.055em;
+        }
+
+        .clubhub-entry__wordmark span {
+            color: #d4af37;
+        }
+
+        .clubhub-entry__tagline {
+            display: flex;
+            flex-direction: column;
+
+            gap: 0.12rem;
+
+            margin: 1.15rem 0 0;
+
+            font-size: 1rem;
+            font-weight: 520;
+            line-height: 1.45;
+        }
+
+        .clubhub-entry__tagline span:first-child {
+            color: #ffffff;
+        }
+
+        .clubhub-entry__tagline span:last-child {
+            color: #d4af37;
+        }
+
+        .clubhub-entry__status {
+            min-height: 1.4rem;
+            margin: 2.25rem 0 0;
+
+            color: rgba(255, 255, 255, 0.7);
+
+            font-size: 0.82rem;
+            font-weight: 520;
+            letter-spacing: 0.02em;
+        }
+
+        .clubhub-entry__loader {
+            width: 1.35rem;
+            height: 1.35rem;
+
+            margin-top: 0.85rem;
+
+            border:
+                2px solid
+                rgba(255, 255, 255, 0.2);
+
+            border-top-color: #d4af37;
+
+            border-radius: 50%;
+
+            animation:
+                clubhub-entry-spin
+                700ms
+                linear
+                infinite;
+        }
+
+        @keyframes clubhub-entry-in {
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(0.55rem)
+                    scale(0.985);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0)
+                    scale(1);
+            }
+        }
+
+        @keyframes clubhub-entry-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-height: 650px) {
+            .clubhub-entry__logo {
+                width: 8rem;
+            }
+
+            .clubhub-entry__wordmark {
+                font-size: 2.4rem;
+            }
+
+            .clubhub-entry__tagline {
+                margin-top: 0.8rem;
+                font-size: 0.88rem;
+            }
+
+            .clubhub-entry__status {
+                margin-top: 1.4rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .clubhub-entry,
+            .clubhub-entry__content,
+            .clubhub-entry__loader {
+                animation: none;
+                transition: none;
+            }
+        }
+    </style>
+
     <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0; url=html/index.html" />
-    <title>Bells Golf App</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <meta
+        name="theme-color"
+        content="#06382a"
+    />
+
+    <title>ClubHub</title>
+
+    <link
+        rel="manifest"
+        href="./manifest.json"
+    />
+
+    <link
+        rel="apple-touch-icon"
+        href="./assets/Icon.PNG"
+    />
+
+    <script
+        src="./js/core/config.js"
+        defer
+    ></script>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+        defer
+    ></script>
+
+    <script
+        src="./js/core/supabase.js"
+        defer
+    ></script>
+
+    <script
+        src="./js/core/entry.js?entry=1"
+        defer
+    ></script>
 </head>
+
 <body>
-    <p>Loading Bells Golf App...</p>
-    <p><a href="html/index.html">Open Bells Golf App</a></p>
+    <main
+        id="clubhubEntry"
+        class="clubhub-entry"
+        aria-label="Opening ClubHub"
+    >
+        <div class="clubhub-entry__content">
+            <img
+                src="./assets/branding/clubhub-logo.PNG?brand=7"
+                alt=""
+                class="clubhub-entry__logo"
+                aria-hidden="true"
+            />
+
+            <h1 class="clubhub-entry__wordmark">
+                Club<span>Hub</span>
+            </h1>
+
+            <p class="clubhub-entry__tagline">
+                <span>Designed for the club.</span>
+                <span>Built for the golfer.</span>
+            </p>
+
+            <p
+                id="clubhubEntryStatus"
+                class="clubhub-entry__status"
+                aria-live="polite"
+            >
+                Opening ClubHub…
+            </p>
+
+            <span
+                class="clubhub-entry__loader"
+                aria-hidden="true"
+            ></span>
+        </div>
+    </main>
 </body>
 </html>
