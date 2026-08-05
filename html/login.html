@@ -1,6 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="auth-styles-loading">
 <head>
+    <style>
+        html {
+            min-height: 100%;
+            background: #06382a;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: #06382a;
+            opacity: 0;
+        }
+
+        html.auth-ready body {
+            opacity: 1;
+        }
+    </style>
+
     <meta charset="UTF-8" />
 
     <meta
@@ -8,29 +26,31 @@
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
 
-    <meta name="theme-color" content="#184332" />
+    <meta name="theme-color" content="#06382a" />
 
     <title>Sign In | ClubHub</title>
 
-    <link
-        rel="stylesheet"
-        href="../styles/tokens.css"
-    />
+    <link rel="stylesheet" href="../styles/tokens.css" />
+    <link rel="stylesheet" href="../styles/components.css" />
 
     <link
         rel="stylesheet"
-        href="../styles/components.css"
+        href="../styles/auth.css?brand=5"
+        onload="
+            document.documentElement.classList.remove('auth-styles-loading');
+            document.documentElement.classList.add('auth-ready');
+        "
     />
 
-    <link
-        rel="stylesheet"
-        href="../styles/auth.css?brand=4"
-    />
+    <noscript>
+        <style>
+            body {
+                opacity: 1;
+            }
+        </style>
+    </noscript>
 
-    <link
-        rel="manifest"
-        href="../manifest.json"
-    />
+    <link rel="manifest" href="../manifest.json" />
 
     <link
         rel="apple-touch-icon"
