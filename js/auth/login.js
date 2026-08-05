@@ -1,12 +1,32 @@
 (function () {
     "use strict";
 
-    const form = document.getElementById("loginForm");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const passwordToggle = document.getElementById("passwordToggle");
-    const loginButton = document.getElementById("loginButton");
-    const message = document.getElementById("loginMessage");
+    /* =========================================================
+       CLUBHUB LOGIN
+       ========================================================= */
+
+    const form =
+        document.getElementById("loginForm");
+
+    const emailInput =
+        document.getElementById("email");
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const passwordToggle =
+        document.getElementById("passwordToggle");
+
+    const loginButton =
+        document.getElementById("loginButton");
+
+    const loginButtonLabel =
+        loginButton?.querySelector(
+            ".auth-submit__label"
+        ) || null;
+
+    const message =
+        document.getElementById("loginMessage");
 
     if (
         !form ||
@@ -16,122 +36,290 @@
         !loginButton ||
         !message
     ) {
-        console.error("Login page elements are missing.");
+        console.error(
+            "ClubHub login page elements are missing."
+        );
+
         return;
     }
 
+    let submissionInProgress =
+        false;
+
+    /* =========================================================
+       MESSAGE
+       ========================================================= */
+
     function showMessage(text, type) {
-        message.textContent = text;
-        message.className = `auth-message auth-message--${type} is-visible`;
+        message.textContent =
+            text;
+
+        message.className =
+            `auth-message auth-message--${type} is-visible`;
+
+        message.hidden =
+            false;
     }
 
     function clearMessage() {
-        message.textContent = "";
-        message.className = "auth-message";
+        message.textContent =
+            "";
+
+        message.className =
+            "auth-message";
+
+        message.hidden =
+            true;
     }
+
+    /* =========================================================
+       LOADING STATE
+       ========================================================= */
 
     function setLoading(isLoading) {
-        loginButton.disabled = isLoading;
-        loginButton.textContent = isLoading ? "Signing in…" : "Sign in";
+        loginButton.disabled =
+            isLoading;
+
+        loginButton.classList.toggle(
+            "is-loading",
+            isLoading
+        );
+
+        emailInput.disabled =
+            isLoading;
+
+        passwordInput.disabled =
+            isLoading;
+
+        passwordToggle.disabled =
+            isLoading;
+
+        if (loginButtonLabel) {
+            loginButtonLabel.textContent =
+                isLoading
+                    ? "Signing in…"
+                    : "Sign In";
+        }
     }
 
+    /* =========================================================
+       VALIDATION
+       ========================================================= */
+
     function validateForm() {
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
+        const email =
+            emailInput.value.trim();
+
+        const password =
+            passwordInput.value;
 
         if (!email) {
-            showMessage("Enter your email address.", "error");
+            showMessage(
+                "Enter your email address.",
+                "error"
+            );
+
             emailInput.focus();
+
             return false;
         }
 
         if (!emailInput.validity.valid) {
-            showMessage("Enter a valid email address.", "error");
+            showMessage(
+                "Enter a valid email address.",
+                "error"
+            );
+
             emailInput.focus();
+
             return false;
         }
 
         if (!password) {
-            showMessage("Enter your password.", "error");
+            showMessage(
+                "Enter your password.",
+                "error"
+            );
+
             passwordInput.focus();
+
             return false;
         }
-    
+
         return true;
     }
-    
-const pageParams = new URLSearchParams(window.location.search);
 
-if (pageParams.get("reason") === "timeout") {
-    showMessage(
-        "You were signed out after 30 minutes of inactivity.",
-        "error"
-    );
-}
-    passwordToggle.addEventListener("click", function () {
-        const passwordIsVisible = passwordInput.type === "text";
+    /* =========================================================
+       REDIRECT
+       ========================================================= */
 
-        passwordInput.type = passwordIsVisible ? "password" : "text";
-        passwordToggle.textContent = passwordIsVisible ? "Show" : "Hide";
-        passwordToggle.setAttribute(
-            "aria-pressed",
-            String(!passwordIsVisible)
+    function getDestination() {
+        const parameters =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        const returnTo =
+            parameters.get("returnTo");
+
+        /*
+         * Only allow a local relative destination.
+         */
+        if (
+            returnTo &&
+            !returnTo.startsWith("http://") &&
+            !returnTo.startsWith("https://") &&
+            !returnTo.startsWith("//")
+        ) {
+            return returnTo;
+        }
+
+        return "index.html";
+    }
+
+    function openDestination() {
+        window.location.replace(
+            getDestination()
         );
-    });
+    }
 
-    form.addEventListener("submit", async function (event) {
-        event.preventDefault();
+    /* =========================================================
+       TIMEOUT MESSAGE
+       ========================================================= */
+
+    const pageParameters =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    if (
+        pageParameters.get("reason") ===
+        "timeout"
+    ) {
+        showMessage(
+            "You were signed out after 30 minutes of inactivity.",
+            "error"
+        );
+    } else {
         clearMessage();
+    }
 
-        if (!validateForm()) {
-            return;
-        }
+    /* =========================================================
+       PASSWORD VISIBILITY
+       ========================================================= */
 
-        if (!window.supabaseClient) {
-            showMessage(
-                "The sign-in service is unavailable. Please refresh and try again.",
-                "error"
+    passwordToggle.addEventListener(
+        "click",
+        function () {
+            const passwordIsVisible =
+                passwordInput.type ===
+                "text";
+
+            passwordInput.type =
+                passwordIsVisible
+                    ? "password"
+                    : "text";
+
+            passwordToggle.setAttribute(
+                "aria-label",
+                passwordIsVisible
+                    ? "Show password"
+                    : "Hide password"
             );
-            return;
+
+            passwordToggle.setAttribute(
+                "aria-pressed",
+                String(
+                    !passwordIsVisible
+                )
+            );
         }
+    );
 
-        setLoading(true);
+    /* =========================================================
+       SUBMISSION
+       ========================================================= */
 
-        try {
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
+    form.addEventListener(
+        "submit",
+        async function (event) {
+            event.preventDefault();
 
-            const { data, error } =
-                await window.supabaseClient.auth.signInWithPassword({
-                    email,
-                    password
-                });
-
-            if (error) {
-                throw error;
+            if (submissionInProgress) {
+                return;
             }
 
-            if (!data.session) {
-                throw new Error("No active session was created.");
+            clearMessage();
+
+            if (!validateForm()) {
+                return;
             }
 
-            showMessage("Signed in successfully. Opening BookIt…", "success");
+            if (!window.supabaseClient) {
+                showMessage(
+                    "The sign-in service is unavailable. Please refresh and try again.",
+                    "error"
+                );
 
-const params = new URLSearchParams(window.location.search);
-const returnTo = params.get("returnTo");
+                return;
+            }
 
-window.setTimeout(function () {
-    window.location.href = returnTo || "index.html";
-}, 600);
-        } catch (error) {
-            console.error("BookIt login error:", error);
+            submissionInProgress =
+                true;
 
-            showMessage(
-                "The email address or password is incorrect.",
-                "error"
-            );
-        } finally {
-            setLoading(false);
+            setLoading(true);
+
+            try {
+                const email =
+                    emailInput.value.trim();
+
+                const password =
+                    passwordInput.value;
+
+                const {
+                    data,
+                    error
+                } =
+                    await window.supabaseClient
+                        .auth
+                        .signInWithPassword({
+                            email,
+                            password
+                        });
+
+                if (error) {
+                    throw error;
+                }
+
+                if (!data.session) {
+                    throw new Error(
+                        "No active session was created."
+                    );
+                }
+
+                /*
+                 * Redirect immediately.
+                 *
+                 * No success message, timeout or intermediate
+                 * loading screen.
+                 */
+                openDestination();
+            } catch (error) {
+                console.error(
+                    "ClubHub login error:",
+                    error
+                );
+
+                submissionInProgress =
+                    false;
+
+                setLoading(false);
+
+                showMessage(
+                    "The email address or password is incorrect.",
+                    "error"
+                );
+            }
         }
-    });
+    );
 })();
