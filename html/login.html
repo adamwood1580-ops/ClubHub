@@ -4,18 +4,22 @@
     <style>
         html {
             min-height: 100%;
-            background: #06382a;
+            background-color: #06382a;
+            color-scheme: dark;
         }
 
         body {
             min-height: 100vh;
             margin: 0;
-            background: #06382a;
-            opacity: 0;
+            background-color: #06382a;
+        }
+
+        html.auth-styles-loading body {
+            visibility: hidden;
         }
 
         html.auth-ready body {
-            opacity: 1;
+            visibility: visible;
         }
     </style>
 
@@ -30,27 +34,37 @@
 
     <title>Sign In | ClubHub</title>
 
-    <link rel="stylesheet" href="../styles/tokens.css" />
-    <link rel="stylesheet" href="../styles/components.css" />
+    <link
+        rel="stylesheet"
+        href="../styles/tokens.css"
+    />
 
-   <link
-    rel="stylesheet"
-    href="../styles/auth.css?brand=6"
-    onload="
-        document.documentElement.classList.remove('auth-styles-loading');
-        document.documentElement.classList.add('auth-ready');
-    "
-/>
+    <link
+        rel="stylesheet"
+        href="../styles/components.css"
+    />
+
+    <link
+        rel="stylesheet"
+        href="../styles/auth.css?brand=7"
+        onload="
+            document.documentElement.classList.remove('auth-styles-loading');
+            document.documentElement.classList.add('auth-ready');
+        "
+    />
 
     <noscript>
         <style>
-            body {
-                opacity: 1;
+            html.auth-styles-loading body {
+                visibility: visible;
             }
         </style>
     </noscript>
 
-    <link rel="manifest" href="../manifest.json" />
+    <link
+        rel="manifest"
+        href="../manifest.json"
+    />
 
     <link
         rel="apple-touch-icon"
@@ -70,7 +84,7 @@
 
            <header class="auth-brand">
     <img
-    src="../assets/branding/clubhub-logo.PNG?brand=3"
+    src="../assets/branding/clubhub-logo.PNG?brand=4"
     alt=""
     class="clubhub-logo"
     aria-hidden="true"
