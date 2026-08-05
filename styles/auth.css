@@ -4,6 +4,8 @@
 
 :root {
     --auth-page-green: #06382a;
+    --auth-page-green-dark: #042d22;
+
     --auth-panel-green: #043b2c;
     --auth-panel-green-deep: #032f24;
 
@@ -43,6 +45,8 @@ body {
 
     margin: 0;
 
+    background: var(--auth-page-green);
+
     font-family:
         Inter,
         Manrope,
@@ -54,6 +58,11 @@ body {
 
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+
+    opacity: 1;
+
+    transition:
+        opacity 180ms ease;
 }
 
 button,
@@ -70,18 +79,12 @@ a {
    INITIAL PAGE REVEAL
    ========================================================= */
 
-.auth-layout {
-    opacity: 1;
-    visibility: visible;
-
-    transition:
-        opacity 240ms ease,
-        visibility 240ms ease;
+html.auth-styles-loading body {
+    opacity: 0;
 }
 
-html.auth-styles-loading .auth-layout {
-    opacity: 0;
-    visibility: hidden;
+html.auth-ready body {
+    opacity: 1;
 }
 
 /* =========================================================
@@ -110,15 +113,15 @@ html.auth-styles-loading .auth-layout {
    ========================================================= */
 
 .auth-page {
+    color: var(--auth-white);
+
     background:
         linear-gradient(
             180deg,
             #07402f 0%,
             var(--auth-page-green) 42%,
-            #042d22 100%
+            var(--auth-page-green-dark) 100%
         );
-
-    color: var(--auth-white);
 }
 
 .auth-layout {
@@ -146,7 +149,7 @@ html.auth-styles-loading .auth-layout {
     width: min(100%, 25rem);
 
     padding:
-        2.25rem
+        2.15rem
         1.35rem
         1.7rem;
 
@@ -199,9 +202,11 @@ html.auth-styles-loading .auth-layout {
 
     height: auto;
 
-    margin: 0 auto 0.85rem;
+    margin: 0 auto 0.8rem;
 
     object-fit: contain;
+
+    background: transparent;
 
     user-select: none;
     pointer-events: none;
@@ -233,7 +238,7 @@ html.auth-styles-loading .auth-layout {
 
     gap: 0.1rem;
 
-    margin: 1.1rem 0 0;
+    margin: 1.05rem 0 0;
 
     font-size: 1rem;
     font-weight: 520;
@@ -256,7 +261,7 @@ html.auth-styles-loading .auth-layout {
     position: relative;
     z-index: 1;
 
-    margin-top: 1.85rem;
+    margin-top: 1.75rem;
 }
 
 .auth-fields {
@@ -611,9 +616,9 @@ html.auth-styles-loading .auth-layout {
 
     .auth-panel {
         padding:
-            1.85rem
+            1.75rem
             1rem
-            1.45rem;
+            1.4rem;
 
         border-radius: 1.35rem;
     }
@@ -627,13 +632,13 @@ html.auth-styles-loading .auth-layout {
     }
 
     .auth-tagline {
-        margin-top: 0.9rem;
+        margin-top: 0.85rem;
 
         font-size: 0.9rem;
     }
 
     .auth-form {
-        margin-top: 1.5rem;
+        margin-top: 1.45rem;
     }
 
     .auth-field,
@@ -664,14 +669,14 @@ html.auth-styles-loading .auth-layout {
     .auth-panel {
         margin: auto 0;
 
-        padding-top: 1.15rem;
-        padding-bottom: 1.05rem;
+        padding-top: 1.1rem;
+        padding-bottom: 1rem;
     }
 
     .clubhub-logo {
         width: 5.5rem;
 
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.45rem;
     }
 
     .clubhub-wordmark {
@@ -679,13 +684,13 @@ html.auth-styles-loading .auth-layout {
     }
 
     .auth-tagline {
-        margin-top: 0.65rem;
+        margin-top: 0.6rem;
 
         font-size: 0.84rem;
     }
 
     .auth-form {
-        margin-top: 1.05rem;
+        margin-top: 1rem;
     }
 
     .auth-field,
@@ -731,7 +736,7 @@ html.auth-styles-loading .auth-layout {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .auth-layout,
+    body,
     .auth-panel,
     .auth-submit__spinner {
         animation: none;
