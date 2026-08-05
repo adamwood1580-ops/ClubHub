@@ -1,44 +1,29 @@
 /* =========================================================
-   CLUBHUB AUTHENTICATION
+   CLUBHUB LOGIN
    ========================================================= */
 
 :root {
-    --auth-green:
-        #184332;
+    --clubhub-green: #073c2d;
+    --clubhub-green-deep: #032c21;
+    --clubhub-green-page: #063728;
 
-    --auth-green-deep:
-        #082f23;
+    --clubhub-gold: #d4af37;
+    --clubhub-gold-light: #e3bd43;
+    --clubhub-gold-dark: #bd9322;
 
-    --auth-green-dark:
-        #05271d;
+    --clubhub-white: #ffffff;
+    --clubhub-charcoal: #14251f;
 
-    --auth-gold:
-        #d4af37;
+    --clubhub-field: #f8f8f8;
+    --clubhub-field-border: #cfcfcf;
+    --clubhub-placeholder: #858585;
 
-    --auth-gold-light:
-        #e2bf4d;
-
-    --auth-white:
-        #ffffff;
-
-    --auth-field-background:
-        #f8f8f8;
-
-    --auth-field-border:
-        rgba(31, 41, 55, 0.18);
-
-    --auth-muted:
-        rgba(255, 255, 255, 0.76);
-
-    --auth-error:
-        #ffb5b5;
-
-    --auth-success:
-        #b8f0c8;
+    --clubhub-error: #ffd0d0;
+    --clubhub-success: #c7f2d3;
 }
 
 /* =========================================================
-   RESET
+   BASE
    ========================================================= */
 
 *,
@@ -49,13 +34,13 @@
 
 html {
     min-height: 100%;
-    background:
-        var(--auth-green-dark);
+    background: var(--clubhub-green-page);
 }
 
 body {
     min-height: 100vh;
     min-height: 100dvh;
+
     margin: 0;
 
     font-family:
@@ -67,8 +52,8 @@ body {
         "Segoe UI",
         sans-serif;
 
-    -webkit-font-smoothing:
-        antialiased;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 button,
@@ -78,8 +63,7 @@ input {
 
 button,
 a {
-    -webkit-tap-highlight-color:
-        transparent;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* =========================================================
@@ -110,73 +94,67 @@ a {
 .auth-page {
     background:
         radial-gradient(
-            circle at 50% 20%,
-            rgba(46, 125, 70, 0.38),
-            transparent 39%
+            circle at 50% 34%,
+            rgba(22, 94, 68, 0.22),
+            transparent 44%
         ),
         linear-gradient(
-            155deg,
-            #0a3a2b 0%,
-            #052a1f 48%,
-            #031e17 100%
+            180deg,
+            #084532 0%,
+            #063c2d 45%,
+            #032b21 100%
         );
 
-    color:
-        var(--auth-white);
+    color: var(--clubhub-white);
 }
 
 .auth-layout {
     display: grid;
     min-height: 100vh;
     min-height: 100dvh;
+
     place-items: center;
 
     padding:
-        max(1.25rem, env(safe-area-inset-top))
+        max(1.5rem, env(safe-area-inset-top))
         max(1rem, env(safe-area-inset-right))
-        max(1.25rem, env(safe-area-inset-bottom))
+        max(1.5rem, env(safe-area-inset-bottom))
         max(1rem, env(safe-area-inset-left));
 }
 
 /* =========================================================
-   GOLD-BORDERED PANEL
+   MAIN PANEL
    ========================================================= */
 
 .auth-panel {
     position: relative;
 
-    width: min(100%, 29rem);
+    width: min(100%, 27.5rem);
 
     padding:
-        clamp(1.65rem, 5vh, 2.5rem)
-        clamp(1.15rem, 5vw, 2rem)
-        clamp(1.35rem, 4vh, 2rem);
+        2.55rem
+        1.25rem
+        1.9rem;
 
-    overflow: hidden;
-
-    border:
-        1.5px solid
-        var(--auth-gold);
-
-    border-radius:
-        1.65rem;
+    border: 1px solid rgba(212, 175, 55, 0.92);
+    border-radius: 1.85rem;
 
     background:
         linear-gradient(
-            155deg,
-            rgba(7, 63, 46, 0.98),
-            rgba(3, 44, 32, 0.99)
+            180deg,
+            rgba(5, 62, 45, 0.97),
+            rgba(3, 48, 35, 0.99)
         );
 
     box-shadow:
-        0 1.5rem 4rem
-        rgba(0, 0, 0, 0.32);
+        0 1.1rem 2.8rem
+        rgba(0, 0, 0, 0.18);
 
-    isolation: isolate;
+    overflow: hidden;
 
     animation:
-        auth-panel-enter
-        480ms
+        clubhub-panel-enter
+        420ms
         cubic-bezier(0.22, 1, 0.36, 1)
         both;
 }
@@ -185,21 +163,16 @@ a {
     content: "";
 
     position: absolute;
-    z-index: -1;
+    inset: 0;
 
-    width: 18rem;
-    height: 18rem;
-
-    top: -10rem;
-    right: -8rem;
-
-    border-radius: 50%;
+    pointer-events: none;
 
     background:
-        rgba(46, 125, 70, 0.18);
-
-    filter:
-        blur(0.2rem);
+        radial-gradient(
+            circle at 50% 23%,
+            rgba(36, 109, 78, 0.13),
+            transparent 38%
+        );
 }
 
 /* =========================================================
@@ -207,6 +180,9 @@ a {
    ========================================================= */
 
 .auth-brand {
+    position: relative;
+    z-index: 1;
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -215,14 +191,10 @@ a {
 }
 
 .clubhub-mark {
-    width:
-        clamp(5.3rem, 21vw, 7rem);
+    width: 8.2rem;
+    height: 6.85rem;
 
-    height:
-        clamp(5.3rem, 21vw, 7rem);
-
-    margin-bottom:
-        0.4rem;
+    margin: 0 0 0.55rem;
 }
 
 .clubhub-mark svg {
@@ -235,70 +207,50 @@ a {
 }
 
 .clubhub-mark__c {
-    fill:
-        var(--auth-white);
+    fill: var(--clubhub-white);
 }
 
 .clubhub-mark__h {
-    fill:
-        var(--auth-gold);
+    fill: var(--clubhub-gold);
 }
 
 .clubhub-wordmark {
-    margin:
-        0;
+    margin: 0;
 
-    font-size:
-        clamp(2.25rem, 10vw, 3.35rem);
+    font-size: clamp(2.65rem, 12vw, 3.5rem);
+    font-weight: 580;
+    line-height: 0.95;
 
-    font-weight:
-        730;
-
-    line-height:
-        1;
-
-    letter-spacing:
-        -0.055em;
+    letter-spacing: -0.055em;
 }
 
 .clubhub-wordmark__club {
-    color:
-        var(--auth-white);
+    color: var(--clubhub-white);
 }
 
 .clubhub-wordmark__hub {
-    color:
-        var(--auth-gold);
+    color: var(--clubhub-gold);
 }
 
 .auth-tagline {
     display: flex;
     flex-direction: column;
 
-    gap:
-        0.08rem;
+    gap: 0.12rem;
 
-    margin:
-        1.05rem 0 0;
+    margin: 1.3rem 0 0;
 
-    font-size:
-        clamp(0.94rem, 4vw, 1.08rem);
-
-    font-weight:
-        520;
-
-    line-height:
-        1.45;
+    font-size: 1.02rem;
+    font-weight: 560;
+    line-height: 1.45;
 }
 
 .auth-tagline span:first-child {
-    color:
-        var(--auth-white);
+    color: var(--clubhub-white);
 }
 
 .auth-tagline span:last-child {
-    color:
-        var(--auth-gold);
+    color: var(--clubhub-gold);
 }
 
 /* =========================================================
@@ -306,43 +258,37 @@ a {
    ========================================================= */
 
 .auth-form {
-    margin-top:
-        clamp(1.55rem, 5vh, 2.25rem);
+    position: relative;
+    z-index: 1;
+
+    margin-top: 2.1rem;
 }
 
 .auth-fields {
+    padding: 0.42rem;
+
     overflow: hidden;
 
-    padding:
-        0.45rem;
+    border-radius: 1.2rem;
 
-    border-radius:
-        1.15rem;
-
-    background:
-        rgba(255, 255, 255, 0.96);
+    background: rgba(255, 255, 255, 0.98);
 
     box-shadow:
-        0 0.8rem 2rem
-        rgba(0, 0, 0, 0.2);
+        0 0.55rem 1.4rem
+        rgba(0, 0, 0, 0.14);
 }
 
 .auth-field {
     position: relative;
 
     display: flex;
-    min-height: 4.65rem;
+    min-height: 4.55rem;
     align-items: center;
 
-    border:
-        1px solid
-        var(--auth-field-border);
+    border: 1px solid var(--clubhub-field-border);
+    border-radius: 0.92rem;
 
-    border-radius:
-        0.85rem;
-
-    background:
-        var(--auth-field-background);
+    background: var(--clubhub-field);
 
     transition:
         border-color 150ms ease,
@@ -351,30 +297,28 @@ a {
 }
 
 .auth-field + .auth-field {
-    margin-top:
-        0.4rem;
+    margin-top: 0.42rem;
 }
 
 .auth-field:focus-within {
-    border-color:
-        var(--auth-gold);
+    border-color: var(--clubhub-gold);
 
-    background:
-        var(--auth-white);
+    background: var(--clubhub-white);
 
     box-shadow:
         0 0 0 3px
-        rgba(212, 175, 55, 0.16);
+        rgba(212, 175, 55, 0.14);
 }
 
 .auth-field__icon {
     display: grid;
-    width: 3.4rem;
-    flex: 0 0 3.4rem;
+
+    width: 3.55rem;
+    flex: 0 0 3.55rem;
+
     place-items: center;
 
-    color:
-        #6c706e;
+    color: #757575;
 }
 
 .auth-field__icon svg,
@@ -394,111 +338,96 @@ a {
     min-width: 0;
 
     padding:
-        1rem 0.8rem 1rem 0;
+        1rem
+        0.75rem
+        1rem
+        0;
 
     border: 0;
     outline: 0;
 
-    background:
-        transparent;
+    background: transparent;
 
-    color:
-        #18211d;
+    color: #1f2925;
 
-    font-size:
-        1.04rem;
+    font-size: 1.05rem;
+    font-weight: 500;
 
-    line-height:
-        1.2;
+    line-height: 1.2;
 }
 
 .auth-field input::placeholder {
-    color:
-        #858987;
-
-    opacity:
-        1;
+    color: var(--clubhub-placeholder);
+    opacity: 1;
 }
 
 .auth-field__toggle {
     display: grid;
-    width: 3.5rem;
-    min-height: 3.5rem;
-    flex: 0 0 3.5rem;
+
+    width: 3.7rem;
+    min-height: 3.7rem;
+    flex: 0 0 3.7rem;
+
     place-items: center;
 
     padding: 0;
 
     border: 0;
 
-    background:
-        transparent;
+    background: transparent;
+    color: #777d79;
 
-    color:
-        #707573;
-
-    cursor:
-        pointer;
+    cursor: pointer;
 }
 
 .auth-field__toggle:focus-visible {
-    outline:
-        2px solid
-        var(--auth-gold);
+    border-radius: 0.7rem;
 
-    outline-offset:
-        -0.3rem;
-
-    border-radius:
-        0.75rem;
+    outline: 2px solid var(--clubhub-gold);
+    outline-offset: -0.25rem;
 }
 
 /* =========================================================
-   SIGN-IN BUTTON
+   BUTTON
    ========================================================= */
 
 .auth-submit {
     position: relative;
 
     display: flex;
+
     width: 100%;
-    min-height: 4.6rem;
+    min-height: 4.65rem;
+
     align-items: center;
     justify-content: center;
 
-    margin-top:
-        0.45rem;
+    margin-top: 0.45rem;
+    padding: 0.95rem 1rem;
 
-    padding:
-        0.9rem 1rem;
+    border:
+        1px solid
+        var(--clubhub-gold-dark);
 
-    border: 0;
-
-    border-radius:
-        0.85rem;
+    border-radius: 0.95rem;
 
     background:
         linear-gradient(
             135deg,
-            var(--auth-gold-light),
-            var(--auth-gold)
+            var(--clubhub-gold-light),
+            var(--clubhub-gold)
         );
 
-    color:
-        #11291f;
+    color: var(--clubhub-charcoal);
 
-    font-size:
-        1.1rem;
-
-    font-weight:
-        720;
-
-    cursor:
-        pointer;
+    font-size: 1.13rem;
+    font-weight: 730;
 
     box-shadow:
         inset 0 1px 0
-        rgba(255, 255, 255, 0.26);
+        rgba(255, 255, 255, 0.25);
+
+    cursor: pointer;
 
     transition:
         transform 120ms ease,
@@ -506,14 +435,12 @@ a {
         opacity 120ms ease;
 }
 
-.auth-submit:active {
-    transform:
-        scale(0.985);
+.auth-submit:hover {
+    filter: brightness(1.035);
 }
 
-.auth-submit:hover {
-    filter:
-        brightness(1.04);
+.auth-submit:active {
+    transform: scale(0.986);
 }
 
 .auth-submit:focus-visible {
@@ -521,46 +448,39 @@ a {
         3px solid
         rgba(255, 255, 255, 0.85);
 
-    outline-offset:
-        0.2rem;
+    outline-offset: 0.2rem;
 }
 
 .auth-submit:disabled {
-    cursor:
-        wait;
-
-    opacity:
-        0.78;
+    opacity: 0.75;
+    cursor: wait;
 }
 
 .auth-submit__spinner {
     display: none;
 
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 1.15rem;
+    height: 1.15rem;
 
-    margin-left:
-        0.65rem;
+    margin-left: 0.65rem;
 
     border:
         2px solid
-        rgba(17, 41, 31, 0.28);
+        rgba(20, 37, 31, 0.25);
 
     border-top-color:
-        #11291f;
+        var(--clubhub-charcoal);
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     animation:
-        auth-spin
+        clubhub-spin
         700ms
         linear
         infinite;
 }
 
-.auth-submit.is-loading
-.auth-submit__spinner {
+.auth-submit.is-loading .auth-submit__spinner {
     display: block;
 }
 
@@ -569,141 +489,202 @@ a {
    ========================================================= */
 
 .auth-message {
-    margin:
-        0.85rem 0 0;
+    margin: 0.85rem 0 0;
 
-    padding:
-        0.7rem 0.85rem;
+    padding: 0.7rem 0.8rem;
 
-    border-radius:
-        0.7rem;
+    border-radius: 0.7rem;
 
-    background:
-        rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.09);
 
-    color:
-        var(--auth-white);
+    color: var(--clubhub-white);
 
-    font-size:
-        0.86rem;
+    font-size: 0.86rem;
+    font-weight: 560;
+    line-height: 1.4;
 
-    font-weight:
-        580;
-
-    line-height:
-        1.4;
-
-    text-align:
-        center;
+    text-align: center;
 }
 
 .auth-message[hidden] {
-    display:
-        none;
+    display: none;
 }
 
 .auth-message.is-error,
 .auth-message[data-type="error"] {
-    background:
-        rgba(180, 40, 40, 0.2);
-
-    color:
-        var(--auth-error);
+    background: rgba(175, 38, 38, 0.2);
+    color: var(--clubhub-error);
 }
 
 .auth-message.is-success,
 .auth-message[data-type="success"] {
-    background:
-        rgba(39, 174, 96, 0.18);
-
-    color:
-        var(--auth-success);
+    background: rgba(39, 174, 96, 0.17);
+    color: var(--clubhub-success);
 }
 
 /* =========================================================
-   FOOTER
+   FOOTER LINKS
    ========================================================= */
 
 .auth-footer {
+    position: relative;
+    z-index: 1;
+
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    margin-top:
-        1.35rem;
+    margin-top: 1.45rem;
 
-    text-align:
-        center;
+    text-align: center;
 }
 
 .auth-link {
-    color:
-        var(--auth-white);
+    color: var(--clubhub-white);
 
-    font-size:
-        0.96rem;
+    font-size: 1rem;
+    font-weight: 520;
 
-    font-weight:
-        620;
-
-    text-decoration:
-        none;
+    text-decoration: none;
 }
 
 .auth-link:hover,
 .auth-link:focus-visible {
-    color:
-        var(--auth-gold);
+    color: var(--clubhub-gold);
 }
 
 .auth-club-contact {
-    margin:
-        1.2rem 0 0;
+    margin: 1.25rem 0 0;
 
-    color:
-        var(--auth-white);
+    color: var(--clubhub-white);
 
-    font-size:
-        0.9rem;
-
-    line-height:
-        1.4;
+    font-size: 0.98rem;
+    font-weight: 500;
+    line-height: 1.4;
 }
 
 .auth-club-contact a {
-    color:
-        var(--auth-gold);
+    color: var(--clubhub-gold);
 
-    font-weight:
-        700;
+    font-weight: 650;
 
-    text-decoration:
-        none;
+    text-decoration: none;
 }
 
 .auth-link:focus-visible,
 .auth-club-contact a:focus-visible {
-    outline:
-        2px solid
-        var(--auth-gold);
+    border-radius: 0.2rem;
 
-    outline-offset:
-        0.25rem;
+    outline: 2px solid var(--clubhub-gold);
+    outline-offset: 0.25rem;
+}
 
-    border-radius:
-        0.15rem;
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 390px) {
+    .auth-layout {
+        padding-right: 0.8rem;
+        padding-left: 0.8rem;
+    }
+
+    .auth-panel {
+        padding:
+            2.15rem
+            0.95rem
+            1.55rem;
+
+        border-radius: 1.55rem;
+    }
+
+    .clubhub-mark {
+        width: 7.15rem;
+        height: 5.95rem;
+    }
+
+    .clubhub-wordmark {
+        font-size: 2.55rem;
+    }
+
+    .auth-tagline {
+        margin-top: 1rem;
+        font-size: 0.92rem;
+    }
+
+    .auth-form {
+        margin-top: 1.65rem;
+    }
+
+    .auth-field,
+    .auth-submit {
+        min-height: 4.1rem;
+    }
+
+    .auth-footer {
+        margin-top: 1.15rem;
+    }
+
+    .auth-club-contact {
+        margin-top: 0.95rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-height: 720px) {
+    .auth-layout {
+        place-items: start center;
+    }
+
+    .auth-panel {
+        margin: auto 0;
+
+        padding-top: 1.3rem;
+        padding-bottom: 1.15rem;
+    }
+
+    .clubhub-mark {
+        width: 6rem;
+        height: 5rem;
+    }
+
+    .clubhub-wordmark {
+        font-size: 2.25rem;
+    }
+
+    .auth-tagline {
+        margin-top: 0.75rem;
+        font-size: 0.86rem;
+    }
+
+    .auth-form {
+        margin-top: 1.2rem;
+    }
+
+    .auth-field,
+    .auth-submit {
+        min-height: 3.65rem;
+    }
+
+    .auth-footer {
+        margin-top: 0.95rem;
+    }
+
+    .auth-club-contact {
+        margin-top: 0.75rem;
+    }
 }
 
 /* =========================================================
    ANIMATION
    ========================================================= */
 
-@keyframes auth-panel-enter {
+@keyframes clubhub-panel-enter {
     from {
         opacity: 0;
 
         transform:
-            translateY(0.75rem)
+            translateY(0.7rem)
             scale(0.99);
     }
 
@@ -716,102 +697,20 @@ a {
     }
 }
 
-@keyframes auth-spin {
+@keyframes clubhub-spin {
     to {
-        transform:
-            rotate(360deg);
+        transform: rotate(360deg);
     }
 }
-
-/* =========================================================
-   SMALLER PHONE HEIGHTS
-   ========================================================= */
-
-@media (max-height: 720px) {
-    .auth-layout {
-        place-items:
-            start center;
-    }
-
-    .auth-panel {
-        margin:
-            auto 0;
-
-        padding-top:
-            1.25rem;
-
-        padding-bottom:
-            1.15rem;
-    }
-
-    .clubhub-mark {
-        width:
-            4.75rem;
-
-        height:
-            4.75rem;
-    }
-
-    .clubhub-wordmark {
-        font-size:
-            2.15rem;
-    }
-
-    .auth-tagline {
-        margin-top:
-            0.65rem;
-
-        font-size:
-            0.88rem;
-    }
-
-    .auth-form {
-        margin-top:
-            1.15rem;
-    }
-
-    .auth-field,
-    .auth-submit {
-        min-height:
-            3.75rem;
-    }
-
-    .auth-footer {
-        margin-top:
-            1rem;
-    }
-
-    .auth-club-contact {
-        margin-top:
-            0.8rem;
-    }
-}
-
-/* =========================================================
-   WIDER SCREENS
-   ========================================================= */
-
-@media (min-width: 700px) {
-    .auth-panel {
-        padding:
-            2.5rem 2.25rem 2rem;
-    }
-}
-
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
     .auth-panel,
     .auth-submit__spinner {
-        animation:
-            none;
+        animation: none;
     }
 
     .auth-field,
     .auth-submit {
-        transition:
-            none;
+        transition: none;
     }
 }
