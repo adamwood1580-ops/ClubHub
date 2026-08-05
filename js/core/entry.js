@@ -112,27 +112,21 @@
     }
 
     async function redirectTo(url) {
-        if (redirectStarted) {
-            return;
-        }
-
-        redirectStarted =
-            true;
-
-        await waitForMinimumDisplay();
-
-        if (entryElement) {
-            entryElement.classList.add(
-                "is-leaving"
-            );
-        }
-
-        await wait(
-            EXIT_ANIMATION_MS
-        );
-
-        window.location.replace(url);
+    if (redirectStarted) {
+        return;
     }
+
+    redirectStarted = true;
+
+    await waitForMinimumDisplay();
+
+    /*
+     * Keep the splash fully visible until the browser replaces
+     * this document. Fading it first exposes an unstyled or
+     * partially loaded destination page underneath.
+     */
+    
+}
 
     async function initialiseEntry() {
         try {
