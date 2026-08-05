@@ -59,11 +59,6 @@ body {
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
 
-    opacity: 1;
-
-    transition:
-        opacity 180ms ease;
-}
 
 button,
 input {
@@ -75,17 +70,6 @@ a {
     -webkit-tap-highlight-color: transparent;
 }
 
-/* =========================================================
-   INITIAL PAGE REVEAL
-   ========================================================= */
-
-html.auth-styles-loading body {
-    opacity: 0;
-}
-
-html.auth-ready body {
-    opacity: 1;
-}
 
 /* =========================================================
    ACCESSIBILITY
@@ -197,8 +181,8 @@ html.auth-ready body {
 .clubhub-logo {
     display: block;
 
-    width: 7.8rem;
-    max-width: 42%;
+    width: 9.25rem;
+    max-width: 50%;
 
     height: auto;
 
@@ -609,6 +593,11 @@ html.auth-ready body {
    ========================================================= */
 
 @media (max-width: 390px) {
+    .clubhub-logo {
+        width: 8.25rem;
+        max-width: 48%;
+    }
+}
     .auth-layout {
         padding-right: 0.8rem;
         padding-left: 0.8rem;
@@ -662,6 +651,11 @@ html.auth-ready body {
    ========================================================= */
 
 @media (max-height: 720px) {
+    .clubhub-logo {
+        width: 6.75rem;
+        margin-bottom: 0.45rem;
+    }
+}
     .auth-layout {
         place-items: start center;
     }
