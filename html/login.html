@@ -2,23 +2,24 @@
 <html lang="en" class="auth-styles-loading">
 <head>
     <style>
-        html {
+        html,
+        body {
             min-height: 100%;
-            background-color: #06382a;
-            color-scheme: dark;
+            margin: 0;
+            background: #06382a;
         }
 
         body {
-            min-height: 100vh;
-            margin: 0;
-            background-color: #06382a;
+            color: #ffffff;
         }
 
-        html.auth-styles-loading body {
+        html.auth-styles-loading .auth-panel {
+            opacity: 0;
             visibility: hidden;
         }
 
-        html.auth-ready body {
+        html.auth-ready .auth-panel {
+            opacity: 1;
             visibility: visible;
         }
     </style>
@@ -30,7 +31,10 @@
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
 
-    <meta name="theme-color" content="#06382a" />
+    <meta
+        name="theme-color"
+        content="#06382a"
+    />
 
     <title>Sign In | ClubHub</title>
 
@@ -46,7 +50,7 @@
 
     <link
         rel="stylesheet"
-        href="../styles/auth.css?brand=7"
+        href="../styles/auth.css?brand=8"
         onload="
             document.documentElement.classList.remove('auth-styles-loading');
             document.documentElement.classList.add('auth-ready');
@@ -55,7 +59,8 @@
 
     <noscript>
         <style>
-            html.auth-styles-loading body {
+            html.auth-styles-loading .auth-panel {
+                opacity: 1;
                 visibility: visible;
             }
         </style>
@@ -82,23 +87,33 @@
                  CLUBHUB BRAND
                  ============================================= -->
 
-           <header class="auth-brand">
-    <img
-    src="../assets/branding/clubhub-logo.PNG?brand=4"
-    alt=""
-    class="clubhub-logo"
-    aria-hidden="true"
-/>
+            <header class="auth-brand">
+                <img
+                    src="../assets/branding/clubhub-logo.PNG?brand=5"
+                    alt=""
+                    class="clubhub-logo"
+                    aria-hidden="true"
+                />
 
-    <h1 class="clubhub-wordmark">
-        <span class="clubhub-wordmark__club">Club</span><span class="clubhub-wordmark__hub">Hub</span>
-    </h1>
+                <h1
+                    id="clubhubWordmark"
+                    class="clubhub-wordmark"
+                >
+                    <span class="clubhub-wordmark__club">
+                        Club
+                    </span><span class="clubhub-wordmark__hub">Hub</span>
+                </h1>
 
-    <p class="auth-tagline">
-        <span>Designed for the club.</span>
-        <span>Built for the golfer.</span>
-    </p>
-</header>
+                <p class="auth-tagline">
+                    <span>
+                        Designed for the club.
+                    </span>
+
+                    <span>
+                        Built for the golfer.
+                    </span>
+                </p>
+            </header>
 
             <!-- =============================================
                  LOGIN FORM
@@ -266,8 +281,11 @@
     </main>
 
     <script src="../js/core/config.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script src="../js/core/supabase.js"></script>
+
     <script src="../js/auth/login.js"></script>
 </body>
 </html>
