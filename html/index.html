@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" class="auth-protected">
 <head>
+    <style>
+    html,
+    body {
+        min-height: 100%;
+        margin: 0;
+        background: #06382a;
+    }
+
+    html.auth-protected:not(.auth-ready) body {
+        visibility: hidden;
+    }
+
+    html.auth-protected.auth-ready,
+    html.auth-protected.auth-ready body {
+        background: #f4f6f3;
+    }
+</style>
+    
     <meta charset="UTF-8" />
 
     <meta
