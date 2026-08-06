@@ -8,16 +8,8 @@
     const MINIMUM_SPLASH_MS =
         650;
 
-    const EXIT_ANIMATION_MS =
-        180;
-
     const startedAt =
         Date.now();
-
-    const entryElement =
-        document.getElementById(
-            "clubhubEntry"
-        );
 
     const statusElement =
         document.getElementById(
@@ -121,11 +113,10 @@
     await waitForMinimumDisplay();
 
     /*
-     * Keep the splash fully visible until the browser replaces
-     * this document. Fading it first exposes an unstyled or
-     * partially loaded destination page underneath.
+     * Keep the splash visible until the destination page
+     * replaces this document.
      */
-    
+    window.location.replace(url);
 }
 
     async function initialiseEntry() {
