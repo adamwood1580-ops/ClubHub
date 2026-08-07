@@ -1,6 +1,28 @@
 <!DOCTYPE html>
 <html lang="en" class="auth-protected">
 <head>
+    <style>
+        html.auth-protected {
+            min-height: 100%;
+            background: #06382a !important;
+        }
+
+        html.auth-protected body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        html.auth-protected:not(.auth-ready) body {
+            visibility: hidden;
+            background: #06382a !important;
+        }
+
+        html.auth-protected.auth-ready,
+        html.auth-protected.auth-ready body {
+            background: #f4f6f3 !important;
+        }
+    </style>
+
     <meta charset="UTF-8" />
 
     <meta
@@ -8,27 +30,28 @@
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
 
-    <meta name="theme-color" content="#173f2b" />
+    <meta
+        name="theme-color"
+        content="#06382a"
+    />
 
-    <title>Book a Round | BookIt</title>
+    <title>Book a Round | ClubHub</title>
 
     <link rel="stylesheet" href="../styles/tokens.css" />
     <link rel="stylesheet" href="../styles/app-shell.css" />
     <link rel="stylesheet" href="../styles/components.css" />
     <link rel="stylesheet" href="../styles/booking.css" />
-    <link rel="stylesheet" href="../styles/clubhub-splash.css?brand=1" />
 
     <link rel="manifest" href="../json/manifest.json" />
-    <link rel="apple-touch-icon" href="../assets/Icon.PNG" />
+    <link
+        rel="apple-touch-icon"
+        href="../assets/Icon.PNG"
+    />
 
-    <!--
-        boot.js loads the Supabase library, configuration,
-        Supabase client and profile service.
-    -->
     <script
-    src="../js/core/protected-loader.js?loader=3"
-    defer
-></script>
+        src="../js/core/protected-loader.js?loader=7"
+        defer
+    ></script>
 </head>
 
 <body
@@ -39,7 +62,13 @@
     <div class="app-shell">
         <header data-app-header></header>
 
-        <main class="app-main app-main--narrow booking-page">
+        <main
+            class="app-main app-main--narrow booking-page"
+        >
+            <!-- =================================================
+                 PAGE HEADING
+                 ================================================= -->
+
             <section class="booking-heading">
                 <p
                     id="bookingClubName"
@@ -56,6 +85,10 @@
                     Choose an available time or join an existing group.
                 </p>
             </section>
+
+            <!-- =================================================
+                 DATE SELECTOR
+                 ================================================= -->
 
             <section
                 class="date-panel"
@@ -112,10 +145,6 @@
                     </svg>
                 </button>
 
-                <!--
-                    Hidden native date input. The page controller can
-                    connect this to the centre date button later.
-                -->
                 <input
                     id="bookingDatePicker"
                     class="visually-hidden"
@@ -125,25 +154,48 @@
                 />
             </section>
 
+            <!-- =================================================
+                 AVAILABILITY SUMMARY
+                 ================================================= -->
+
             <section
                 class="availability-summary"
                 aria-label="Tee-time availability summary"
             >
                 <div class="availability-summary__item">
-                    <strong id="availableCount">0</strong>
-                    <span>Available</span>
+                    <strong id="availableCount">
+                        0
+                    </strong>
+
+                    <span>
+                        Available
+                    </span>
                 </div>
 
                 <div class="availability-summary__item">
-                    <strong id="joinableCount">0</strong>
-                    <span>Joinable</span>
+                    <strong id="joinableCount">
+                        0
+                    </strong>
+
+                    <span>
+                        Joinable
+                    </span>
                 </div>
 
                 <div class="availability-summary__item">
-                    <strong id="bookedCount">0</strong>
-                    <span>Booked</span>
+                    <strong id="bookedCount">
+                        0
+                    </strong>
+
+                    <span>
+                        Booked
+                    </span>
                 </div>
             </section>
+
+            <!-- =================================================
+                 FILTERS
+                 ================================================= -->
 
             <section class="booking-controls">
                 <div
@@ -179,6 +231,10 @@
                 </div>
             </section>
 
+            <!-- =================================================
+                 TEE SHEET
+                 ================================================= -->
+
             <section class="tee-sheet-section">
                 <div class="section__header">
                     <h2 class="section__title">
@@ -207,10 +263,10 @@
         <nav data-bottom-nav></nav>
     </div>
 
-    <!--
-        Retained for the next stage when real Book and Join
-        database functions are connected.
-    -->
+    <!-- =====================================================
+         BOOKING MODAL
+         ===================================================== -->
+
     <div
         id="bookingModal"
         class="modal hidden"
@@ -329,7 +385,9 @@
                         />
 
                         <span class="booking-option__content">
-                            <strong>Joinable</strong>
+                            <strong>
+                                Joinable
+                            </strong>
 
                             <small>
                                 Other golfers can join the remaining spaces.
@@ -345,7 +403,9 @@
                         />
 
                         <span class="booking-option__content">
-                            <strong>Private</strong>
+                            <strong>
+                                Private
+                            </strong>
 
                             <small>
                                 Keep the remaining spaces unavailable.
@@ -369,6 +429,5 @@
             </div>
         </div>
     </div>
-
-   </body>
+</body>
 </html>
