@@ -163,7 +163,7 @@
             );
 
             /*
-             * An auth-service problem should never trap the
+             ** An auth-service problem should never trap the
              * user on the splash. The login page can show the
              * relevant error if authentication remains down.
              */
