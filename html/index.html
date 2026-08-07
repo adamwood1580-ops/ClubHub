@@ -2,23 +2,30 @@
 <html lang="en" class="auth-protected">
 <head>
     <style>
-    html,
-    body {
-        min-height: 100%;
-        margin: 0;
-        background: #06382a;
-    }
- 
-    html.auth-protected:not(.auth-ready) body {
-        visibility: hidden;
-    }
+        html.auth-protected {
+            min-height: 100%;
+            background: #06382a !important;
+        }
 
-    html.auth-protected.auth-ready,
-    html.auth-protected.auth-ready body {
-        background: #f4f6f3;
-    }
-</style>
-    
+        html.auth-protected body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        html.auth-protected:not(.auth-ready) body {
+            visibility: hidden;
+            background: #06382a !important;
+        }
+
+        html.auth-protected.auth-ready {
+            background: #f4f6f3 !important;
+        }
+
+        html.auth-protected.auth-ready body {
+            background: #f4f6f3 !important;
+        }
+    </style>
+
     <meta charset="UTF-8" />
 
     <meta
@@ -26,28 +33,48 @@
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
 
-    <meta name="theme-color" content="#184332" />
+    <meta
+        name="theme-color"
+        content="#06382a"
+    />
 
     <title>ClubHub | Bells Hotel & Country Club</title>
 
-    <link rel="stylesheet" href="../styles/tokens.css" />
-    <link rel="stylesheet" href="../styles/app-shell.css" />
-    <link rel="stylesheet" href="../styles/components.css" />
-    <link rel="stylesheet" href="../styles/member-home.css" />
+    <link
+        rel="stylesheet"
+        href="../styles/tokens.css"
+    />
 
-    <link rel="manifest" href="../manifest.json" />
+    <link
+        rel="stylesheet"
+        href="../styles/app-shell.css"
+    />
+
+    <link
+        rel="stylesheet"
+        href="../styles/components.css"
+    />
+
+    <link
+        rel="stylesheet"
+        href="../styles/member-home.css"
+    />
+
+    <link
+        rel="manifest"
+        href="../manifest.json"
+    />
+
     <link
         rel="apple-touch-icon"
         href="../assets/Icon.PNG"
     />
 
     <script
-        src="../js/core/protected-loader.js?loader=6"
+        src="../js/core/protected-loader.js?loader=7"
         defer
     ></script>
 </head>
-
-**
 
 <body
     data-page="home"
@@ -216,79 +243,89 @@
                 class="home-summary-grid section"
                 aria-label="Club information"
             >
+                <!-- WEATHER -->
+
                 <article
-    id="weatherCard"
-    class="card summary-card weather-card"
-    aria-live="polite"
->
-    <div class="summary-card__topline">
-        <span
-            id="weatherStatusDot"
-            class="summary-card__dot"
-        ></span>
+                    id="weatherCard"
+                    class="card summary-card weather-card"
+                    aria-live="polite"
+                >
+                    <div class="summary-card__topline">
+                        <span
+                            id="weatherStatusDot"
+                            class="summary-card__dot"
+                        ></span>
 
-        <span id="weatherTitle">
-            Bells today
-        </span>
-    </div>
+                        <span id="weatherTitle">
+                            Bells today
+                        </span>
+                    </div>
 
-    <div class="weather-card__main">
-        <div
-            id="weatherIcon"
-            class="weather-card__icon"
-            aria-hidden="true"
-        >
-            <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="4" />
-                <path
-                    d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"
-                />
-            </svg>
-        </div>
+                    <div class="weather-card__main">
+                        <div
+                            id="weatherIcon"
+                            class="weather-card__icon"
+                            aria-hidden="true"
+                        >
+                            <svg viewBox="0 0 24 24">
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="4"
+                                />
 
-        <div>
-            <p
-                id="weatherTemperature"
-                class="summary-card__value"
-            >
-                --°C
-            </p>
+                                <path
+                                    d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"
+                                />
+                            </svg>
+                        </div>
 
-            <p
-                id="weatherDescription"
-                class="weather-card__description"
-            >
-                Loading weather...
-            </p>
-        </div>
-    </div>
+                        <div>
+                            <p
+                                id="weatherTemperature"
+                                class="summary-card__value"
+                            >
+                                --°C
+                            </p>
 
-    <p
-        id="weatherWind"
-        class="summary-card__meta"
-    >
-        Wind -- mph
-    </p>
+                            <p
+                                id="weatherDescription"
+                                class="weather-card__description"
+                            >
+                                Loading weather...
+                            </p>
+                        </div>
+                    </div>
 
-    <p
-        id="weatherAdvisory"
-        class="weather-card__advisory"
-        hidden
-    ></p>
+                    <p
+                        id="weatherWind"
+                        class="summary-card__meta"
+                    >
+                        Wind -- mph
+                    </p>
 
-    <div class="weather-card__footer">
-        <span>
-            Course
-            <strong id="weatherCourseStatus">
-                Open
-            </strong>
-        </span>
+                    <p
+                        id="weatherAdvisory"
+                        class="weather-card__advisory"
+                        hidden
+                    ></p>
 
-        <span id="weatherUpdated">
-            Updating...
-        </span>
-    </div>
-</article>
+                    <div class="weather-card__footer">
+                        <span>
+                            Course
+
+                            <strong id="weatherCourseStatus">
+                                Open
+                            </strong>
+                        </span>
+
+                        <span id="weatherUpdated">
+                            Updating...
+                        </span>
+                    </div>
+                </article>
+
+                <!-- COMPETITION -->
 
                 <a
                     class="card card--interactive summary-card"
