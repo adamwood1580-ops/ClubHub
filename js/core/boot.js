@@ -17,16 +17,32 @@
     const LAST_ACTIVITY_KEY =
         "bookit_last_activity";
 
+    const STARTUP_PROFILE_ATTEMPTS =
+        3;
+
+    const STARTUP_PROFILE_RETRY_MS =
+        350;
+
     window.BookIt =
         window.BookIt || {};
 
-    let isInitialising = false;
-    let isReady = false;
-    let isRedirecting = false;
-    let isSigningOut = false;
+    let isInitialising =
+        false;
 
-    let inactivityInterval = null;
-    let lastRecordedActivity = 0;
+    let isReady =
+        false;
+
+    let isRedirecting =
+        false;
+
+    let isSigningOut =
+        false;
+
+    let inactivityInterval =
+        null;
+
+    let lastRecordedActivity =
+        0;
 
     let resolveReady;
     let rejectReady;
@@ -43,9 +59,68 @@
             resolve,
             reject
         ) {
-            resolveReady = resolve;
-            rejectReady = reject;
+            resolveReady =
+                resolve;
+
+            rejectReady =
+                reject;
         });
+
+    /* =========================================================
+       GENERAL HELPERS
+       ========================================================= */
+
+    function wait(milliseconds) {
+        return new Promise(function (
+            resolve
+        ) {
+            window.setTimeout(
+                resolve,
+                milliseconds
+            );
+        });
+    }
+
+    function getReadableError(error) {
+        if (!error) {
+            return "An unknown error occurred.";
+        }
+
+        if (
+            typeof error.message ===
+            "string" &&
+            error.message.trim()
+        ) {
+            return error.message;
+        }
+
+        if (
+            typeof error.details ===
+            "string" &&
+            error.details.trim()
+        ) {
+            return error.details;
+        }
+
+        return String(error);
+    }
+
+    function isMissingSessionError(error) {
+        const name =
+            error?.name || "";
+
+        const message =
+            error?.message || "";
+
+        return (
+            name ===
+                "AuthSessionMissingError" ||
+            message ===
+                "Auth session missing!" ||
+            message ===
+                "No authenticated user was found."
+        );
+    }
 
     /* =========================================================
        VERSIONED DEPENDENCIES
@@ -53,19 +128,25 @@
 
     function getAssetVersion() {
         const version =
-            typeof window.BOOKIT_ASSET_VERSION ===
+            typeof window
+                .BOOKIT_ASSET_VERSION ===
                 "string"
-                ? window.BOOKIT_ASSET_VERSION.trim()
+                ? window
+                    .BOOKIT_ASSET_VERSION
+                    .trim()
                 : "";
 
         return version || null;
     }
 
-    function buildVersionedUrl(source) {
-        const url = new URL(
-            source,
-            document.baseURI
-        );
+    function buildVersionedUrl(
+        source
+    ) {
+        const url =
+            new URL(
+                source,
+                document.baseURI
+            );
 
         const version =
             getAssetVersion();
@@ -99,22 +180,36 @@
        DEPENDENCY LOADING
        ========================================================= */
 
-    function getCanonicalScriptUrl(source) {
+    function getCanonicalScriptUrl(
+        source
+    ) {
         return new URL(
             source,
             document.baseURI
         ).href;
     }
 
-    function findExistingScript(source) {
+    function findExistingScript(
+        source
+    ) {
         const targetUrl =
-            getCanonicalScriptUrl(source);
+            getCanonicalScriptUrl(
+                source
+            );
 
-        return Array.from(
-            document.scripts
-        ).find(function (script) {
-            return script.src === targetUrl;
-        }) || null;
+        return (
+            Array.from(
+                document.scripts
+            ).find(function (
+                script
+            ) {
+                return (
+                    script.src ===
+                    targetUrl
+                );
+            }) ||
+            null
+        );
     }
 
     function loadScript(
@@ -135,7 +230,9 @@
             }
 
             const existingScript =
-                findExistingScript(source);
+                findExistingScript(
+                    source
+                );
 
             if (existingScript) {
                 const handleExistingLoad =
@@ -157,7 +254,8 @@
                     };
 
                 if (
-                    existingScript.dataset
+                    existingScript
+                        .dataset
                         .bookitLoaded ===
                     "true"
                 ) {
@@ -165,10 +263,6 @@
                     return;
                 }
 
-                /*
-                 * If an existing script has already completed,
-                 * the ready check is the only reliable signal.
-                 */
                 if (
                     typeof readyCheck ===
                         "function" &&
@@ -178,27 +272,29 @@
                     return;
                 }
 
-                existingScript.addEventListener(
-                    "load",
-                    handleExistingLoad,
-                    {
-                        once: true
-                    }
-                );
+                existingScript
+                    .addEventListener(
+                        "load",
+                        handleExistingLoad,
+                        {
+                            once: true
+                        }
+                    );
 
-                existingScript.addEventListener(
-                    "error",
-                    function () {
-                        reject(
-                            new Error(
-                                `Could not load script: ${source}`
-                            )
-                        );
-                    },
-                    {
-                        once: true
-                    }
-                );
+                existingScript
+                    .addEventListener(
+                        "error",
+                        function () {
+                            reject(
+                                new Error(
+                                    `Could not load script: ${source}`
+                                )
+                            );
+                        },
+                        {
+                            once: true
+                        }
+                    );
 
                 return;
             }
@@ -208,16 +304,21 @@
                     "script"
                 );
 
-            script.src = source;
-            script.async = false;
+            script.src =
+                source;
 
-            script.dataset.bookitDependency =
+            script.async =
+                false;
+
+            script.dataset
+                .bookitDependency =
                 "true";
 
             script.addEventListener(
                 "load",
                 function () {
-                    script.dataset.bookitLoaded =
+                    script.dataset
+                        .bookitLoaded =
                         "true";
 
                     if (
@@ -255,9 +356,10 @@
                 }
             );
 
-            document.head.appendChild(
-                script
-            );
+            document.head
+                .appendChild(
+                    script
+                );
         });
     }
 
@@ -279,7 +381,8 @@
             SUPABASE_SCRIPT,
             function () {
                 return Boolean(
-                    window.supabaseClient
+                    window
+                        .supabaseClient
                 );
             }
         );
@@ -288,8 +391,11 @@
             PROFILE_SCRIPT,
             function () {
                 return Boolean(
-                    window.BookIt.profile &&
-                    typeof window.BookIt.profile
+                    window.BookIt
+                        .profile &&
+                    typeof window
+                        .BookIt
+                        .profile
                         .load ===
                         "function"
                 );
@@ -302,18 +408,23 @@
        ========================================================= */
 
     function getSupabaseClient() {
-        if (!window.supabaseClient) {
+        if (
+            !window
+                .supabaseClient
+        ) {
             throw new Error(
                 "Supabase client is unavailable."
             );
         }
 
-        return window.supabaseClient;
+        return window
+            .supabaseClient;
     }
 
     function getCurrentPage() {
         return (
-            window.location.pathname
+            window.location
+                .pathname
                 .split("/")
                 .pop() ||
             "index.html"
@@ -334,7 +445,8 @@
             return;
         }
 
-        isRedirecting = true;
+        isRedirecting =
+            true;
 
         const parameters =
             new URLSearchParams();
@@ -351,9 +463,10 @@
             );
         }
 
-        window.location.replace(
-            `${LOGIN_PAGE}?${parameters.toString()}`
-        );
+        window.location
+            .replace(
+                `${LOGIN_PAGE}?${parameters.toString()}`
+            );
     }
 
     async function getAuthenticatedUser() {
@@ -363,27 +476,35 @@
         const {
             data: sessionData,
             error: sessionError
-        } = await client.auth.getSession();
+        } =
+            await client
+                .auth
+                .getSession();
 
         if (sessionError) {
             throw sessionError;
         }
 
-        if (!sessionData.session) {
+        if (
+            !sessionData
+                ?.session
+        ) {
             return null;
         }
 
         const {
             data: userData,
             error: userError
-        } = await client.auth.getUser();
+        } =
+            await client
+                .auth
+                .getUser();
 
         if (userError) {
             if (
-                userError.name ===
-                    "AuthSessionMissingError" ||
-                userError.message ===
-                    "Auth session missing!"
+                isMissingSessionError(
+                    userError
+                )
             ) {
                 return null;
             }
@@ -391,7 +512,103 @@
             throw userError;
         }
 
-        return userData.user || null;
+        return (
+            userData
+                ?.user ||
+            null
+        );
+    }
+
+    /* =========================================================
+       STARTUP PROFILE RETRY
+       ========================================================= */
+
+    async function loadStartupProfile(
+        user
+    ) {
+        if (
+            !window.BookIt
+                .profile ||
+            typeof window.BookIt
+                .profile
+                .load !==
+                "function"
+        ) {
+            throw new Error(
+                "The ClubHub profile service is unavailable."
+            );
+        }
+
+        let lastError =
+            null;
+
+        for (
+            let attempt = 1;
+            attempt <=
+                STARTUP_PROFILE_ATTEMPTS;
+            attempt += 1
+        ) {
+            try {
+                const profile =
+                    await window
+                        .BookIt
+                        .profile
+                        .load({
+                            forceRefresh:
+                                true
+                        });
+
+                if (
+                    profile?.userId &&
+                    profile.userId !==
+                        user.id
+                ) {
+                    throw new Error(
+                        "The loaded profile does not belong to the authenticated user."
+                    );
+                }
+
+                return profile;
+            } catch (error) {
+                lastError =
+                    error;
+
+                console.warn(
+                    `ClubHub profile startup attempt ${attempt} of ${STARTUP_PROFILE_ATTEMPTS} failed:`,
+                    error
+                );
+
+                if (
+                    isMissingSessionError(
+                        error
+                    )
+                ) {
+                    throw error;
+                }
+
+                if (
+                    attempt <
+                    STARTUP_PROFILE_ATTEMPTS
+                ) {
+                    /*
+                     * The delay increases slightly with each
+                     * retry, allowing the new Supabase session
+                     * and related database requests to settle.
+                     */
+                    await wait(
+                        STARTUP_PROFILE_RETRY_MS *
+                            attempt
+                    );
+                }
+            }
+        }
+
+        throw (
+            lastError ||
+            new Error(
+                "ClubHub could not load your account information."
+            )
+        );
     }
 
     /* =========================================================
@@ -400,14 +617,19 @@
 
     function readLastActivity() {
         try {
-            const value = Number(
-                window.localStorage.getItem(
-                    LAST_ACTIVITY_KEY
-                )
-            );
+            const value =
+                Number(
+                    window
+                        .localStorage
+                        .getItem(
+                            LAST_ACTIVITY_KEY
+                        )
+                );
 
             if (
-                !Number.isFinite(value) ||
+                !Number.isFinite(
+                    value
+                ) ||
                 value <= 0
             ) {
                 return null;
@@ -428,10 +650,14 @@
         timestamp
     ) {
         try {
-            window.localStorage.setItem(
-                LAST_ACTIVITY_KEY,
-                String(timestamp)
-            );
+            window
+                .localStorage
+                .setItem(
+                    LAST_ACTIVITY_KEY,
+                    String(
+                        timestamp
+                    )
+                );
         } catch (error) {
             console.warn(
                 "Could not save BookIt activity time:",
@@ -442,9 +668,11 @@
 
     function clearLastActivity() {
         try {
-            window.localStorage.removeItem(
-                LAST_ACTIVITY_KEY
-            );
+            window
+                .localStorage
+                .removeItem(
+                    LAST_ACTIVITY_KEY
+                );
         } catch (error) {
             console.warn(
                 "Could not clear BookIt activity time:",
@@ -458,7 +686,8 @@
             Date.now();
 
         if (
-            now - lastRecordedActivity <
+            now -
+                lastRecordedActivity <
             1000
         ) {
             return;
@@ -467,7 +696,9 @@
         lastRecordedActivity =
             now;
 
-        saveLastActivity(now);
+        saveLastActivity(
+            now
+        );
     }
 
     function sessionHasTimedOut() {
@@ -475,7 +706,8 @@
             readLastActivity();
 
         if (
-            lastActivity === null
+            lastActivity ===
+            null
         ) {
             return false;
         }
@@ -489,31 +721,43 @@
 
     function clearApplicationData() {
         if (
-            window.BookIt.profile &&
-            typeof window.BookIt.profile
+            window.BookIt
+                .profile &&
+            typeof window.BookIt
+                .profile
                 .clearCache ===
                 "function"
         ) {
-            window.BookIt.profile
+            window.BookIt
+                .profile
                 .clearCache();
         }
 
         if (
-            window.BookIt.booking &&
-            typeof window.BookIt.booking
+            window.BookIt
+                .booking &&
+            typeof window.BookIt
+                .booking
                 .clearCache ===
                 "function"
         ) {
-            window.BookIt.booking
+            window.BookIt
+                .booking
                 .clearCache();
         }
 
-        window.BookIt.user = null;
-        window.BookIt.currentProfile =
+        window.BookIt.user =
             null;
 
-        window.bookitUser = null;
-        window.bookitProfile = null;
+        window.BookIt
+            .currentProfile =
+            null;
+
+        window.bookitUser =
+            null;
+
+        window.bookitProfile =
+            null;
     }
 
     async function signOutForInactivity() {
@@ -521,15 +765,18 @@
             return;
         }
 
-        isSigningOut = true;
+        isSigningOut =
+            true;
 
         try {
             const client =
                 getSupabaseClient();
 
-            await client.auth.signOut({
-                scope: "local"
-            });
+            await client
+                .auth
+                .signOut({
+                    scope: "local"
+                });
         } catch (error) {
             console.error(
                 "BookIt inactivity sign-out failed:",
@@ -538,7 +785,9 @@
         } finally {
             clearLastActivity();
             clearApplicationData();
-            redirectToLogin("timeout");
+            redirectToLogin(
+                "timeout"
+            );
         }
     }
 
@@ -550,7 +799,9 @@
             return;
         }
 
-        if (sessionHasTimedOut()) {
+        if (
+            sessionHasTimedOut()
+        ) {
             await signOutForInactivity();
         }
     }
@@ -608,20 +859,28 @@
         user,
         profile
     ) {
-        window.BookIt.user = user;
-        window.BookIt.currentProfile =
+        window.BookIt.user =
+            user;
+
+        window.BookIt
+            .currentProfile =
             profile;
 
         /*
          * Temporary aliases for older scripts.
          */
-        window.bookitUser = user;
-        window.bookitProfile = profile;
+        window.bookitUser =
+            user;
+
+        window.bookitProfile =
+            profile;
     }
 
     function revealApplication() {
-        document.documentElement
-            .classList.add(
+        document
+            .documentElement
+            .classList
+            .add(
                 "auth-ready"
             );
     }
@@ -637,7 +896,8 @@
                 getAssetVersion()
         };
 
-        isReady = true;
+        isReady =
+            true;
 
         exposeApplicationData(
             user,
@@ -645,7 +905,10 @@
         );
 
         revealApplication();
-        resolveReady(detail);
+
+        resolveReady(
+            detail
+        );
 
         document.dispatchEvent(
             new CustomEvent(
@@ -657,38 +920,46 @@
         );
     }
 
-    function dispatchError(error) {
+    function dispatchError(
+        error
+    ) {
         const normalisedError =
             error instanceof Error
                 ? error
                 : new Error(
-                    String(error)
+                    String(
+                        error
+                    )
                 );
 
         const detail = {
             message:
-                normalisedError.message ||
+                normalisedError
+                    .message ||
                 "BookIt could not load your account information.",
 
             code:
                 error &&
                 typeof error ===
                     "object"
-                    ? error.code || null
+                    ? error.code ||
+                        null
                     : null,
 
             details:
                 error &&
                 typeof error ===
                     "object"
-                    ? error.details || null
+                    ? error.details ||
+                        null
                     : null,
 
             hint:
                 error &&
                 typeof error ===
                     "object"
-                    ? error.hint || null
+                    ? error.hint ||
+                        null
                     : null,
 
             error:
@@ -696,6 +967,7 @@
         };
 
         revealApplication();
+
         rejectReady(
             normalisedError
         );
@@ -723,7 +995,8 @@
             return;
         }
 
-        isInitialising = true;
+        isInitialising =
+            true;
 
         try {
             await loadDependencies();
@@ -736,30 +1009,23 @@
                 return;
             }
 
-            if (sessionHasTimedOut()) {
+            if (
+                sessionHasTimedOut()
+            ) {
                 await signOutForInactivity();
                 return;
             }
 
             /*
-             * Force an account-validated profile read on every
-             * protected-page startup. profile.js may still use its
-             * own cache when it belongs to this exact user.
+             * A newly created session can occasionally become
+             * available slightly before all related profile
+             * requests are ready. Retry the complete validated
+             * profile load silently before exposing an error.
              */
             const profile =
-                await window.BookIt.profile
-                    .load({
-                        forceRefresh: true
-                    });
-
-            if (
-                profile?.userId &&
-                profile.userId !== user.id
-            ) {
-                throw new Error(
-                    "The loaded profile does not belong to the authenticated user."
+                await loadStartupProfile(
+                    user
                 );
-            }
 
             startInactivityTracking();
 
@@ -774,21 +1040,28 @@
             );
 
             if (
-                error?.name ===
-                    "AuthSessionMissingError" ||
-                error?.message ===
-                    "Auth session missing!" ||
-                error?.message ===
-                    "No authenticated user was found."
+                isMissingSessionError(
+                    error
+                )
             ) {
                 clearApplicationData();
                 redirectToLogin();
                 return;
             }
 
-            dispatchError(error);
+            console.error(
+                "ClubHub startup detail:",
+                getReadableError(
+                    error
+                )
+            );
+
+            dispatchError(
+                error
+            );
         } finally {
-            isInitialising = false;
+            isInitialising =
+                false;
         }
     }
 
@@ -810,7 +1083,9 @@
     window.addEventListener(
         "beforeunload",
         function () {
-            if (inactivityInterval) {
+            if (
+                inactivityInterval
+            ) {
                 window.clearInterval(
                     inactivityInterval
                 );
