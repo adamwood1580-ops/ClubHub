@@ -1,33 +1,57 @@
 :root {
-    /* Brand colours */
-    --color-primary: #173f2b;
-    --color-primary-dark: #0f2e1f;
-    --color-primary-light: #e7f1eb;
+    /* =========================================================
+       CLUBHUB BRAND
+       ========================================================= */
 
-    --color-accent: #c7a34b;
-    --color-accent-light: #f4ecd8;
+    --color-primary: #06382a;
+    --color-primary-dark: #032d22;
+    --color-primary-light: #e7efe9;
 
-    /* Surfaces */
-    --color-background: #f4f6f4;
+    --color-accent: #d4af37;
+    --color-accent-dark: #b88d22;
+    --color-accent-light: #f5ecd2;
+
+    /* =========================================================
+       SURFACES
+       ========================================================= */
+
+    --color-background: #f4f6f3;
     --color-surface: #ffffff;
-    --color-surface-muted: #eef1ee;
+    --color-surface-muted: #eef2ed;
+    --color-surface-sage: #e7efe9;
+    --color-surface-warm: #f7f6f1;
 
-    /* Text */
-    --color-text: #172019;
-    --color-text-muted: #68716b;
+    /* =========================================================
+       TEXT
+       ========================================================= */
+
+    --color-text: #14251f;
+    --color-text-muted: #69736e;
+    --color-text-soft: #7c8580;
     --color-text-inverse: #ffffff;
 
-    /* Status */
-    --color-success: #237a45;
-    --color-warning: #a96d12;
-    --color-danger: #b53b3b;
-    --color-info: #2d6994;
+    /* =========================================================
+       STATUS
+       ========================================================= */
 
-    /* Borders */
-    --color-border: #d9dfda;
-    --color-border-strong: #bfc8c1;
+    --color-success: #2f8651;
+    --color-warning: #b47b19;
+    --color-danger: #b64a4a;
+    --color-info: #386f8f;
 
-    /* Typography */
+    /* =========================================================
+       BORDERS
+       ========================================================= */
+
+    --color-border: #dce3dd;
+    --color-border-strong: #c6d0c8;
+    --color-border-brand:
+        rgba(6, 56, 42, 0.14);
+
+    /* =========================================================
+       TYPOGRAPHY
+       ========================================================= */
+
     --font-family-base:
         -apple-system,
         BlinkMacSystemFont,
@@ -50,7 +74,10 @@
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
 
-    /* Spacing */
+    /* =========================================================
+       SPACING
+       ========================================================= */
+
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 0.75rem;
@@ -61,31 +88,69 @@
     --space-10: 2.5rem;
     --space-12: 3rem;
 
-    /* Shape */
-    --radius-sm: 0.5rem;
-    --radius-md: 0.75rem;
-    --radius-lg: 1rem;
-    --radius-xl: 1.5rem;
+    /* =========================================================
+       SHAPE
+       ========================================================= */
+
+    --radius-sm: 0.6rem;
+    --radius-md: 0.9rem;
+    --radius-lg: 1.2rem;
+    --radius-xl: 1.65rem;
     --radius-round: 999px;
 
-    /* Shadows */
-    --shadow-sm: 0 2px 8px rgba(15, 46, 31, 0.08);
-    --shadow-md: 0 8px 24px rgba(15, 46, 31, 0.12);
-    --shadow-lg: 0 16px 40px rgba(15, 46, 31, 0.16);
+    /* =========================================================
+       SHADOWS
+       ========================================================= */
 
-    /* Layout */
+    --shadow-sm:
+        0 3px 10px
+        rgba(20, 50, 38, 0.06);
+
+    --shadow-md:
+        0 10px 28px
+        rgba(20, 50, 38, 0.10);
+
+    --shadow-lg:
+        0 18px 44px
+        rgba(20, 50, 38, 0.14);
+
+    --shadow-card:
+        0 7px 22px
+        rgba(20, 50, 38, 0.08);
+
+    --shadow-brand:
+        0 9px 24px
+        rgba(6, 56, 42, 0.18);
+
+    /* =========================================================
+       LAYOUT
+       ========================================================= */
+
     --content-width: 72rem;
     --content-width-narrow: 42rem;
     --header-height: 4rem;
     --bottom-nav-height: 4.5rem;
 
-    /* Animation */
+    /* =========================================================
+       ANIMATION
+       ========================================================= */
+
     --transition-fast: 150ms ease;
     --transition-standard: 250ms ease;
 
-    /* iPhone safe areas */
-    --safe-area-top: env(safe-area-inset-top, 0px);
-    --safe-area-right: env(safe-area-inset-right, 0px);
-    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-    --safe-area-left: env(safe-area-inset-left, 0px);
+    /* =========================================================
+       SAFE AREAS
+       ========================================================= */
+
+    --safe-area-top:
+        env(safe-area-inset-top, 0px);
+
+    --safe-area-right:
+        env(safe-area-inset-right, 0px);
+
+    --safe-area-bottom:
+        env(safe-area-inset-bottom, 0px);
+
+    --safe-area-left:
+        env(safe-area-inset-left, 0px);
 }
