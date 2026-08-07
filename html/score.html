@@ -1,6 +1,28 @@
 <!DOCTYPE html>
 <html lang="en" class="auth-protected">
 <head>
+    <style>
+        html.auth-protected {
+            min-height: 100%;
+            background: #06382a !important;
+        }
+
+        html.auth-protected body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        html.auth-protected:not(.auth-ready) body {
+            visibility: hidden;
+            background: #06382a !important;
+        }
+
+        html.auth-protected.auth-ready,
+        html.auth-protected.auth-ready body {
+            background: #f4f6f3 !important;
+        }
+    </style>
+
     <meta charset="UTF-8" />
 
     <meta
@@ -8,58 +30,102 @@
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
 
-    <meta name="theme-color" content="#1f683d" />
+    <meta
+        name="theme-color"
+        content="#06382a"
+    />
 
-    <title>Score | BookIt</title>
+    <title>Play | ClubHub</title>
 
-    <link rel="stylesheet" href="../styles/tokens.css" />
-    <link rel="stylesheet" href="../styles/app-shell.css" />
-    <link rel="stylesheet" href="../styles/components.css" />
-    <link rel="stylesheet" href="../styles/score-hub.css" />
+    <link
+        rel="stylesheet"
+        href="../styles/tokens.css"
+    />
 
-    <link rel="manifest" href="../manifest.json" />
-    <link rel="apple-touch-icon" href="../assets/Icon.PNG" />
-<script
-    src="../js/core/protected-loader.js?loader=1"
-    data-scripts="
-        ../js/ui/header.js,
-        ../js/ui/navigation.js,
-        ../js/pages/score-page.js
-    "
-    defer
-></script></head>
+    <link
+        rel="stylesheet"
+        href="../styles/app-shell.css"
+    />
+
+    <link
+        rel="stylesheet"
+        href="../styles/components.css"
+    />
+
+    <link
+        rel="stylesheet"
+        href="../styles/score-hub.css"
+    />
+
+    <link
+        rel="manifest"
+        href="../manifest.json"
+    />
+
+    <link
+        rel="apple-touch-icon"
+        href="../assets/Icon.PNG"
+    />
+
+    <script
+        src="../js/core/protected-loader.js?loader=7"
+        defer
+    ></script>
+</head>
 
 <body
     data-page="play"
     data-header="standard"
-    data-title="Book A Round"
-    >
+    data-title="Play"
+>
     <div class="app-shell">
         <header data-app-header></header>
 
-        <main class="app-main app-main--narrow score-hub">
+        <main
+            class="app-main app-main--narrow score-hub"
+        >
+            <!-- =================================================
+                 PAGE HEADING
+                 ================================================= -->
+
             <section class="score-heading">
-                <h2 class="score-heading__title">
+                <p class="score-heading__eyebrow">
+                    Play
+                </p>
+
+                <h1 class="score-heading__title">
                     What are you playing?
-                </h2>
+                </h1>
 
                 <p class="score-heading__subtitle">
                     Continue a round or start a new scorecard.
                 </p>
             </section>
 
-            <!-- Placeholder until score saving is connected -->
+            <!-- =================================================
+                 CONTINUE ROUND
+                 ================================================= -->
+
             <section class="hero-card continue-round">
-                <p class="hero-card__eyebrow">
-                    Continue round
-                </p>
+                <div class="continue-round__topline">
+                    <p class="hero-card__eyebrow">
+                        Continue round
+                    </p>
+
+                    <span class="continue-round__status">
+                        In progress
+                    </span>
+                </div>
 
                 <p class="continue-round__course">
                     Bells Hotel &amp; Country Club
                 </p>
 
                 <div class="continue-round__progress">
-                    <p class="continue-round__hole">Hole 12</p>
+                    <p class="continue-round__hole">
+                        Hole 12
+                    </p>
+
                     <span class="continue-round__label">
                         Stableford
                     </span>
@@ -69,15 +135,30 @@
                     Started today at 09:18
                 </p>
 
+                <div class="continue-round__track">
+                    <span
+                        class="continue-round__track-fill"
+                        style="width: 66.67%;"
+                    ></span>
+                </div>
+
                 <div class="hero-card__actions">
                     <a
                         class="button button--hero button--full"
                         href="stableford.html"
                     >
                         Continue round
+
+                        <span aria-hidden="true">
+                            ›
+                        </span>
                     </a>
                 </div>
             </section>
+
+            <!-- =================================================
+                 START A NEW ROUND
+                 ================================================= -->
 
             <section class="section">
                 <div class="section__header">
@@ -87,13 +168,28 @@
                 </div>
 
                 <div class="score-format-grid">
+                    <!-- STABLEFORD -->
+
                     <a
-                        class="card card--interactive score-format-card score-format-card--featured"
+                        class="score-format-card score-format-card--featured"
                         href="stableford.html"
                     >
                         <div class="score-format-card__top">
-                            <span class="score-format-card__icon">
-                                🏆
+                            <span
+                                class="score-format-card__icon"
+                                aria-hidden="true"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    class="score-format-icon"
+                                >
+                                    <path d="M8 4h8v3a4 4 0 0 1-8 0V4Z" />
+                                    <path d="M10 13h4" />
+                                    <path d="M12 11v6" />
+                                    <path d="M8 20h8" />
+                                    <path d="M8 5H5v1a3 3 0 0 0 3 3" />
+                                    <path d="M16 5h3v1a3 3 0 0 1-3 3" />
+                                </svg>
                             </span>
 
                             <span class="badge badge--gold">
@@ -101,124 +197,265 @@
                             </span>
                         </div>
 
-                        <h3 class="score-format-card__title">
-                            Stableford
-                        </h3>
+                        <div class="score-format-card__content">
+                            <h3 class="score-format-card__title">
+                                Stableford
+                            </h3>
 
-                        <p class="score-format-card__description">
-                            Individual points scoring
-                        </p>
+                            <p class="score-format-card__description">
+                                Individual points scoring
+                            </p>
+                        </div>
+
+                        <span
+                            class="score-format-card__arrow"
+                            aria-hidden="true"
+                        >
+                            ›
+                        </span>
                     </a>
 
+                    <!-- STROKE PLAY -->
+
                     <a
-                        class="card card--interactive score-format-card"
+                        class="score-format-card"
                         href="strokeplay.html"
                     >
                         <div class="score-format-card__top">
-                            <span class="score-format-card__icon">
-                                ⛳
+                            <span
+                                class="score-format-card__icon"
+                                aria-hidden="true"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    class="score-format-icon"
+                                >
+                                    <path d="M6 21V4" />
+                                    <path d="M6 4h10l-2 4 2 4H6" />
+                                    <circle cx="15" cy="18" r="2" />
+                                </svg>
                             </span>
                         </div>
 
-                        <h3 class="score-format-card__title">
-                            Stroke Play
-                        </h3>
+                        <div class="score-format-card__content">
+                            <h3 class="score-format-card__title">
+                                Stroke Play
+                            </h3>
 
-                        <p class="score-format-card__description">
-                            Medal and gross scoring
-                        </p>
+                            <p class="score-format-card__description">
+                                Medal and gross scoring
+                            </p>
+                        </div>
+
+                        <span
+                            class="score-format-card__arrow"
+                            aria-hidden="true"
+                        >
+                            ›
+                        </span>
                     </a>
 
+                    <!-- 4BBB -->
+
                     <a
-                        class="card card--interactive score-format-card"
+                        class="score-format-card"
                         href="fourbbb.html"
                     >
                         <div class="score-format-card__top">
-                            <span class="score-format-card__icon">
-                                🤝
+                            <span
+                                class="score-format-card__icon"
+                                aria-hidden="true"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    class="score-format-icon"
+                                >
+                                    <circle cx="8" cy="8" r="3" />
+                                    <circle cx="16" cy="8" r="3" />
+                                    <path d="M3 20a5 5 0 0 1 10 0" />
+                                    <path d="M11 20a5 5 0 0 1 10 0" />
+                                </svg>
                             </span>
                         </div>
 
-                        <h3 class="score-format-card__title">
-                            4BBB
-                        </h3>
+                        <div class="score-format-card__content">
+                            <h3 class="score-format-card__title">
+                                4BBB
+                            </h3>
 
-                        <p class="score-format-card__description">
-                            Fourball Better Ball
-                        </p>
+                            <p class="score-format-card__description">
+                                Fourball Better Ball
+                            </p>
+                        </div>
+
+                        <span
+                            class="score-format-card__arrow"
+                            aria-hidden="true"
+                        >
+                            ›
+                        </span>
                     </a>
 
+                    <!-- GREENSOMES -->
+
                     <a
-                        class="card card--interactive score-format-card"
+                        class="score-format-card"
                         href="greensomes.html"
                     >
                         <div class="score-format-card__top">
-                            <span class="score-format-card__icon">
-                                👥
+                            <span
+                                class="score-format-card__icon"
+                                aria-hidden="true"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    class="score-format-icon"
+                                >
+                                    <circle cx="8" cy="7" r="3" />
+                                    <circle cx="16" cy="7" r="3" />
+                                    <path d="M3 19c0-3 2-5 5-5" />
+                                    <path d="M21 19c0-3-2-5-5-5" />
+                                    <path d="M9 19h6" />
+                                </svg>
                             </span>
                         </div>
 
-                        <h3 class="score-format-card__title">
-                            Greensomes
-                        </h3>
+                        <div class="score-format-card__content">
+                            <h3 class="score-format-card__title">
+                                Greensomes
+                            </h3>
 
-                        <p class="score-format-card__description">
-                            Partners choose one drive
-                        </p>
+                            <p class="score-format-card__description">
+                                Partners choose one drive
+                            </p>
+                        </div>
+
+                        <span
+                            class="score-format-card__arrow"
+                            aria-hidden="true"
+                        >
+                            ›
+                        </span>
                     </a>
 
+                    <!-- TEXAS SCRAMBLE -->
+
                     <a
-                        class="card card--interactive score-format-card"
+                        class="score-format-card"
                         href="texasscramble.html"
                     >
                         <div class="score-format-card__top">
-                            <span class="score-format-card__icon">
-                                🎯
+                            <span
+                                class="score-format-card__icon"
+                                aria-hidden="true"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    class="score-format-icon"
+                                >
+                                    <circle cx="12" cy="12" r="8" />
+                                    <circle cx="12" cy="12" r="4" />
+                                    <circle cx="12" cy="12" r="1" />
+                                </svg>
                             </span>
                         </div>
 
-                        <h3 class="score-format-card__title">
-                            Texas Scramble
-                        </h3>
+                        <div class="score-format-card__content">
+                            <h3 class="score-format-card__title">
+                                Texas Scramble
+                            </h3>
 
-                        <p class="score-format-card__description">
-                            Team scramble format
-                        </p>
+                            <p class="score-format-card__description">
+                                Team scramble format
+                            </p>
+                        </div>
+
+                        <span
+                            class="score-format-card__arrow"
+                            aria-hidden="true"
+                        >
+                            ›
+                        </span>
                     </a>
 
+                    <!-- MATCH PLAY -->
+
                     <a
-                        class="card card--interactive score-format-card"
+                        class="score-format-card"
                         href="matchplay.html"
                     >
                         <div class="score-format-card__top">
-                            <span class="score-format-card__icon">
-                                ⚔️
+                            <span
+                                class="score-format-card__icon"
+                                aria-hidden="true"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    class="score-format-icon"
+                                >
+                                    <path d="m7 4 10 16" />
+                                    <path d="m17 4-10 16" />
+                                    <path d="M5 4h4" />
+                                    <path d="M15 4h4" />
+                                </svg>
                             </span>
                         </div>
 
-                        <h3 class="score-format-card__title">
-                            Match Play
-                        </h3>
+                        <div class="score-format-card__content">
+                            <h3 class="score-format-card__title">
+                                Match Play
+                            </h3>
 
-                        <p class="score-format-card__description">
-                            Win holes against an opponent
-                        </p>
+                            <p class="score-format-card__description">
+                                Win holes against an opponent
+                            </p>
+                        </div>
+
+                        <span
+                            class="score-format-card__arrow"
+                            aria-hidden="true"
+                        >
+                            ›
+                        </span>
                     </a>
                 </div>
             </section>
 
-            <section class="section">
-                <div class="section__header">
-                    <h2 class="section__title">Recent scores</h2>
+            <!-- =================================================
+                 RECENT SCORES
+                 ================================================= -->
 
-                    <a class="section__link" href="#history">
+            <section class="section recent-scores-section">
+                <div class="section__header">
+                    <h2 class="section__title">
+                        Recent scores
+                    </h2>
+
+                    <a
+                        class="section__link"
+                        href="#history"
+                    >
                         View all
                     </a>
                 </div>
 
-                <div class="list-card">
-                    <a class="list-item" href="#recent-score">
-                        <span class="list-item__icon">🏆</span>
+                <div class="list-card recent-score-list">
+                    <a
+                        class="list-item recent-score"
+                        href="#recent-score"
+                    >
+                        <span class="list-item__icon">
+                            <svg
+                                viewBox="0 0 24 24"
+                                class="score-format-icon"
+                                aria-hidden="true"
+                            >
+                                <path d="M8 4h8v3a4 4 0 0 1-8 0V4Z" />
+                                <path d="M10 13h4" />
+                                <path d="M12 11v6" />
+                                <path d="M8 20h8" />
+                            </svg>
+                        </span>
 
                         <div class="list-item__content">
                             <p class="list-item__title">
@@ -235,8 +472,20 @@
                         </span>
                     </a>
 
-                    <a class="list-item" href="#recent-score">
-                        <span class="list-item__icon">⛳</span>
+                    <a
+                        class="list-item recent-score"
+                        href="#recent-score"
+                    >
+                        <span class="list-item__icon">
+                            <svg
+                                viewBox="0 0 24 24"
+                                class="score-format-icon"
+                                aria-hidden="true"
+                            >
+                                <path d="M6 21V4" />
+                                <path d="M6 4h10l-2 4 2 4H6" />
+                            </svg>
+                        </span>
 
                         <div class="list-item__content">
                             <p class="list-item__title">
