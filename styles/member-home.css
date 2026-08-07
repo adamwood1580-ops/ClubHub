@@ -1,203 +1,1023 @@
 /* =========================================================
-   BOOKIT MEMBER HOME
-   Page-specific styling only
+   CLUBHUB MEMBER HOME
+   Page-specific styling
    ========================================================= */
 
 .member-home {
     max-width: 42rem;
 }
 
+/* =========================================================
+   MEMBER GREETING
+   ========================================================= */
+
 .member-greeting {
-    margin-bottom: var(--space-5);
+    position: relative;
+
+    margin-bottom:
+        var(--space-5);
+
+    padding-bottom:
+        var(--space-4);
 }
 
 .member-greeting__title {
     margin: 0;
 
-    color: var(--color-primary-dark);
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1.8rem, 7vw, 2.35rem);
-    line-height: 1.1;
+    color:
+        var(--color-primary);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(
+            1.9rem,
+            7vw,
+            2.5rem
+        );
+
+    font-weight: 700;
+
+    line-height: 1.08;
+}
+
+.member-greeting__title::after {
+    display: block;
+
+    width: 3rem;
+    height: 3px;
+
+    margin-top:
+        var(--space-3);
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--color-accent),
+            var(--color-accent-dark)
+        );
+
+    border-radius:
+        var(--radius-round);
+
+    content: "";
 }
 
 .member-greeting__subtitle {
-    margin: var(--space-2) 0 0;
+    margin:
+        var(--space-4)
+        0 0;
 
-    color: var(--color-text-muted);
-    font-size: var(--font-size-md);
+    color:
+        var(--color-text-muted);
+
+    font-size:
+        var(--font-size-md);
+
+    font-weight:
+        var(--font-weight-medium);
+
+    line-height: 1.45;
 }
+
+/* =========================================================
+   NEXT ROUND HERO
+   ========================================================= */
 
 .booking-hero {
     isolation: isolate;
+
+    margin-bottom:
+        var(--space-5);
 }
 
 .booking-hero__course-art {
     position: absolute;
+
+    top: 4.2rem;
     right: -1rem;
-    top: 4.5rem;
-    z-index: -1;
+
+    z-index: 0;
 
     width: 9rem;
     height: 7rem;
 
-    opacity: 0.24;
-    transform: rotate(-4deg);
+    color:
+        var(--color-accent);
+
+    opacity: 0.15;
+
+    transform:
+        rotate(-4deg);
+
+    pointer-events:
+        none;
 }
 
 .booking-hero__details {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2);
-    margin-top: var(--space-2);
+    position: relative;
+    z-index: 1;
 
-    color: rgba(255, 255, 255, 0.86);
-    font-size: var(--font-size-sm);
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    gap:
+        var(--space-2);
+
+    margin-top:
+        var(--space-3);
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.82
+        );
+
+    font-size:
+        var(--font-size-sm);
 }
 
-.booking-hero__details span + span::before {
-    margin-right: var(--space-2);
+.booking-hero__details
+span + span::before {
+    margin-right:
+        var(--space-2);
+
+    color:
+        var(--color-accent);
+
     content: "•";
 }
 
+/* =========================================================
+   NO UPCOMING BOOKING
+   ========================================================= */
+
+#nextRoundEmpty {
+    margin-bottom:
+        var(--space-5);
+
+    padding:
+        var(--space-5);
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff 0%,
+            #f3f7f3 58%,
+            var(--color-surface-sage) 100%
+        );
+
+    border:
+        1px solid
+        rgba(6, 56, 42, 0.12);
+
+    box-shadow:
+        var(--shadow-md);
+}
+
+#nextRoundEmpty::before {
+    position: absolute;
+
+    top: -3rem;
+    right: -3rem;
+
+    width: 9rem;
+    height: 9rem;
+
+    background:
+        rgba(
+            6,
+            56,
+            42,
+            0.035
+        );
+
+    border-radius: 50%;
+
+    content: "";
+
+    pointer-events:
+        none;
+}
+
+#nextRoundEmpty
+.section__title {
+    position: relative;
+
+    z-index: 1;
+
+    color:
+        var(--color-primary);
+}
+
+#nextRoundEmpty
+.card__meta {
+    position: relative;
+
+    z-index: 1;
+
+    margin:
+        var(--space-3)
+        0
+        var(--space-5);
+
+    color:
+        var(--color-text);
+
+    font-size:
+        var(--font-size-md);
+
+    font-weight:
+        var(--font-weight-medium);
+
+    line-height: 1.5;
+}
+
+#nextRoundEmpty
+.button {
+    position: relative;
+    z-index: 1;
+}
+
+/* =========================================================
+   PLAYER AVATARS
+   ========================================================= */
+
 .player-row {
     display: flex;
+
     align-items: center;
-    margin-top: var(--space-4);
+
+    margin-top:
+        var(--space-4);
 }
 
 .player-avatar {
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
 
     width: 2.75rem;
     height: 2.75rem;
-    margin-right: -0.45rem;
 
-    color: var(--color-primary-dark);
-    background: var(--color-accent-light);
-    border: 2px solid rgba(255, 255, 255, 0.92);
+    margin-right:
+        -0.45rem;
+
+    color:
+        var(--color-primary-dark);
+
+    background:
+        var(--color-accent-light);
+
+    border:
+        2px solid
+        rgba(255, 255, 255, 0.92);
+
     border-radius: 50%;
 
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-bold);
+    font-size:
+        var(--font-size-xs);
+
+    font-weight:
+        var(--font-weight-bold);
 }
 
 .player-avatar:nth-child(2) {
-    background: #dceee2;
+    background:
+        #dceee2;
 }
 
 .player-avatar:nth-child(3) {
-    background: #e7edf5;
+    background:
+        #e7edf5;
 }
 
 .player-avatar--more {
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.18);
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.18
+        );
 }
+
+/* =========================================================
+   CLUB SUMMARY GRID
+   ========================================================= */
 
 .home-summary-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3);
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap:
+        var(--space-3);
+
+    margin-bottom:
+        var(--space-6);
 }
 
 .summary-card {
-    min-height: 9rem;
+    min-width: 0;
+    min-height: 15rem;
+
+    padding:
+        var(--space-4);
 }
 
 .summary-card__topline {
     display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin-bottom: var(--space-3);
 
-    color: var(--color-text-muted);
-    font-size: 0.7rem;
-    font-weight: var(--font-weight-bold);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    align-items: center;
+
+    gap:
+        var(--space-2);
+
+    margin-bottom:
+        var(--space-3);
+
+    color:
+        var(--color-text-muted);
+
+    font-size:
+        0.7rem;
+
+    font-weight:
+        var(--font-weight-bold);
+
+    letter-spacing:
+        0.055em;
+
+    text-transform:
+        uppercase;
 }
 
 .summary-card__dot {
     width: 0.55rem;
     height: 0.55rem;
 
-    background: var(--color-success);
+    flex: 0 0 0.55rem;
+
+    background:
+        var(--color-success);
+
     border-radius: 50%;
 }
 
 .summary-card__icon {
-    color: var(--color-accent);
+    color:
+        var(--color-accent);
 }
 
 .summary-card__value {
     margin: 0;
 
-    color: var(--color-primary);
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
-    line-height: 1.1;
+    color:
+        var(--color-primary);
+
+    font-size:
+        var(--font-size-xl);
+
+    font-weight:
+        var(--font-weight-bold);
+
+    line-height: 1.05;
 }
 
 .summary-card__title {
     margin: 0;
 
-    color: var(--color-text);
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
-    line-height: 1.15;
+    color:
+        var(--color-primary);
+
+    font-size:
+        var(--font-size-lg);
+
+    font-weight:
+        var(--font-weight-bold);
+
+    line-height: 1.12;
 }
 
 .summary-card__meta {
-    margin: var(--space-3) 0 0;
+    margin:
+        var(--space-3)
+        0 0;
 
-    color: var(--color-text-muted);
-    font-size: var(--font-size-xs);
+    color:
+        var(--color-text-muted);
+
+    font-size:
+        var(--font-size-xs);
+
+    line-height: 1.45;
 }
+
+/* =========================================================
+   WEATHER CARD
+   ========================================================= */
+
+.weather-card {
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            #f3f7f3 0%,
+            var(--color-surface-sage) 100%
+        );
+
+    border-color:
+        rgba(6, 56, 42, 0.12);
+}
+
+.weather-card::after {
+    position: absolute;
+
+    top: -2.5rem;
+    right: -2.5rem;
+
+    width: 7rem;
+    height: 7rem;
+
+    background:
+        rgba(
+            212,
+            175,
+            55,
+            0.07
+        );
+
+    border-radius: 50%;
+
+    content: "";
+
+    pointer-events:
+        none;
+}
+
+.weather-card__main {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    gap:
+        0.8rem;
+
+    margin-top:
+        0.65rem;
+}
+
+.weather-card__icon {
+    display: grid;
+
+    width: 2.9rem;
+    height: 2.9rem;
+
+    flex:
+        0 0 2.9rem;
+
+    place-items: center;
+
+    color:
+        var(--color-accent-dark);
+}
+
+.weather-card__icon svg {
+    width: 100%;
+    height: 100%;
+
+    fill: none;
+
+    stroke:
+        currentColor;
+
+    stroke-width: 1.7;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.weather-card__description {
+    margin:
+        0.15rem
+        0 0;
+
+    color:
+        var(--color-text-muted);
+
+    font-size:
+        0.82rem;
+
+    font-weight:
+        var(--font-weight-medium);
+
+    line-height: 1.35;
+}
+
+.weather-card
+.summary-card__meta {
+    position: relative;
+    z-index: 1;
+}
+
+.weather-card__advisory {
+    position: relative;
+    z-index: 1;
+
+    margin:
+        0.65rem
+        0 0;
+
+    padding:
+        0.45rem
+        0.55rem;
+
+    color:
+        #76500b;
+
+    background:
+        rgba(
+            210,
+            150,
+            35,
+            0.12
+        );
+
+    border-radius:
+        0.55rem;
+
+    font-size:
+        0.76rem;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.weather-card__advisory[
+    data-type="wet"
+] {
+    color:
+        #275d86;
+
+    background:
+        rgba(
+            45,
+            105,
+            155,
+            0.12
+        );
+}
+
+.weather-card__advisory[
+    data-type="severe"
+] {
+    color:
+        #912f2f;
+
+    background:
+        rgba(
+            170,
+            50,
+            50,
+            0.12
+        );
+}
+
+.weather-card__footer {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap:
+        0.35rem;
+
+    margin-top:
+        0.8rem;
+
+    color:
+        var(--color-text-muted);
+
+    font-size:
+        0.7rem;
+
+    line-height: 1.35;
+}
+
+.weather-card__footer strong {
+    color:
+        var(--color-primary);
+}
+
+.weather-card[
+    data-weather-severity="wet"
+] {
+    border-color:
+        rgba(
+            45,
+            105,
+            155,
+            0.24
+        );
+}
+
+.weather-card[
+    data-weather-severity="caution"
+] {
+    border-color:
+        rgba(
+            210,
+            150,
+            35,
+            0.3
+        );
+}
+
+.weather-card[
+    data-weather-severity="severe"
+] {
+    border-color:
+        rgba(
+            170,
+            50,
+            50,
+            0.3
+        );
+}
+
+.weather-card[
+    data-weather-severity="unavailable"
+] {
+    opacity: 0.82;
+}
+
+/* =========================================================
+   COMPETITION CARD
+   ========================================================= */
+
+.competition-card {
+    display: flex;
+
+    flex-direction: column;
+
+    min-height: 15rem;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    background:
+        var(--color-surface);
+
+    border-color:
+        rgba(6, 56, 42, 0.12);
+}
+
+.competition-card__content {
+    position: relative;
+    z-index: 2;
+
+    padding:
+        var(--space-4)
+        var(--space-4)
+        var(--space-3);
+}
+
+.competition-card
+.summary-card__topline {
+    margin-bottom:
+        var(--space-3);
+}
+
+.competition-card
+.summary-card__title {
+    color:
+        var(--color-primary);
+
+    font-size:
+        clamp(
+            1rem,
+            4.7vw,
+            1.25rem
+        );
+}
+
+.competition-card
+.summary-card__meta {
+    margin-top:
+        var(--space-3);
+}
+
+.competition-card__arrow {
+    color:
+        var(--color-accent-dark);
+
+    font-size: 1rem;
+
+    font-weight:
+        var(--font-weight-bold);
+}
+
+.competition-card__image-wrap {
+    position: relative;
+
+    min-height: 6.4rem;
+
+    margin-top: auto;
+
+    overflow: hidden;
+}
+
+.competition-card__image {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+    min-height: 6.4rem;
+
+    object-fit: cover;
+
+    object-position: center 55%;
+
+    transition:
+        transform
+        var(--transition-standard);
+}
+
+.competition-card__image-wrap::after {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(6, 56, 42, 0.02),
+            rgba(6, 56, 42, 0.20)
+        );
+
+    content: "";
+
+    pointer-events: none;
+}
+
+.competition-card:active
+.competition-card__image {
+    transform:
+        scale(1.025);
+}
+
+/* =========================================================
+   QUICK ACTIONS
+   ========================================================= */
+
+.member-home
+.quick-actions {
+    gap:
+        var(--space-3);
+}
+
+.member-home
+.quick-action {
+    position: relative;
+
+    justify-content:
+        flex-start;
+
+    min-height: 4.4rem;
+
+    padding:
+        var(--space-4);
+
+    overflow: hidden;
+
+    border-radius:
+        var(--radius-lg);
+}
+
+.member-home
+.quick-action::after {
+    position: absolute;
+
+    right:
+        var(--space-4);
+
+    color:
+        var(--color-accent);
+
+    font-size: 1.45rem;
+
+    font-weight: 400;
+
+    content: "›";
+}
+
+.member-home
+.quick-action
+.home-icon {
+    width: 1.55rem;
+    height: 1.55rem;
+
+    flex:
+        0 0 1.55rem;
+
+    color:
+        var(--color-accent);
+}
+
+/* =========================================================
+   SHARED HOME ICON
+   ========================================================= */
 
 .home-icon {
     width: 1.35rem;
     height: 1.35rem;
 
     fill: none;
-    stroke: currentColor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+
+    stroke:
+        currentColor;
+
+    stroke-linecap:
+        round;
+
+    stroke-linejoin:
+        round;
+
     stroke-width: 1.8;
 }
 
+/* =========================================================
+   HOME HEADER
+   ========================================================= */
+
 .app-header__club {
     display: flex;
+
     align-items: center;
     justify-content: center;
-    gap: var(--space-1);
+
+    gap:
+        var(--space-2);
 
     min-width: 0;
+
+    padding:
+        0.6rem
+        1rem;
+
+    color:
+        #ffffff;
+
+    background:
+        linear-gradient(
+            145deg,
+            #084733,
+            var(--color-primary)
+        );
+
+    border:
+        1px solid
+        rgba(
+            212,
+            175,
+            55,
+            0.16
+        );
+
+    border-radius:
+        var(--radius-round);
+
+    box-shadow:
+        0 5px 14px
+        rgba(
+            6,
+            56,
+            42,
+            0.14
+        );
 }
 
 .app-header__club-name {
     overflow: hidden;
 
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-semibold);
-    text-overflow: ellipsis;
+    color: inherit;
+
+    font-size:
+        var(--font-size-sm);
+
+    font-weight:
+        var(--font-weight-semibold);
+
+    text-overflow:
+        ellipsis;
+
     white-space: nowrap;
+}
+
+.app-header__club
+svg {
+    color:
+        #ffffff;
 }
 
 .notification-dot {
     position: absolute;
+
     top: 0.55rem;
     right: 0.5rem;
 
     width: 0.55rem;
     height: 0.55rem;
 
-    background: var(--color-success);
-    border: 2px solid #ffffff;
+    background:
+        var(--color-success);
+
+    border:
+        2px solid #ffffff;
+
     border-radius: 50%;
 }
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 420px) {
+    .summary-card {
+        padding:
+            var(--space-3);
+
+        min-height: 14.5rem;
+    }
+
+    .competition-card {
+        padding: 0;
+    }
+
+    .competition-card__content {
+        padding:
+            var(--space-3);
+    }
+
+    .weather-card__main {
+        align-items:
+            flex-start;
+
+        gap:
+            0.65rem;
+    }
+
+    .weather-card__icon {
+        width: 2.6rem;
+        height: 2.6rem;
+
+        flex-basis:
+            2.6rem;
+    }
+
+    .summary-card__value {
+        font-size:
+            1.45rem;
+    }
+
+    .member-home
+    .quick-action {
+        padding:
+            var(--space-3);
+    }
+}
+
+/* =========================================================
+   TABLET / DESKTOP
+   ========================================================= */
 
 @media (min-width: 48rem) {
     .member-home {
@@ -206,110 +1026,21 @@
 
     .booking-hero__course-art {
         right: 1rem;
+
         width: 12rem;
         height: 9rem;
     }
-}
-/* =========================================================
-   HOME WEATHER CARD
-   ========================================================= */
 
-.weather-card {
-    position: relative;
-    overflow: hidden;
-}
-
-.weather-card__main {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-top: 0.65rem;
-}
-
-.weather-card__icon {
-    display: grid;
-    width: 2.75rem;
-    height: 2.75rem;
-    flex: 0 0 2.75rem;
-    place-items: center;
-    color: var(--color-primary, #1f683d);
-}
-
-.weather-card__icon svg {
-    width: 100%;
-    height: 100%;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.7;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.weather-card__description {
-    margin: 0.15rem 0 0;
-    color: var(--color-text-muted, #647067);
-    font-size: 0.82rem;
-    line-height: 1.3;
-}
-
-.weather-card__advisory {
-    margin: 0.55rem 0 0;
-    padding: 0.45rem 0.55rem;
-    border-radius: 0.55rem;
-    background: rgba(210, 150, 35, 0.12);
-    color: #76500b;
-    font-size: 0.76rem;
-    font-weight: 700;
-    line-height: 1.3;
-}
-
-.weather-card__advisory[data-type="wet"] {
-    background: rgba(45, 105, 155, 0.12);
-    color: #275d86;
-}
-
-.weather-card__advisory[data-type="severe"] {
-    background: rgba(170, 50, 50, 0.12);
-    color: #912f2f;
-}
-
-.weather-card__footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    margin-top: 0.7rem;
-    color: var(--color-text-muted, #647067);
-    font-size: 0.7rem;
-}
-
-.weather-card__footer strong {
-    color: var(--color-primary, #1f683d);
-}
-
-.weather-card[data-weather-severity="wet"] {
-    border-color: rgba(45, 105, 155, 0.24);
-}
-
-.weather-card[data-weather-severity="caution"] {
-    border-color: rgba(210, 150, 35, 0.3);
-}
-
-.weather-card[data-weather-severity="severe"] {
-    border-color: rgba(170, 50, 50, 0.3);
-}
-
-.weather-card[data-weather-severity="unavailable"] {
-    opacity: 0.82;
-}
-
-@media (max-width: 420px) {
-    .weather-card__main {
-        align-items: flex-start;
+    .summary-card {
+        min-height: 17rem;
     }
 
-    .weather-card__footer {
-        align-items: flex-start;
-        flex-direction: column;
+    .competition-card {
+        min-height: 17rem;
+    }
+
+    .competition-card__image-wrap,
+    .competition-card__image {
+        min-height: 8rem;
     }
 }
