@@ -1,6 +1,28 @@
 <!DOCTYPE html>
 <html lang="en" class="auth-protected">
 <head>
+    <style>
+        html.auth-protected {
+            min-height: 100%;
+            background: #06382a !important;
+        }
+
+        html.auth-protected body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        html.auth-protected:not(.auth-ready) body {
+            visibility: hidden;
+            background: #06382a !important;
+        }
+
+        html.auth-protected.auth-ready,
+        html.auth-protected.auth-ready body {
+            background: #f4f6f3 !important;
+        }
+    </style>
+
     <meta charset="UTF-8" />
 
     <meta
@@ -8,20 +30,47 @@
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
 
-    <meta name="theme-color" content="#173f2b" />
+    <meta
+        name="theme-color"
+        content="#06382a"
+    />
 
-    <title>Profile | BookIt</title>
+    <title>Profile | ClubHub</title>
 
-    <link rel="stylesheet" href="../styles/tokens.css" />
-    <link rel="stylesheet" href="../styles/app-shell.css" />
-    <link rel="stylesheet" href="../styles/components.css" />
-    <link rel="stylesheet" href="../styles/profile.css" />
-    <link rel="manifest" href="../json/manifest.json" />
-    <link rel="apple-touch-icon" href="../assets/Icon.PNG" />
-<script
-    src="../js/core/protected-loader.js?loader=2"
-    defer
-></script>
+    <link
+        rel="stylesheet"
+        href="../styles/tokens.css"
+    />
+
+    <link
+        rel="stylesheet"
+        href="../styles/app-shell.css"
+    />
+
+    <link
+        rel="stylesheet"
+        href="../styles/components.css"
+    />
+
+    <link
+        rel="stylesheet"
+        href="../styles/profile.css"
+    />
+
+    <link
+        rel="manifest"
+        href="../manifest.json"
+    />
+
+    <link
+        rel="apple-touch-icon"
+        href="../assets/Icon.PNG"
+    />
+
+    <script
+        src="../js/core/protected-loader.js?loader=7"
+        defer
+    ></script>
 </head>
 
 <body
@@ -32,46 +81,61 @@
     <div class="app-shell">
         <header data-app-header></header>
 
-        <main class="app-main app-main--narrow profile-page">
+        <main
+            class="app-main app-main--narrow profile-page"
+        >
+            <!-- =================================================
+                 MEMBER IDENTITY
+                 ================================================= -->
+
             <section class="profile-intro">
                 <div
                     id="profileAvatar"
                     class="profile-avatar"
                     aria-hidden="true"
-    >
-    --
-</div>
+                >
+                    --
+                </div>
 
-<div class="profile-intro__content">
-    <h1
-        id="profileGreeting"
-        class="profile-intro__title"
-    >
-        Loading...
-    </h1>
+                <div class="profile-intro__content">
+                    <p class="profile-intro__eyebrow">
+                        Your membership
+                    </p>
 
-    <div class="profile-intro__details">
-        <p
-            id="profileClub"
-            class="profile-intro__club"
-        >
-            Loading...
-        </p>
+                    <h1
+                        id="profileGreeting"
+                        class="profile-intro__title"
+                    >
+                        Loading...
+                    </h1>
 
-        <p
-            id="profileMembershipNumber"
-            class="profile-intro__membership"
-        >
-            Membership loading...
-        </p>
-    </div>
+                    <div class="profile-intro__details">
+                        <p
+                            id="profileClub"
+                            class="profile-intro__club"
+                        >
+                            Loading...
+                        </p>
+
+                        <p
+                            id="profileMembershipNumber"
+                            class="profile-intro__membership"
+                        >
+                            Membership loading...
+                        </p>
+                    </div>
+                </div>
             </section>
+
+            <!-- =================================================
+                 HANDICAP
+                 ================================================= -->
 
             <section
                 class="hero-card handicap-card"
                 aria-labelledby="handicap-title"
             >
-                <div>
+                <div class="handicap-card__content">
                     <p
                         class="handicap-card__label"
                         id="handicap-title"
@@ -79,30 +143,42 @@
                         Handicap Index
                     </p>
 
-   <p
-    id="profileHandicap"
-    class="handicap-card__value"
->
-    --.-
-</p>
+                    <p
+                        id="profileHandicap"
+                        class="handicap-card__value"
+                    >
+                        --.-
+                    </p>
 
-<p
-    id="profileHandicapUpdated"
-    class="handicap-card__meta"
->
-    Loading...
-</p>
+                    <p
+                        id="profileHandicapUpdated"
+                        class="handicap-card__meta"
+                    >
+                        Loading...
+                    </p>
                 </div>
 
                 <div
                     class="handicap-card__badge"
                     aria-hidden="true"
                 >
-                    ⛳
+                    <svg
+                        viewBox="0 0 24 24"
+                        class="profile-handicap-icon"
+                    >
+                        <path d="M6 21V4" />
+                        <path d="M6 4h10l-2 4 2 4H6" />
+                        <circle cx="14" cy="18" r="2" />
+                        <path d="M11 21h6" />
+                    </svg>
                 </div>
             </section>
 
-            <section class="section">
+            <!-- =================================================
+                 UPCOMING BOOKING
+                 ================================================= -->
+
+            <section class="section profile-section">
                 <div class="section__header">
                     <h2 class="section__title">
                         Upcoming
@@ -126,20 +202,41 @@
                         </span>
                     </div>
 
-                    <p class="profile-booking__meta">
-                        Bells Hotel &amp; Country Club · 1st Tee
-                    </p>
+                    <div class="profile-booking__divider"></div>
+
+                    <div class="profile-booking__course">
+                        <svg
+                            class="profile-booking__icon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path d="M5 21V4" />
+                            <path d="M5 4h10l-2 4 2 4H5" />
+                        </svg>
+
+                        <p class="profile-booking__meta">
+                            Bells Hotel &amp; Country Club · 1st Tee
+                        </p>
+                    </div>
 
                     <a
                         class="button button--primary button--full"
                         href="booking.html"
                     >
                         View booking
+
+                        <span aria-hidden="true">
+                            ›
+                        </span>
                     </a>
                 </article>
             </section>
 
-            <section class="section">
+            <!-- =================================================
+                 RECENT GOLF
+                 ================================================= -->
+
+            <section class="section profile-section">
                 <div class="section__header">
                     <h2 class="section__title">
                         Recent golf
@@ -179,22 +276,34 @@
                 </div>
             </section>
 
-            <section class="section">
+            <!-- =================================================
+                 ACCOUNT
+                 ================================================= -->
+
+            <section class="section profile-section">
                 <div class="section__header">
                     <h2 class="section__title">
                         Account
                     </h2>
                 </div>
 
-                <div class="list-card">
-                    <a class="list-item" href="#settings">
+                <div class="list-card profile-menu">
+                    <a
+                        class="list-item"
+                        href="#settings"
+                    >
                         <span class="list-item__icon">
                             <svg
                                 class="profile-menu-icon"
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
                             >
-                                <circle cx="12" cy="12" r="3"></circle>
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="3"
+                                ></circle>
+
                                 <path
                                     d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.09A1.7 1.7 0 0 0 9 19.35a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.63 15a1.7 1.7 0 0 0-1.56-1.03H3v-4h.09A1.7 1.7 0 0 0 4.65 9a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1.03-1.56V3h4v.09A1.7 1.7 0 0 0 15 4.65a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.37 9a1.7 1.7 0 0 0 1.56 1.03H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"
                                 ></path>
@@ -211,10 +320,15 @@
                             </p>
                         </div>
 
-                        <span class="list-item__meta">›</span>
+                        <span class="list-item__meta">
+                            ›
+                        </span>
                     </a>
 
-                    <a class="list-item" href="#home-club">
+                    <a
+                        class="list-item"
+                        href="#home-club"
+                    >
                         <span class="list-item__icon">
                             <svg
                                 class="profile-menu-icon"
@@ -236,7 +350,9 @@
                             </p>
                         </div>
 
-                        <span class="list-item__meta">›</span>
+                        <span class="list-item__meta">
+                            ›
+                        </span>
                     </a>
 
                     <div class="list-item">
@@ -282,6 +398,7 @@
                                     height="14"
                                     rx="2"
                                 ></rect>
+
                                 <path d="M3 10h18"></path>
                             </svg>
                         </span>
@@ -306,7 +423,5 @@
 
         <nav data-bottom-nav></nav>
     </div>
-
-
 </body>
 </html>
