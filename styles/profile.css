@@ -1,235 +1,793 @@
 /* =========================================================
-   BOOKIT PROFILE
+   CLUBHUB PROFILE
    ========================================================= */
 
 .profile-page {
     max-width: 42rem;
 }
 
+/* =========================================================
+   MEMBER INTRO
+   ========================================================= */
+
 .profile-intro {
+    position: relative;
+
     display: flex;
+
     align-items: center;
-    gap: var(--space-4);
-    margin-bottom: var(--space-5);
-}
 
-.profile-intro__details {
-    min-width: 0;
-}
+    gap:
+        var(--space-4);
 
-.profile-intro__membership {
-    margin: var(--space-1) 0 0;
+    margin-bottom:
+        var(--space-5);
 
-    color: var(--color-text-muted);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-}
+    padding:
+        var(--space-4);
 
-.profile-avatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
+    overflow: hidden;
 
-    width: 4.75rem;
-    height: 4.75rem;
-
-    color: var(--color-text-inverse);
     background:
         linear-gradient(
             145deg,
-            var(--color-primary),
+            #ffffff 0%,
+            #eef4ef 100%
+        );
+
+    border:
+        1px solid
+        rgba(6, 56, 42, 0.11);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-card);
+}
+
+.profile-intro::after {
+    position: absolute;
+
+    top: -3.5rem;
+    right: -3rem;
+
+    width: 10rem;
+    height: 10rem;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(212, 175, 55, 0.11),
+            transparent 68%
+        );
+
+    border-radius: 50%;
+
+    content: "";
+
+    pointer-events: none;
+}
+
+.profile-avatar {
+    position: relative;
+    z-index: 1;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    width: 5.2rem;
+    height: 5.2rem;
+
+    color:
+        var(--color-text-inverse);
+
+    background:
+        linear-gradient(
+            145deg,
+            #084733,
             var(--color-primary-dark)
         );
-    border: 3px solid var(--color-accent-light);
-    border-radius: 50%;
-    box-shadow: var(--shadow-sm);
 
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
+    border:
+        3px solid
+        var(--color-accent-light);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 8px 20px
+        rgba(6, 56, 42, 0.18);
+
+    font-size:
+        var(--font-size-xl);
+
+    font-weight:
+        var(--font-weight-bold);
 }
 
 .profile-intro__content {
+    position: relative;
+    z-index: 1;
+
     min-width: 0;
+
+    flex: 1;
+}
+
+.profile-intro__eyebrow {
+    margin:
+        0 0
+        var(--space-1);
+
+    color:
+        var(--color-accent-dark);
+
+    font-size:
+        var(--font-size-xs);
+
+    font-weight:
+        var(--font-weight-bold);
+
+    letter-spacing:
+        0.06em;
+
+    text-transform:
+        uppercase;
 }
 
 .profile-intro__title {
     margin: 0;
 
-    color: var(--color-primary-dark);
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1.75rem, 7vw, 2.3rem);
-    line-height: 1.1;
+    color:
+        var(--color-primary);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(
+            1.6rem,
+            6.5vw,
+            2.2rem
+        );
+
+    font-weight: 700;
+
+    line-height: 1.08;
+}
+
+.profile-intro__title::after {
+    display: block;
+
+    width: 2.7rem;
+    height: 3px;
+
+    margin-top:
+        var(--space-2);
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--color-accent),
+            var(--color-accent-dark)
+        );
+
+    border-radius:
+        var(--radius-round);
+
+    content: "";
+}
+
+.profile-intro__details {
+    min-width: 0;
+
+    margin-top:
+        var(--space-3);
 }
 
 .profile-intro__club {
-    margin: var(--space-2) 0 0;
+    margin: 0;
 
-    color: var(--color-text-muted);
-    font-size: var(--font-size-sm);
+    overflow: hidden;
+
+    color:
+        var(--color-text);
+
+    font-size:
+        var(--font-size-sm);
+
+    font-weight:
+        var(--font-weight-semibold);
+
+    text-overflow:
+        ellipsis;
+
+    white-space: nowrap;
 }
 
-/* Handicap hero */
+.profile-intro__membership {
+    margin:
+        var(--space-1)
+        0 0;
+
+    color:
+        var(--color-text-muted);
+
+    font-size:
+        var(--font-size-xs);
+
+    font-weight:
+        var(--font-weight-semibold);
+}
+
+/* =========================================================
+   HANDICAP HERO
+   ========================================================= */
 
 .handicap-card {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+
     align-items: center;
-    gap: var(--space-4);
+
+    gap:
+        var(--space-4);
+
+    margin-bottom:
+        var(--space-6);
+
+    min-height: 11rem;
+}
+
+.handicap-card__content {
+    position: relative;
+    z-index: 1;
 }
 
 .handicap-card__label {
     margin: 0;
 
-    color: rgba(255, 255, 255, 0.8);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.76
+        );
+
+    font-size:
+        var(--font-size-xs);
+
+    font-weight:
+        var(--font-weight-bold);
+
+    letter-spacing:
+        0.06em;
+
+    text-transform:
+        uppercase;
 }
 
 .handicap-card__value {
-    margin: var(--space-2) 0 0;
+    margin:
+        var(--space-2)
+        0 0;
 
-    font-size: clamp(3rem, 15vw, 4.5rem);
-    font-weight: var(--font-weight-bold);
-    line-height: 0.95;
+    color:
+        var(--color-accent);
+
+    font-size:
+        clamp(
+            3.2rem,
+            16vw,
+            4.8rem
+        );
+
+    font-weight:
+        var(--font-weight-bold);
+
+    line-height: 0.92;
+
+    font-variant-numeric:
+        tabular-nums;
 }
 
 .handicap-card__meta {
-    margin: var(--space-2) 0 0;
+    margin:
+        var(--space-3)
+        0 0;
 
-    color: rgba(255, 255, 255, 0.78);
-    font-size: var(--font-size-sm);
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.78
+        );
+
+    font-size:
+        var(--font-size-sm);
+
+    line-height: 1.4;
 }
 
 .handicap-card__badge {
+    position: relative;
+    z-index: 1;
+
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
 
-    width: 4.75rem;
-    height: 4.75rem;
+    width: 5rem;
+    height: 5rem;
 
-    color: var(--color-primary-dark);
-    background: var(--color-accent-light);
-    border: 2px solid var(--color-accent);
+    color:
+        var(--color-primary);
+
+    background:
+        linear-gradient(
+            145deg,
+            #f8edca,
+            var(--color-accent-light)
+        );
+
+    border:
+        2px solid
+        var(--color-accent);
+
     border-radius: 50%;
 
-    font-size: 1.55rem;
+    box-shadow:
+        0 8px 20px
+        rgba(0, 0, 0, 0.12);
 }
 
-/* Upcoming booking */
+.profile-handicap-icon {
+    width: 2.35rem;
+    height: 2.35rem;
+
+    fill: none;
+
+    stroke:
+        currentColor;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    stroke-width: 1.7;
+}
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.profile-section {
+    margin-top:
+        var(--space-6);
+}
+
+/* =========================================================
+   UPCOMING BOOKING
+   ========================================================= */
 
 .profile-booking {
     display: grid;
-    gap: var(--space-3);
+
+    gap:
+        var(--space-3);
+
+    padding:
+        var(--space-5);
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff 0%,
+            #f2f6f2 100%
+        );
+
+    border-color:
+        rgba(6, 56, 42, 0.11);
+
+    box-shadow:
+        var(--shadow-md);
 }
 
 .profile-booking__top {
     display: flex;
+
     align-items: flex-start;
     justify-content: space-between;
-    gap: var(--space-3);
+
+    gap:
+        var(--space-3);
 }
 
 .profile-booking__date {
     margin: 0;
 
-    color: var(--color-primary-dark);
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
+    color:
+        var(--color-primary);
+
+    font-size:
+        var(--font-size-sm);
+
+    font-weight:
+        var(--font-weight-semibold);
 }
 
 .profile-booking__time {
-    margin: var(--space-1) 0 0;
+    margin:
+        var(--space-1)
+        0 0;
 
-    color: var(--color-primary);
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
+    color:
+        var(--color-accent-dark);
+
+    font-size:
+        clamp(
+            2rem,
+            10vw,
+            2.65rem
+        );
+
+    font-weight:
+        var(--font-weight-bold);
+
+    line-height: 1;
+}
+
+.profile-booking__divider {
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(6, 56, 42, 0.12),
+            transparent
+        );
+}
+
+.profile-booking__course {
+    display: flex;
+
+    align-items: center;
+
+    gap:
+        var(--space-2);
+}
+
+.profile-booking__icon {
+    width: 1.35rem;
+    height: 1.35rem;
+
+    flex:
+        0 0 1.35rem;
+
+    fill: none;
+
+    color:
+        var(--color-primary);
+
+    stroke:
+        currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .profile-booking__meta {
     margin: 0;
 
-    color: var(--color-text-muted);
-    font-size: var(--font-size-sm);
+    color:
+        var(--color-text-muted);
+
+    font-size:
+        var(--font-size-sm);
 }
 
-/* Statistics */
+/* =========================================================
+   RECENT GOLF
+   ========================================================= */
 
 .profile-stats {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
     overflow: hidden;
 
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    background:
+        linear-gradient(
+            145deg,
+            #eef4ef 0%,
+            #ffffff 100%
+        );
+
+    border:
+        1px solid
+        rgba(6, 56, 42, 0.11);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        var(--shadow-card);
 }
 
 .profile-stat {
+    position: relative;
+
     min-width: 0;
-    padding: var(--space-4) var(--space-2);
+
+    padding:
+        var(--space-5)
+        var(--space-2);
 
     text-align: center;
 }
 
-.profile-stat + .profile-stat {
-    border-left: 1px solid var(--color-border);
+.profile-stat
++ .profile-stat {
+    border-left:
+        1px solid
+        rgba(6, 56, 42, 0.10);
 }
 
 .profile-stat__value {
     display: block;
 
-    color: var(--color-primary);
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
+    color:
+        var(--color-primary);
+
+    font-size:
+        clamp(
+            1.65rem,
+            8vw,
+            2.15rem
+        );
+
+    font-weight:
+        var(--font-weight-bold);
+
     line-height: 1;
+}
+
+.profile-stat:first-child
+.profile-stat__value {
+    color:
+        var(--color-accent-dark);
 }
 
 .profile-stat__label {
     display: block;
-    margin-top: var(--space-2);
 
-    color: var(--color-text-muted);
-    font-size: var(--font-size-xs);
+    margin-top:
+        var(--space-2);
+
+    color:
+        var(--color-text-muted);
+
+    font-size:
+        var(--font-size-xs);
+
+    font-weight:
+        var(--font-weight-medium);
+
+    line-height: 1.3;
 }
 
-/* Menu */
+/* =========================================================
+   ACCOUNT MENU
+   ========================================================= */
+
+.profile-menu {
+    border-color:
+        rgba(6, 56, 42, 0.11);
+
+    box-shadow:
+        var(--shadow-card);
+}
+
+.profile-menu
+.list-item {
+    min-height: 5rem;
+}
+
+.profile-menu
+.list-item__icon {
+    color:
+        var(--color-primary);
+
+    background:
+        linear-gradient(
+            145deg,
+            #f2f6f2,
+            var(--color-primary-light)
+        );
+}
+
+.profile-menu
+.list-item:nth-child(2)
+.list-item__icon {
+    color:
+        var(--color-accent-dark);
+
+    background:
+        var(--color-accent-light);
+}
+
+.profile-menu
+.list-item__meta {
+    color:
+        var(--color-accent-dark);
+
+    font-size: 1.25rem;
+}
 
 .profile-menu-icon {
     width: 1.35rem;
     height: 1.35rem;
 
     fill: none;
-    stroke: currentColor;
+
+    stroke:
+        currentColor;
+
     stroke-linecap: round;
     stroke-linejoin: round;
+
     stroke-width: 1.8;
 }
 
 .coming-soon {
-    color: var(--color-text-muted);
-    font-size: 0.68rem;
-    font-weight: var(--font-weight-semibold);
-    text-transform: uppercase;
+    padding:
+        0.35rem
+        0.55rem;
+
+    color:
+        var(--color-text-muted);
+
+    background:
+        var(--color-surface-muted);
+
+    border-radius:
+        var(--radius-round);
+
+    font-size:
+        0.64rem;
+
+    font-weight:
+        var(--font-weight-bold);
+
+    letter-spacing:
+        0.04em;
+
+    text-transform:
+        uppercase;
 }
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 390px) {
+    .profile-intro {
+        gap:
+            var(--space-3);
+
+        padding:
+            var(--space-3);
+    }
+
+    .profile-avatar {
+        width: 4.5rem;
+        height: 4.5rem;
+    }
+
+    .profile-intro__title {
+        font-size: 1.55rem;
+    }
+
+    .handicap-card {
+        min-height: 10rem;
+
+        padding:
+            var(--space-4);
+    }
+
+    .handicap-card__badge {
+        width: 4.4rem;
+        height: 4.4rem;
+    }
+
+    .profile-stat {
+        padding:
+            var(--space-4)
+            var(--space-1);
+    }
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
 
 @media (max-width: 22rem) {
-    .profile-stats {
-        grid-template-columns: 1fr;
+    .profile-intro {
+        align-items:
+            flex-start;
     }
 
-    .profile-stat + .profile-stat {
-        border-top: 1px solid var(--color-border);
+    .profile-avatar {
+        width: 4rem;
+        height: 4rem;
+    }
+
+    .profile-stats {
+        grid-template-columns:
+            1fr;
+    }
+
+    .profile-stat
+    + .profile-stat {
+        border-top:
+            1px solid
+            rgba(6, 56, 42, 0.10);
+
         border-left: 0;
     }
+
+    .handicap-card {
+        grid-template-columns:
+            1fr;
+    }
+
+    .handicap-card__badge {
+        display: none;
+    }
 }
+
+/* =========================================================
+   TABLET / DESKTOP
+   ========================================================= */
 
 @media (min-width: 48rem) {
     .profile-page {
         max-width: 48rem;
+    }
+
+    .profile-intro {
+        padding:
+            var(--space-5);
+    }
+
+    .profile-avatar {
+        width: 5.8rem;
+        height: 5.8rem;
+    }
+
+    .handicap-card {
+        min-height: 12rem;
+
+        padding:
+            var(--space-6);
     }
 }
