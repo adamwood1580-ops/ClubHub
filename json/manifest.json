@@ -1,5 +1,5 @@
 {
-  "id": "/Clubhub/",
+  "id": "../",
 
   "name": "ClubHub",
   "short_name": "ClubHub",
@@ -9,8 +9,8 @@
   "lang": "en-GB",
   "dir": "ltr",
 
-  "start_url": "/Clubhub/",
-  "scope": "/Clubhub/",
+  "start_url": "../",
+  "scope": "../",
 
   "display": "standalone",
 
