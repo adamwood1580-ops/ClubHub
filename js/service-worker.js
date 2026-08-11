@@ -21,7 +21,7 @@ const FILES_TO_CACHE = [
 
     "./assets/bells-logo.PNG",
     "./assets/course-bg.JPG",
-    "./assets/Icon.PNG"
+    "./assets/app.PNG"
 ];
 
 self.addEventListener("install", event => {
