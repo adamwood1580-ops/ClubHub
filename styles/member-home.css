@@ -1044,3 +1044,41 @@ svg {
         min-height: 8rem;
     }
 }
+
+/* =========================================================
+   ADMIN QUICK ACTION
+   ========================================================= */
+
+.member-home
+.quick-action--admin {
+    grid-column: 1 / -1;
+    color: var(--color-primary-dark);
+    background:
+        linear-gradient(
+            135deg,
+            #f0df9f,
+            var(--color-accent)
+        );
+    border-color: var(--color-accent-dark);
+}
+
+.member-home
+.quick-action--admin::after,
+.member-home
+.quick-action--admin
+.home-icon {
+    color: var(--color-primary-dark);
+}
+
+.member-home
+.quick-action[hidden] {
+    display: none;
+}
+
+@media (min-width: 48rem) {
+    .member-home
+    .quick-action--admin {
+        grid-column: auto;
+    }
+}
+
