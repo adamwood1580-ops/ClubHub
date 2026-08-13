@@ -45,6 +45,11 @@
             "nextRoundEmpty"
         );
 
+    const adminQuickAction =
+        document.getElementById(
+            "adminQuickAction"
+        );
+
     /* =========================================================
        COMPETITION / EVENT ELEMENTS
        ========================================================= */
@@ -177,6 +182,26 @@
             greetingSubtitleElement.textContent =
                 "We could not load your account information.";
         }
+    }
+
+    function renderAdminAccess(profile) {
+        if (!adminQuickAction) {
+            return;
+        }
+
+        const role =
+            String(
+                profile?.membership?.role ||
+                ""
+            )
+                .trim()
+                .toLowerCase();
+
+        adminQuickAction.hidden =
+            ![
+                "manager",
+                "club_admin"
+            ].includes(role);
     }
 
     /* =========================================================
@@ -1306,6 +1331,11 @@
                 await window.BookIt.ready;
 
             renderGreeting(
+                readyData?.profile ||
+                window.BookIt.currentProfile
+            );
+
+            renderAdminAccess(
                 readyData?.profile ||
                 window.BookIt.currentProfile
             );
