@@ -25,7 +25,7 @@
         home: [
             "../js/core/booking.js",
             "../js/core/weather.js",
-            "../js/competitions.js
+            "../js/competitions.js",
             "../js/pages/home-page.js"
         ],
 
