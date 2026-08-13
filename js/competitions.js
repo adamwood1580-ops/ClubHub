@@ -42,10 +42,14 @@
     };
 
     const elements = {};
-
-    document.addEventListener("DOMContentLoaded", start);
+    let initialised = false;
 
     async function start() {
+        if (initialised) {
+            return;
+        }
+
+        initialised = true;
         cacheElements();
         bindControls();
 
@@ -159,6 +163,7 @@
         }) || memberships[0];
 
         return (
+            profile?.club?.id ||
             profile?.club_id ||
             profile?.clubId ||
             profile?.membership?.club_id ||
@@ -603,5 +608,24 @@
 
     function escapeAttribute(value) {
         return escapeHtml(value).replaceAll("`", "&#096;");
+    }
+
+    /* =========================================================
+       INITIALISATION
+       =========================================================
+
+       competitions.js is loaded dynamically by protected-loader.js.
+       That loader starts after DOMContentLoaded, so this page script
+       must initialise immediately when the DOM is already ready.
+    */
+
+    if (document.readyState === "loading") {
+        document.addEventListener(
+            "DOMContentLoaded",
+            start,
+            { once: true }
+        );
+    } else {
+        start();
     }
 })();
