@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta name="theme-color" content="#003f24">
+
+    <title>Competitions | Bells Golf Suite</title>
+
+    <link rel="stylesheet" href="../styles/competitions.css?v=1">
+    <link rel="manifest" href="../json/manifest.json">
+    <link rel="apple-touch-icon" href="../assets/Icon.PNG">
+</head>
+
+<body>
+    <main class="calendar-page">
+        <header class="calendar-hero">
+            <a href="index.html" class="back-link" aria-label="Back to home">
+                ← Home
+            </a>
+
+            <img
+                src="../assets/bells-logo.PNG"
+                alt="Bells Hotel and Country Club"
+                class="calendar-logo"
+            >
+
+            <div class="calendar-title-block">
+                <p class="eyebrow">Club Calendar</p>
+                <h1>Competitions</h1>
+                <p class="calendar-subtitle">
+                    Competitions, fixtures and club events.
+                </p>
+            </div>
+        </header>
+
+        <section class="upcoming-panel" aria-labelledby="upcomingHeading">
+            <div class="section-heading-row">
+                <div>
+                    <p class="section-kicker">Coming up</p>
+                    <h2 id="upcomingHeading">Next Event</h2>
+                </div>
+
+                <span id="upcomingFilterLabel" class="section-chip">
+                    All sections
+                </span>
+            </div>
+
+            <div id="upcomingEvent" class="upcoming-card" aria-live="polite">
+                <div class="loading-line">Loading next event…</div>
+            </div>
+        </section>
+
+        <section class="calendar-panel" aria-labelledby="calendarHeading">
+            <div class="month-toolbar">
+                <button
+                    id="previousMonth"
+                    class="month-nav-btn"
+                    type="button"
+                    aria-label="Previous month"
+                >
+                    ‹
+                </button>
+
+                <div class="month-title-wrap">
+                    <p class="section-kicker">Fixture list</p>
+                    <h2 id="calendarHeading">August 2026</h2>
+                    <span id="monthSummary" class="month-summary"></span>
+                </div>
+
+                <button
+                    id="nextMonth"
+                    class="month-nav-btn"
+                    type="button"
+                    aria-label="Next month"
+                >
+                    ›
+                </button>
+            </div>
+
+            <div class="calendar-actions">
+                <div class="filter-bar" role="group" aria-label="Filter calendar by section">
+                    <button
+                        type="button"
+                        class="filter-btn active"
+                        data-section="all"
+                    >
+                        All
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filter-btn"
+                        data-section="mens"
+                    >
+                        Men
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filter-btn"
+                        data-section="seniors"
+                    >
+                        Seniors
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filter-btn"
+                        data-section="ladies"
+                    >
+                        Ladies
+                    </button>
+                </div>
+
+                <button id="currentMonthBtn" class="current-month-btn" type="button">
+                    This Month
+                </button>
+            </div>
+
+            <div
+                id="calendarMessage"
+                class="calendar-message"
+                role="status"
+                aria-live="polite"
+            >
+                Loading club calendar…
+            </div>
+
+            <div id="agendaList" class="agenda-list" hidden></div>
+        </section>
+
+        <section class="calendar-legend" aria-label="Calendar legend">
+            <span class="legend-item legend-club">Club</span>
+            <span class="legend-item legend-mens">Men</span>
+            <span class="legend-item legend-seniors">Seniors</span>
+            <span class="legend-item legend-ladies">Ladies</span>
+        </section>
+
+        <a href="index.html" class="home-link">
+            ← Back to Home
+        </a>
+    </main>
+
+    <script src="../js/core/boot.js"></script>
+    <script src="../js/competitions.js"></script>
+</body>
+</html>
