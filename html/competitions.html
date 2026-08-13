@@ -1,6 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="auth-protected">
 <head>
+    <style>
+        html.auth-protected {
+            min-height: 100%;
+            background: #06382a;
+        }
+
+        html.auth-protected:not(.auth-ready) body {
+            visibility: hidden;
+        }
+    </style>
+
     <meta charset="UTF-8">
     <meta
         name="viewport"
@@ -14,9 +25,13 @@
     <link rel="stylesheet" href="../styles/competitions.css?v=1">
     <link rel="manifest" href="../json/manifest.json">
     <link rel="apple-touch-icon" href="../assets/Icon.PNG">
+    <script
+        src="../js/core/protected-loader.js?loader=9"
+        defer
+    ></script>
 </head>
 
-<body>
+<body data-page="competitions">
     <main class="calendar-page">
         <header class="calendar-hero">
             <a href="index.html" class="back-link" aria-label="Back to home">
@@ -145,10 +160,5 @@
             ← Back to Home
         </a>
     </main>
-<script
-        src="../js/core/protected-loader.js?loader=8"
-        defer
-    ></script>
-
 </body>
 </html>
