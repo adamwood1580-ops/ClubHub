@@ -46,6 +46,30 @@
         );
 
     /* =========================================================
+       COMPETITION / EVENT ELEMENTS
+       ========================================================= */
+
+    const competitionCard =
+        document.querySelector(
+            ".competition-card"
+        );
+
+    const competitionTopline =
+        competitionCard?.querySelector(
+            ".summary-card__topline"
+        ) || null;
+
+    const competitionTitle =
+        competitionCard?.querySelector(
+            ".summary-card__title"
+        ) || null;
+
+    const competitionMeta =
+        competitionCard?.querySelector(
+            ".summary-card__meta"
+        ) || null;
+
+    /* =========================================================
        WEATHER ELEMENTS
        ========================================================= */
 
@@ -298,6 +322,576 @@
              * member greeting or prevent weather loading.
              */
             showNoUpcomingBooking();
+        }
+    }
+
+    /* =========================================================
+       NEXT CLUB EVENT
+       ========================================================= */
+
+    function getSupabaseClient() {
+        if (
+            window.supabaseClient &&
+            typeof window.supabaseClient.from ===
+                "function"
+        ) {
+            return window.supabaseClient;
+        }
+
+        return null;
+    }
+
+    function resolveClubId(profile) {
+        return (
+            profile?.club?.id ||
+            profile?.club_id ||
+            profile?.clubId ||
+            null
+        );
+    }
+
+    function toLocalDateKey(date) {
+        const year =
+            date.getFullYear();
+
+        const month =
+            String(
+                date.getMonth() + 1
+            ).padStart(2, "0");
+
+        const day =
+            String(
+                date.getDate()
+            ).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+    function createEventDate(dateKey) {
+        const parts =
+            String(dateKey || "")
+                .split("-")
+                .map(Number);
+
+        if (
+            parts.length !== 3 ||
+            parts.some(Number.isNaN)
+        ) {
+            return null;
+        }
+
+        const date =
+            new Date(
+                parts[0],
+                parts[1] - 1,
+                parts[2]
+            );
+
+        return Number.isNaN(
+            date.getTime()
+        )
+            ? null
+            : date;
+    }
+
+    function eventDateWithTime(
+        date,
+        timeValue
+    ) {
+        if (!date || !timeValue) {
+            return null;
+        }
+
+        const parts =
+            String(timeValue)
+                .split(":")
+                .map(Number);
+
+        return new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            parts[0] || 0,
+            parts[1] || 0,
+            parts[2] || 0
+        );
+    }
+
+    function startOfLocalDay(date) {
+        return new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate()
+        );
+    }
+
+    function isEventCurrent(
+        event,
+        now
+    ) {
+        const date =
+            createEventDate(
+                event?.event_date
+            );
+
+        if (!date) {
+            return false;
+        }
+
+        const today =
+            startOfLocalDay(now);
+
+        const eventDay =
+            startOfLocalDay(date);
+
+        if (
+            eventDay.getTime() !==
+            today.getTime()
+        ) {
+            return false;
+        }
+
+        if (
+            !event.start_time ||
+            !event.end_time
+        ) {
+            return false;
+        }
+
+        const startsAt =
+            eventDateWithTime(
+                date,
+                event.start_time
+            );
+
+        const endsAt =
+            eventDateWithTime(
+                date,
+                event.end_time
+            );
+
+        return (
+            startsAt &&
+            endsAt &&
+            startsAt <= now &&
+            endsAt >= now
+        );
+    }
+
+    function isEventCurrentOrUpcoming(
+        event,
+        now
+    ) {
+        const date =
+            createEventDate(
+                event?.event_date
+            );
+
+        if (!date) {
+            return false;
+        }
+
+        const today =
+            startOfLocalDay(now);
+
+        const eventDay =
+            startOfLocalDay(date);
+
+        if (eventDay > today) {
+            return true;
+        }
+
+        if (eventDay < today) {
+            return false;
+        }
+
+        if (isEventCurrent(event, now)) {
+            return true;
+        }
+
+        if (!event.start_time) {
+            return true;
+        }
+
+        const startsAt =
+            eventDateWithTime(
+                date,
+                event.start_time
+            );
+
+        return Boolean(
+            startsAt &&
+            startsAt >= now
+        );
+    }
+
+    function compareClubEvents(
+        left,
+        right
+    ) {
+        if (
+            left.event_date !==
+            right.event_date
+        ) {
+            return String(
+                left.event_date
+            ).localeCompare(
+                String(
+                    right.event_date
+                )
+            );
+        }
+
+        const leftTime =
+            left.start_time ||
+            "99:99:99";
+
+        const rightTime =
+            right.start_time ||
+            "99:99:99";
+
+        if (leftTime !== rightTime) {
+            return leftTime.localeCompare(
+                rightTime
+            );
+        }
+
+        return (
+            Number(
+                left.display_order ||
+                0
+            ) -
+            Number(
+                right.display_order ||
+                0
+            )
+        );
+    }
+
+    function getEventToplineLabel(
+        event,
+        now
+    ) {
+        if (isEventCurrent(event, now)) {
+            return "Happening now";
+        }
+
+        const date =
+            createEventDate(
+                event.event_date
+            );
+
+        if (!date) {
+            return "Coming up";
+        }
+
+        const today =
+            startOfLocalDay(now);
+
+        const eventDay =
+            startOfLocalDay(date);
+
+        const difference =
+            Math.round(
+                (
+                    eventDay -
+                    today
+                ) /
+                86400000
+            );
+
+        if (difference === 0) {
+            return "Today";
+        }
+
+        if (difference === 1) {
+            return "Tomorrow";
+        }
+
+        if (difference <= 7) {
+            return "This week";
+        }
+
+        return "Coming up";
+    }
+
+    function formatEventDate(dateKey) {
+        const date =
+            createEventDate(dateKey);
+
+        if (!date) {
+            return "View club calendar";
+        }
+
+        return new Intl.DateTimeFormat(
+            "en-GB",
+            {
+                weekday: "long",
+                day: "numeric",
+                month: "long"
+            }
+        ).format(date);
+    }
+
+    function setCompetitionTopline(label) {
+        if (!competitionTopline) {
+            return;
+        }
+
+        competitionTopline.innerHTML = "";
+
+        const icon =
+            document.createElement(
+                "span"
+            );
+
+        icon.className =
+            "summary-card__icon";
+
+        icon.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        icon.textContent = "🏆";
+
+        competitionTopline.append(
+            icon,
+            document.createTextNode(
+                ` ${label}`
+            )
+        );
+    }
+
+    function setCompetitionMeta(text) {
+        if (!competitionMeta) {
+            return;
+        }
+
+        competitionMeta.innerHTML = "";
+
+        competitionMeta.append(
+            document.createTextNode(
+                text
+            )
+        );
+
+        const arrow =
+            document.createElement(
+                "span"
+            );
+
+        arrow.className =
+            "competition-card__arrow";
+
+        arrow.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        arrow.textContent = "›";
+
+        competitionMeta.append(
+            " ",
+            arrow
+        );
+    }
+
+    function showCompetitionLoading() {
+        if (!competitionCard) {
+            return;
+        }
+
+        competitionCard.href =
+            "competitions.html";
+
+        setCompetitionTopline(
+            "Club calendar"
+        );
+
+        if (competitionTitle) {
+            competitionTitle.textContent =
+                "Loading next event...";
+        }
+
+        setCompetitionMeta(
+            "View competitions and fixtures"
+        );
+    }
+
+    function showNoUpcomingCompetition() {
+        if (!competitionCard) {
+            return;
+        }
+
+        competitionCard.href =
+            "competitions.html";
+
+        setCompetitionTopline(
+            "Club calendar"
+        );
+
+        if (competitionTitle) {
+            competitionTitle.textContent =
+                "No upcoming events";
+        }
+
+        setCompetitionMeta(
+            "View full fixture list"
+        );
+    }
+
+    function renderNextCompetition(event) {
+        if (
+            !competitionCard ||
+            !event
+        ) {
+            showNoUpcomingCompetition();
+            return;
+        }
+
+        const now =
+            new Date();
+
+        competitionCard.href =
+            "competitions.html";
+
+        setCompetitionTopline(
+            getEventToplineLabel(
+                event,
+                now
+            )
+        );
+
+        if (competitionTitle) {
+            competitionTitle.textContent =
+                event.title ||
+                "Club event";
+        }
+
+        setCompetitionMeta(
+            formatEventDate(
+                event.event_date
+            )
+        );
+    }
+
+    async function loadNextCompetition(
+        profile
+    ) {
+        if (!competitionCard) {
+            return;
+        }
+
+        showCompetitionLoading();
+
+        const client =
+            getSupabaseClient();
+
+        if (!client) {
+            showNoUpcomingCompetition();
+            return;
+        }
+
+        const now =
+            new Date();
+
+        let query =
+            client
+                .from("club_events")
+                .select(
+                    [
+                        "id",
+                        "club_id",
+                        "event_date",
+                        "display_order",
+                        "start_time",
+                        "end_time",
+                        "time_text",
+                        "title",
+                        "section",
+                        "event_type",
+                        "location_type",
+                        "status"
+                    ].join(",")
+                )
+                .eq(
+                    "is_published",
+                    true
+                )
+                .gte(
+                    "event_date",
+                    toLocalDateKey(now)
+                )
+                .order(
+                    "event_date",
+                    {
+                        ascending: true
+                    }
+                )
+                .order(
+                    "display_order",
+                    {
+                        ascending: true
+                    }
+                )
+                .limit(80);
+
+        const clubId =
+            resolveClubId(profile);
+
+        if (clubId) {
+            query = query.eq(
+                "club_id",
+                clubId
+            );
+        }
+
+        try {
+            const {
+                data,
+                error
+            } = await query;
+
+            if (error) {
+                throw error;
+            }
+
+            const nextEvent =
+                (Array.isArray(data)
+                    ? data
+                    : [])
+                    .filter(function (
+                        event
+                    ) {
+                        return (
+                            event.status !==
+                                "cancelled" &&
+                            isEventCurrentOrUpcoming(
+                                event,
+                                now
+                            )
+                        );
+                    })
+                    .sort(
+                        compareClubEvents
+                    )[0] || null;
+
+            if (!nextEvent) {
+                showNoUpcomingCompetition();
+                return;
+            }
+
+            renderNextCompetition(
+                nextEvent
+            );
+        } catch (error) {
+            console.error(
+                "ClubHub next event failed:",
+                error
+            );
+
+            showNoUpcomingCompetition();
         }
     }
 
@@ -729,7 +1323,11 @@
          */
         await Promise.allSettled([
             loadUpcomingBooking(),
-            loadWeather()
+            loadWeather(),
+            loadNextCompetition(
+                readyData?.profile ||
+                window.BookIt.currentProfile
+            )
         ]);
     }
 
