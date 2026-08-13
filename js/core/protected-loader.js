@@ -78,6 +78,10 @@
             "../js/competitions.js"
         ],
 
+        admin: [
+            "../js/pages/admin-page.js"
+        ],
+
         clubhub: [
             "../js/pages/clubhub-page.js"
         ]
