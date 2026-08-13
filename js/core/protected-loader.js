@@ -25,7 +25,6 @@
         home: [
             "../js/core/booking.js",
             "../js/core/weather.js",
-            "../js/competitions.js",
             "../js/pages/home-page.js"
         ],
 
@@ -73,6 +72,10 @@
 
         matchplay: [
             "../js/matchplay.js"
+        ],
+
+        competitions: [
+            "../js/competitions.js"
         ],
 
         clubhub: [
