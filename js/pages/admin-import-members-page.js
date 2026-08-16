@@ -25,6 +25,15 @@
         "staff"
     ]);
 
+    const MEMBERSHIP_TYPE_ALIASES = {
+        "full": "member",
+        "full member": "member",
+        "adult": "member",
+        "adult member": "member",
+        "standard": "member",
+        "standard member": "member"
+    };
+
     const HEADER_ALIASES = {
         first_name: [
             "first_name",
@@ -325,6 +334,68 @@
             .toLowerCase();
     }
 
+    function normaliseMembershipType(value) {
+        const raw =
+            String(value || "member")
+                .trim()
+                .toLowerCase()
+                .replace(/[_-]+/g, " ")
+                .replace(/\s+/g, " ");
+
+        return (
+            MEMBERSHIP_TYPE_ALIASES[raw] ||
+            raw
+        );
+    }
+
+    async function readFileText(file) {
+        if (
+            file &&
+            typeof file.text === "function"
+        ) {
+            try {
+                return await file.text();
+            } catch (error) {
+                console.warn(
+                    "File.text() failed; falling back to FileReader.",
+                    error
+                );
+            }
+        }
+
+        return await new Promise(
+            function (resolve, reject) {
+                const reader =
+                    new FileReader();
+
+                reader.addEventListener(
+                    "load",
+                    function () {
+                        resolve(
+                            String(reader.result || "")
+                        );
+                    },
+                    { once: true }
+                );
+
+                reader.addEventListener(
+                    "error",
+                    function () {
+                        reject(
+                            reader.error ||
+                            new Error(
+                                "The selected CSV could not be read."
+                            )
+                        );
+                    },
+                    { once: true }
+                );
+
+                reader.readAsText(file);
+            }
+        );
+    }
+
     function parseHandicap(value) {
         const text = String(value || "").trim();
 
@@ -400,12 +471,10 @@
                 membershipNumber:
                     values.membership_number || "",
                 membershipType:
-                    String(
+                    normaliseMembershipType(
                         values.membership_type ||
                         "member"
-                    )
-                        .trim()
-                        .toLowerCase(),
+                    ),
                 handicapIndex:
                     parseHandicap(
                         values.handicap_index
@@ -661,11 +730,11 @@
 
         state.filename = file.name;
         elements.fileName.textContent =
-            file.name;
+            `${file.name} · Reading...`;
 
         try {
             const text =
-                await file.text();
+                await readFileText(file);
 
             const parsed =
                 parseCsv(text);
@@ -673,8 +742,14 @@
             state.rows =
                 validateRows(parsed);
 
+            elements.fileName.textContent =
+                `${file.name} · ${state.rows.length} member row${state.rows.length === 1 ? "" : "s"} loaded`;
+
             renderValidation();
         } catch (error) {
+            elements.fileName.textContent =
+                `${file.name} · Could not load`;
+
             state.rows = [];
             state.validRows = [];
             state.validationErrors = 0;
